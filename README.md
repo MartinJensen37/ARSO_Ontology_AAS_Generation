@@ -1,8 +1,8 @@
 # ARSO Ontology AAS Generation
 
-Ontology-grounded generation and validation of Asset Administration Shells (AAS) using Large Language Models (LLMs), RDF projection, SHACL validation, and human-in-the-loop correction.
+Ontology-grounded generation, transformation, and validation of Asset Administration Shells (AAS) using Large Language Models (LLMs), RDF projection, SHACL validation, and human-in-the-loop correction.
 
-This repository contains the framework, ontology modules, validation logic, and evaluation material for generating AAS instances from technical equipment documentation. The project is centred around the **AAS Resource Structure Ontology (ARSO)**, which provides semantic grounding for AAS generation and formal validation through SHACL constraints.
+This repository contains the implementation of a modular framework for generating AAS instances from technical equipment documentation. The framework is centred around the **AAS Resource Structure Ontology (ARSO)**, which provides semantic grounding for LLM-based generation and formal validation through SHACL constraints.
 
 ---
 
@@ -10,35 +10,44 @@ This repository contains the framework, ontology modules, validation logic, and 
 
 Creating high-quality and interoperable Asset Administration Shells is a manual and knowledge-intensive task. Engineers need to understand the AAS metamodel, relevant IDTA submodel templates, equipment documentation, communication interfaces, and domain-specific modelling conventions.
 
-This project explores how Large Language Models can support this process when combined with ontology-based grounding and formal validation. Instead of asking an LLM to generate a complete AAS JSON document directly, the framework generates a compact **AAS profile** containing the asset-specific information. This profile is then transformed into a full AAS JSON structure and validated against ontology-derived SHACL constraints.
+This project explores how LLMs can support this process when combined with ontology-based grounding and validation. Instead of asking an LLM to generate a complete AAS JSON document directly, the framework generates a compact **AAS profile** containing the asset-specific information. This profile is then normalised, transformed into a full AAS JSON structure, projected to RDF, and validated against ontology-derived SHACL constraints.
 
 The framework consists of three main layers:
 
-1. **Generation layer**  
-   Builds the LLM context from user input, selected submodels, source documents, examples, and ontology-derived guidance. The LLM generates a compact AAS profile.
+1. **Generation**
+   - Builds the LLM context from user input, selected submodels, source documents, examples, and ontology-derived guidance.
+   - Calls the configured LLM provider.
+   - Produces a compact AAS profile.
 
-2. **Transformation layer**  
-   Normalises the generated profile and expands it into a complete AAS JSON representation using deterministic builder logic.
+2. **Transformation**
+   - Normalises the generated profile.
+   - Expands the profile into a full AAS JSON representation.
+   - Builds submodels using dedicated builder classes.
+   - Converts the generated AAS into RDF for validation.
 
-3. **Validation layer**  
-   Projects the generated AAS into RDF and validates it against SHACL constraints derived from ARSO and the AAS ontology. If validation fails, structured feedback can be returned to the LLM for correction.
+3. **Validation**
+   - Validates the RDF representation against SHACL constraints derived from ARSO and the AAS ontology.
+   - Produces structured validation results.
+   - Supports iterative feedback to the LLM and live validation in the editor.
 
-The framework also includes an interactive editor where users can inspect, correct, and finalise the generated AAS with live validation feedback.
+The framework also includes testing material for both SHACL validation and LLM-based AAS generation.
 
 ---
 
 ## Key Features
 
 - LLM-based generation of compact AAS profiles
-- Ontology-grounded prompt context using ARSO
-- Transformation from profile JSON to full AAS JSON
+- Context construction from submodel-specific Markdown guidance
+- Prompt configuration through YAML files
+- Support for technical documents such as PDFs and OPC UA NodeSet XML files
+- Deterministic transformation from profile JSON to full AAS JSON
+- Dedicated builder classes for supported AAS submodels
 - RDF projection of generated AAS instances
 - SHACL validation against ARSO and AAS constraints
-- Iterative feedback loop based on validation reports
-- Interactive editor for final human verification and correction
-- Live validation feedback during manual editing
-- Modular structure for adding new submodels, rules, and model providers
-- Evaluation material for synthetic industrial use cases
+- Structured validation feedback for iterative correction
+- Test cases for SHACL validation
+- Evaluation scripts for comparing model performance
+- Modular folder structure for extending ontology modules, submodels, and validation rules
 
 ---
 
@@ -50,13 +59,13 @@ The framework also includes an interactive editor where users can inspect, corre
 User input + documents
         |
         v
-Generation layer
+Generation
         |
         v
 Compact AAS profile
         |
         v
-Transformation layer
+Transformation / AAS Builder
         |
         v
 Full AAS JSON
@@ -70,18 +79,316 @@ SHACL validation
         +--> feedback to LLM if violations remain
         |
         v
-Interactive editor and final export
+Final AAS JSON / manual correction
 ```
 
-The framework is designed to keep the LLM task focused and controllable. The LLM generates only the information that must be authored explicitly, while the deterministic transformation layer handles the full AAS structure, semantic identifiers, and JSON serialisation.
+The framework is designed to keep the LLM task focused and controllable. The LLM generates only the information that must be authored explicitly, while the deterministic transformation layer handles the full AAS structure, semantic identifiers, and serialisation.
 
-This reduces the risk of malformed AAS JSON and makes the output easier to validate, correct, and extend.
+This reduces the risk of malformed AAS JSON and makes the generated output easier to validate, correct, and extend.
+
+---
+
+## Repository Structure
+
+The repository is organised into five main parts:
+
+- `Generation/` — LLM configuration, prompting, context building, parsing, RAG support, and LLM client logic.
+- `Ontology/` — AAS, CSS, ARSO, and SHACL ontology resources.
+- `Transformation/` — AAS profile transformation, AAS JSON construction, submodel builders, and RDF projection.
+- `Validation/` — SHACL validation logic.
+- `Testing/` — SHACL test cases, generation test assets, ground truth files, and evaluation scripts.
+
+```text
+.
+├── README.md
+├── __init__.py
+│
+├── Generation/
+│   ├── config.py
+│   ├── pipeline.py
+│   ├── prompts.yaml
+│   ├── __init__.py
+│   │
+│   ├── Context_Builder/
+│   │   ├── context_loader.py
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── context/
+│   │   │   ├── 00-preamble.md
+│   │   │   ├── shacl-rules.md
+│   │   │   ├── valid-example.json
+│   │   │   │
+│   │   │   └── submodels/
+│   │   │       ├── aid.md
+│   │   │       ├── aimc.md
+│   │   │       ├── capabilities.md
+│   │   │       ├── hierarchicalstructures.md
+│   │   │       ├── nameplate.md
+│   │   │       ├── parameters.md
+│   │   │       ├── skills.md
+│   │   │       └── variables.md
+│   │   │
+│   │   ├── Parsing/
+│   │   │   ├── json_description_generation.py
+│   │   │   ├── pdf_extractor.py
+│   │   │   ├── profile_structure.py
+│   │   │   ├── text_parsing.py
+│   │   │   └── __init__.py
+│   │   │
+│   │   └── RAG/
+│   │       ├── prompt_builder.py
+│   │       ├── rag_loader.py
+│   │       └── __init__.py
+│   │
+│   └── LLM_Client/
+│       ├── llm_client.py
+│       └── __init__.py
+│
+├── Ontology/
+│   ├── AAS/
+│   │   └── aas-rdf-ontology.ttl
+│   │
+│   ├── ARSO/
+│   │   └── ARSO_AAS.ttl
+│   │
+│   ├── CSS/
+│   │   └── CSS-Ontology.ttl
+│   │
+│   └── SHACL/
+│       ├── Generated/
+│       │   └── shapes.generated.shacl.ttl
+│       │
+│       └── Manual/
+│           ├── aas-shacl-schema.ttl
+│           └── arso-rules.shacl.ttl
+│
+├── Testing/
+│   ├── __init__.py
+│   │
+│   ├── Generation_Tests/
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── equipment/
+│   │   │   ├── filling_module/
+│   │   │   │   ├── EA-LC-LF120-EN_Lifecycle.pdf
+│   │   │   │   ├── EA-LN-SPL01-EN_Line_BOM.pdf
+│   │   │   │   ├── EA-MI-LF120-EN_MQTT_Interface.pdf
+│   │   │   │   ├── equipment.yaml
+│   │   │   │   └── linfill120_ground_truth.yaml
+│   │   │   │
+│   │   │   ├── ground_truth/
+│   │   │   │   ├── filling_module.yaml
+│   │   │   │   └── stoppering_module.yaml
+│   │   │   │
+│   │   │   └── stoppering_module/
+│   │   │       ├── EA-LC-PS080-EN_Lifecycle.pdf
+│   │   │       ├── EA-LN-SPL01-EN_Line_BOM.pdf
+│   │   │       ├── EA-NS-PS080.NodeSet2.xml
+│   │   │       ├── equipment.yaml
+│   │   │       └── plungerset80_ground_truth.yaml
+│   │   │
+│   │   ├── Test_Matrix/
+│   │   │   └── matrix.yaml
+│   │   │
+│   │   └── Test_Scripts/
+│   │       └── evaluation/
+│   │           ├── aggregate.py
+│   │           ├── effort_check.py
+│   │           ├── matrix.yaml
+│   │           ├── metrics.py
+│   │           ├── plot_results.py
+│   │           ├── run_eval.py
+│   │           └── __init__.py
+│   │
+│   └── SHACL_Tests/
+│       ├── __init__.py
+│       │
+│       ├── Test_Cases/
+│       │   └── tests/
+│       │       ├── invalid_address_missing_city.aas.json
+│       │       ├── invalid_aid_empty_interface.aas.json
+│       │       ├── invalid_capabilities_missing_capability_element.aas.json
+│       │       ├── invalid_entry_node_empty_statements.aas.json
+│       │       ├── invalid_missing_hierarchical_structures.aas.json
+│       │       ├── invalid_missing_nameplate.aas.json
+│       │       ├── invalid_nameplate_missing_address.aas.json
+│       │       ├── invalid_nameplate_missing_mandatory_elements.aas.json
+│       │       └── invalid_skills_without_aid.aas.json
+│       │
+│       └── Test_Scripts/
+│           └── validate_aas.py
+│
+├── Transformation/
+│   ├── __init__.py
+│   │
+│   └── AAS_Builder/
+│       ├── AAS_builder.py
+│       ├── __init__.py
+│       │
+│       ├── AAS_to_RDF/
+│       │   ├── aas_to_rdf.py
+│       │   └── __init__.py
+│       │
+│       └── Builder_Classes/
+│           ├── __init__.py
+│           │
+│           └── AAS_generation/
+│               ├── __init__.py
+│               │
+│               ├── cli/
+│               │   ├── generate_aas.py
+│               │   └── __init__.py
+│               │
+│               ├── core/
+│               │   ├── aas_builder.py
+│               │   ├── element_factory.py
+│               │   ├── schema_handler.py
+│               │   ├── semantic_ids.py
+│               │   └── __init__.py
+│               │
+│               ├── guidance/
+│               │   ├── ontology_guidance_engine.py
+│               │   ├── yaml_to_rdf_lite.py
+│               │   └── __init__.py
+│               │
+│               └── submodels/
+│                   ├── asset_interfaces_builder.py
+│                   ├── capabilities_builder.py
+│                   ├── hierarchical_structures_builder.py
+│                   ├── nameplate_builder.py
+│                   ├── parameters_builder.py
+│                   ├── process_submodels_builder.py
+│                   ├── skills_builder.py
+│                   ├── variables_builder.py
+│                   └── __init__.py
+│
+└── Validation/
+    ├── __init__.py
+    │
+    └── Validator/
+        ├── validator.py
+        └── __init__.py
+```
+
+---
+
+## Main Components
+
+### Generation
+
+The `Generation/` folder contains the logic for preparing prompts, loading context, parsing input documents, and calling LLM providers.
+
+Important files and folders:
+
+- `Generation/config.py`  
+  Configuration handling for the generation pipeline.
+
+- `Generation/pipeline.py`  
+  Main generation pipeline.
+
+- `Generation/prompts.yaml`  
+  Prompt configuration.
+
+- `Generation/Context_Builder/context_loader.py`  
+  Loads static and submodel-specific context.
+
+- `Generation/Context_Builder/context/`  
+  Markdown and JSON files used as prompt context.
+
+- `Generation/Context_Builder/Parsing/`  
+  Utilities for parsing PDFs, text, and profile structures.
+
+- `Generation/Context_Builder/RAG/`  
+  Prompt-building and retrieval-related utilities.
+
+- `Generation/LLM_Client/llm_client.py`  
+  LLM provider interface.
+
+---
+
+### Ontology
+
+The `Ontology/` folder contains the semantic resources used for grounding and validation.
+
+Important files:
+
+- `Ontology/AAS/aas-rdf-ontology.ttl`  
+  RDF representation of the AAS ontology.
+
+- `Ontology/CSS/CSS-Ontology.ttl`  
+  CSS ontology used as part of the resource modelling context.
+
+- `Ontology/ARSO/ARSO_AAS.ttl`  
+  Main ARSO ontology.
+
+- `Ontology/SHACL/Generated/shapes.generated.shacl.ttl`  
+  Automatically generated SHACL shapes.
+
+- `Ontology/SHACL/Manual/aas-shacl-schema.ttl`  
+  Manually defined AAS SHACL constraints.
+
+- `Ontology/SHACL/Manual/arso-rules.shacl.ttl`  
+  Manually defined ARSO rules, including constraints that require graph-pattern logic.
+
+---
+
+### Transformation
+
+The `Transformation/` folder contains the deterministic conversion from generated AAS profiles to complete AAS JSON documents.
+
+Important files and folders:
+
+- `Transformation/AAS_Builder/AAS_builder.py`  
+  Main AAS builder entry point.
+
+- `Transformation/AAS_Builder/AAS_to_RDF/aas_to_rdf.py`  
+  Converts full AAS JSON documents to RDF/Turtle for validation.
+
+- `Transformation/AAS_Builder/Builder_Classes/AAS_generation/core/`  
+  Core AAS building utilities, including element creation, schema handling, and semantic identifiers.
+
+- `Transformation/AAS_Builder/Builder_Classes/AAS_generation/submodels/`  
+  Dedicated builder classes for supported submodels.
+
+- `Transformation/AAS_Builder/Builder_Classes/AAS_generation/cli/generate_aas.py`  
+  CLI entry point for generating AAS JSON from profile data.
+
+---
+
+### Validation
+
+The `Validation/` folder contains SHACL validation logic.
+
+Important file:
+
+- `Validation/Validator/validator.py`  
+  Runs validation against the generated RDF graph and returns conformance results and violation reports.
+
+---
+
+### Testing
+
+The `Testing/` folder contains test cases, input documents, ground truth files, and evaluation scripts.
+
+Main areas:
+
+- `Testing/SHACL_Tests/`  
+  Contains invalid AAS JSON fixtures used to verify that the SHACL validation layer detects expected violations.
+
+- `Testing/Generation_Tests/equipment/`  
+  Contains synthetic equipment documentation and ground truth files for the filling and stoppering modules.
+
+- `Testing/Generation_Tests/Test_Matrix/matrix.yaml`  
+  Defines model and test configurations.
+
+- `Testing/Generation_Tests/Test_Scripts/evaluation/`  
+  Contains scripts for running experiments, computing metrics, aggregating results, checking effort, and plotting results.
 
 ---
 
 ## ARSO Ontology
 
-The **AAS Resource Structure Ontology (ARSO)** provides the semantic foundation for the framework. It describes how resources, submodels, and submodel elements should be organised, and it defines dependencies between selected AAS submodels.
+The **AAS Resource Structure Ontology (ARSO)** provides the semantic foundation for the framework. It describes how resources, submodels, and submodel elements should be organised, and defines dependencies between selected AAS submodels.
 
 ARSO is used in two ways:
 
@@ -91,18 +398,33 @@ ARSO is used in two ways:
 - **Formal validation**  
   Ontology constraints are converted into SHACL shapes and used to validate generated AAS instances after RDF projection.
 
-ARSO currently includes ontology modules aligned with selected IDTA submodel templates and custom submodels, including:
+The ontology imports or aligns with AAS and CSS concepts and provides additional ARSO-specific constraints for resource-oriented AAS generation.
 
-- Digital Nameplate
-- Hierarchical Structures
-- Asset Interfaces Description
+---
+
+## Supported Submodel Context
+
+The generation context currently includes Markdown guidance for the following submodel areas:
+
+- Asset Interfaces Description (`aid.md`)
+- AIMC (`aimc.md`)
+- Capabilities (`capabilities.md`)
+- Hierarchical Structures (`hierarchicalstructures.md`)
+- Digital Nameplate (`nameplate.md`)
+- Parameters (`parameters.md`)
+- Skills (`skills.md`)
+- Variables (`variables.md`)
+
+The transformation layer contains dedicated builders for:
+
+- Asset Interfaces
 - Capabilities
-- Skills / Control Component structures
-- Operational Data
+- Hierarchical Structures
+- Nameplate
 - Parameters
-- Technical Data
-
-<!-- Add ontology figure here -->
+- Process-related submodels
+- Skills
+- Variables
 
 ---
 
@@ -110,14 +432,14 @@ ARSO currently includes ontology modules aligned with selected IDTA submodel tem
 
 The generation pipeline prepares the context needed for the LLM to generate a compact AAS profile.
 
-The prompt context can include:
+The prompt context may include:
 
 - user-provided asset information
 - selected submodel configuration
 - equipment datasheets
 - communication specifications
-- AAS profile examples
-- submodel-specific context templates
+- validated AAS examples
+- submodel-specific Markdown guidance
 - ontology-derived guidance
 - summaries of relevant validation constraints
 
@@ -146,7 +468,19 @@ The transformation step is deterministic and implemented separately from the LLM
 
 ## RDF Projection and SHACL Validation
 
-After transformation, the generated AAS JSON is projected into RDF. The RDF graph is then validated against SHACL constraints derived from ARSO and the AAS ontology.
+After transformation, the generated AAS JSON is projected into RDF using:
+
+```text
+Transformation/AAS_Builder/AAS_to_RDF/aas_to_rdf.py
+```
+
+The RDF graph is then validated against SHACL constraints from:
+
+```text
+Ontology/SHACL/Generated/shapes.generated.shacl.ttl
+Ontology/SHACL/Manual/aas-shacl-schema.ttl
+Ontology/SHACL/Manual/arso-rules.shacl.ttl
+```
 
 The validation layer can detect issues such as:
 
@@ -158,59 +492,67 @@ The validation layer can detect issues such as:
 - incorrect relations between submodels
 - remaining ontology-level inconsistencies
 
-If validation fails, the framework creates a structured validation report. This report can be used as feedback for the next LLM generation attempt or displayed in the interactive editor for manual correction.
-
 ---
 
 ## Feedback Loop
 
-The feedback loop enables iterative correction of generated AAS profiles.
+When SHACL violations are detected, the validation layer returns structured feedback. This feedback can be added to the next LLM prompt so that the model can revise the generated AAS profile.
 
-When SHACL violations are detected, the validation layer returns a structured report containing information such as:
-
-- violated constraint
-- affected focus node
-- relevant path
-- validation message
-- remaining conformance status
-
-This report is added to the next LLM prompt so that the model can revise the AAS profile. The loop continues until SHACL conformance is reached or the configured retry budget is exhausted.
-
-If violations remain after the retry budget is exhausted, the latest AAS and validation messages are returned to the interactive editor for manual correction.
-
----
-
-## Interactive Editor
-
-<!-- Add UI figure here -->
-
-The interactive editor supports human-in-the-loop verification and correction of generated AAS instances.
-
-The editor allows users to:
-
-- inspect the generated AAS structure
-- add or modify submodel content
-- correct remaining validation issues
-- view live validation feedback
-- identify missing or invalid elements
-- finalise the AAS model
-- export the completed AAS as JSON
-
-Once finalised, the exported AAS JSON can be deployed to an AAS server or similar infrastructure.
+The loop continues until SHACL conformance is reached or the configured retry budget is exhausted. If violations remain, the latest AAS and validation messages can be inspected and corrected manually.
 
 ---
 
 ## Evaluation Material
 
-The repository includes evaluation material for synthetic industrial use cases inspired by aseptic pharmaceutical production.
+The repository includes evaluation material for two synthetic industrial use cases inspired by aseptic pharmaceutical production.
 
-The evaluated use-case assets include:
+### LinFill-120
 
-- **LinFill-120**  
-  A syringe filling module using MQTT interface documentation.
+Located in:
 
-- **PlungerSet-80**  
-  An automated stoppering module using OPC UA NodeSet documentation.
+```text
+Testing/Generation_Tests/equipment/filling_module/
+```
+
+Includes:
+
+- lifecycle datasheet
+- line BOM document
+- MQTT interface specification
+- equipment configuration
+- ground truth file
+
+### PlungerSet-80
+
+Located in:
+
+```text
+Testing/Generation_Tests/equipment/stoppering_module/
+```
+
+Includes:
+
+- lifecycle datasheet
+- line BOM document
+- OPC UA NodeSet XML file
+- equipment configuration
+- ground truth file
+
+### Metrics and Evaluation Scripts
+
+Located in:
+
+```text
+Testing/Generation_Tests/Test_Scripts/evaluation/
+```
+
+Includes scripts for:
+
+- running evaluations
+- computing metrics
+- aggregating results
+- checking manual effort
+- plotting results
 
 The evaluation considers:
 
@@ -221,89 +563,37 @@ The evaluation considers:
 - manual correction effort
 - runtime
 
-The evaluation material is intended to support reproducibility and further development of ontology-grounded AAS generation workflows.
-
 ---
 
-## Repository Structure
+## SHACL Test Fixtures
 
-The repository is organised around the main framework components.
+The SHACL test fixtures are located in:
 
 ```text
-.
-├── ontology/
-│   ├── arso/
-│   │   ├── modules/
-│   │   └── imports/
-│   └── README.md
-│
-├── shacl/
-│   ├── generated/
-│   ├── manual/
-│   └── README.md
-│
-├── generation/
-│   ├── context_builder/
-│   ├── prompts/
-│   ├── providers/
-│   ├── orchestrator/
-│   └── README.md
-│
-├── transformation/
-│   ├── builders/
-│   ├── factories/
-│   ├── normalisation/
-│   └── README.md
-│
-├── validation/
-│   ├── aas_to_rdf/
-│   ├── shacl_validator/
-│   ├── reports/
-│   └── README.md
-│
-├── ui/
-│   ├── frontend/
-│   ├── backend/
-│   └── README.md
-│
-├── examples/
-│   ├── profiles/
-│   ├── aas_json/
-│   ├── rdf/
-│   └── validation_reports/
-│
-├── evaluation/
-│   ├── use_cases/
-│   ├── ground_truth/
-│   ├── results/
-│   └── scripts/
-│
-├── docs/
-│   ├── figures/
-│   ├── architecture/
-│   └── notes/
-│
-├── configs/
-│   └── example_config.yaml
-│
-├── tests/
-│   ├── validation/
-│   ├── transformation/
-│   └── generation/
-│
-├── requirements.txt
-├── pyproject.toml
-├── LICENSE
-└── README.md
+Testing/SHACL_Tests/Test_Cases/tests/
 ```
 
-> Note: The exact folder names may differ depending on the current implementation. Update this section if the repository structure changes.
+These fixtures contain intentionally invalid AAS JSON files used to verify that the validation layer catches expected violation classes, such as:
+
+- missing Digital Nameplate
+- missing mandatory nameplate fields
+- missing Hierarchical Structures
+- empty AID interface definitions
+- skills without AID
+- incomplete capability elements
+- incomplete entity statements
+
+The validation script is located in:
+
+```text
+Testing/SHACL_Tests/Test_Scripts/validate_aas.py
+```
 
 ---
 
 ## Installation
 
-Installation instructions will be added later.
+Installation instructions may depend on the local Python environment and the LLM providers used.
 
 Basic setup:
 
@@ -316,6 +606,17 @@ Create and activate a virtual environment:
 
 ```bash
 python -m venv .venv
+```
+
+On Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+On Linux/macOS:
+
+```bash
 source .venv/bin/activate
 ```
 
@@ -325,7 +626,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-If the project uses a `pyproject.toml`, install it in editable mode:
+If the repository is configured as an editable Python package, install it with:
 
 ```bash
 pip install -e .
@@ -335,7 +636,13 @@ pip install -e .
 
 ## Configuration
 
-Configuration details will be added later.
+Generation settings are handled through:
+
+```text
+Generation/config.py
+Generation/prompts.yaml
+Testing/Generation_Tests/Test_Matrix/matrix.yaml
+```
 
 Typical configuration options include:
 
@@ -344,122 +651,104 @@ Typical configuration options include:
 - maximum number of generation attempts
 - selected AAS submodels
 - input document paths
-- output paths
-- base URI settings
+- equipment configuration files
+- ground truth files
 - ontology paths
 - SHACL shape paths
-- validation settings
-
-Example placeholder:
-
-```yaml
-llm:
-  provider: anthropic
-  model: claude-sonnet-4-6
-  max_attempts: 3
-
-input:
-  asset_name: LinFill-120
-  documents:
-    - path/to/datasheet.pdf
-    - path/to/interface_specification.pdf
-
-generation:
-  selected_submodels:
-    - DigitalNameplate
-    - HierarchicalStructures
-    - AssetInterfacesDescription
-    - Capabilities
-    - Skills
-    - OperationalData
-
-validation:
-  ontology_path: ontology/arso/
-  shacl_path: shacl/
-```
+- output paths
 
 ---
 
 ## Usage
 
-Usage instructions will be added later.
+The exact commands may depend on the current configuration and environment.
 
-Example placeholder for running generation:
+Potential entry points include:
 
-```bash
-python run_generation.py --config configs/example_config.yaml
+```text
+Generation/pipeline.py
+Transformation/AAS_Builder/Builder_Classes/AAS_generation/cli/generate_aas.py
+Testing/Generation_Tests/Test_Scripts/evaluation/run_eval.py
+Testing/SHACL_Tests/Test_Scripts/validate_aas.py
 ```
 
-Example placeholder for validating an existing AAS JSON file:
+Example placeholders:
+
+Run the generation pipeline:
 
 ```bash
-python validate_aas.py --input examples/aas_json/example.json
+python Generation/pipeline.py
 ```
 
-Example placeholder for converting AAS JSON to RDF:
+Generate AAS JSON from profile data:
 
 ```bash
-python aas_to_rdf.py --input examples/aas_json/example.json --output examples/rdf/example.ttl
+python Transformation/AAS_Builder/Builder_Classes/AAS_generation/cli/generate_aas.py
 ```
 
----
-
-## Running the Interactive Editor
-
-Instructions for running the interactive editor will be added later.
-
-Example placeholder:
+Run SHACL validation tests:
 
 ```bash
-cd ui
-npm install
-npm run dev
+python Testing/SHACL_Tests/Test_Scripts/validate_aas.py
 ```
 
-or, if the editor is served through a Python backend:
+Run evaluation:
 
 ```bash
-python app.py
+python Testing/Generation_Tests/Test_Scripts/evaluation/run_eval.py
 ```
 
-Update this section with the actual commands used by the project.
-
----
-
-## Running Tests
-
-Test instructions will be added later.
-
-Example placeholder:
-
-```bash
-pytest
-```
-
-Possible test categories:
-
-- transformation tests
-- RDF projection tests
-- SHACL validation tests
-- generation pipeline tests
-- end-to-end use-case tests
+Update this section with the exact commands for your local setup.
 
 ---
 
 ## Adding a New Submodel
 
-The framework is designed to be modular. Adding a new submodel may require changes in several components.
+The framework is designed to be modular. Adding a new submodel may require changes in several places.
 
 Typical steps:
 
-1. Add or extend an ARSO ontology module.
-2. Add or generate SHACL constraints.
-3. Define the compact AAS profile structure.
-4. Add prompt/context guidance for the new submodel.
-5. Implement builder logic for the full AAS JSON output.
-6. Add RDF projection mappings if needed.
-7. Add UI support for editing and validation.
-8. Add examples and tests.
+1. Add or update submodel guidance in:
+
+```text
+Generation/Context_Builder/context/submodels/
+```
+
+2. Add or update ontology definitions in:
+
+```text
+Ontology/ARSO/ARSO_AAS.ttl
+```
+
+3. Add or update SHACL constraints in:
+
+```text
+Ontology/SHACL/
+```
+
+4. Add transformation logic in:
+
+```text
+Transformation/AAS_Builder/Builder_Classes/AAS_generation/submodels/
+```
+
+5. Add semantic identifiers or schema handling if required in:
+
+```text
+Transformation/AAS_Builder/Builder_Classes/AAS_generation/core/
+```
+
+6. Add or update RDF projection logic in:
+
+```text
+Transformation/AAS_Builder/AAS_to_RDF/
+```
+
+7. Add tests and examples in:
+
+```text
+Testing/
+```
 
 ---
 
@@ -467,12 +756,13 @@ Typical steps:
 
 Recommended development practices:
 
-- Keep ontology modules modular and aligned with individual submodel templates.
+- Keep ontology rules and generated SHACL shapes versioned.
 - Keep deterministic AAS construction separate from LLM output.
-- Validate generated AAS instances after each transformation.
+- Validate generated AAS instances after transformation.
 - Prefer structured validation reports over free-text error messages.
 - Add tests for each new ontology rule, projection mapping, and builder component.
-- Keep generated examples and ground truth data versioned where possible.
+- Keep test equipment documents and ground truth files organised by use case.
+- Ensure prompt context and builder logic stay aligned when new submodels are added.
 
 ---
 
@@ -503,31 +793,6 @@ Current limitations include:
 - some semantically valid values may not match ground truth strings exactly
 - smaller LLMs may struggle with complex output formats and feedback correction
 - ontology coverage is limited to the currently implemented ARSO modules
-
----
-
-## Contributing
-
-Contributions are welcome.
-
-Possible contribution areas include:
-
-- new ARSO modules
-- additional SHACL constraints
-- support for new AAS submodel templates
-- improved RDF projection mappings
-- additional LLM provider integrations
-- UI improvements
-- validation test cases
-- documentation improvements
-- evaluation on additional industrial assets
-
-Before contributing, please:
-
-1. Open an issue describing the proposed change.
-2. Keep changes modular and documented.
-3. Add tests where relevant.
-4. Follow the existing project structure and naming conventions.
 
 ---
 
