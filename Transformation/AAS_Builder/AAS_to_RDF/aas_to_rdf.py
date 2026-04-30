@@ -1,24 +1,6 @@
-"""aas_to_rdf -- generic AAS JSON -> RDF serializer aligned to ARSO_AAS.ttl.
+"""
+Convert AAS JSON to RDF/Turtle for ARSO-based validation.
 
-Input  : full AAS JSON (assetAdministrationShells + submodels + conceptDescriptions)
-Output : Turtle RDF using
-         - AAS  = https://admin-shell.io/aas/3/1/
-         - CSS  = http://www.w3id.org/hsu-aut/css#
-         - ARSO = https://w3id.org/2025/arso#
-
-Typing strategy:
-- Every AAS-JSON object is rdf:typed as the official AAS class for its modelType.
-- When a known IDTA semanticId is present, the object additionally gets the
-  matching arso: subclass (e.g. arso:DigitalNameplateSubmodel,
-  arso:ManufacturerNameMLP). Unknown semanticIds -> only the bare AAS class type,
-  so structural validation still fires but domain constraints do not apply.
-- Containment uses the official AAS property IRIs
-  (aas:Submodel/submodelElements, aas:SubmodelElementCollection/value,
-   aas:HasSemantics/semanticId, aas:Property/value, aas:Entity/statements).
-
-Public API:
-    convert(aas_json_path: Path, output_ttl_path: Path) -> None
-    serialize(document: dict) -> rdflib.Graph
 """
 from __future__ import annotations
 

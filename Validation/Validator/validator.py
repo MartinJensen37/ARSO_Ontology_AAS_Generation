@@ -1,18 +1,4 @@
-﻿"""validator_v2 â€” single pyshacl call covering AAS metamodel + ARSO domain.
-
-Replaces v1's two-step validation (basyx metamodel pre-check + custom RDF
-projection + SHACL) with one unified path:
-
-    aas_json â†’ aas_to_rdf.convert â†’ data_graph
-                                  + ARSO_AAS.ttl (with transitively imported AAS v3.1 OWL)
-                                  vs.
-                                  aas-shacl-schema.ttl (AAS v3.1 SHACL)
-                                  + shacl/generated/shapes.generated.shacl.ttl (ARSO auto-derived)
-
-Issues are partitioned into "metamodel" (sh:sourceShape in AAS namespace) and
-"ontology" (everything else) so the existing UI message-routing keeps working.
-"""
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
