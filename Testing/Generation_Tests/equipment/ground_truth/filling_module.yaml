@@ -1,0 +1,135 @@
+asset_name: "LinFill120"
+description: |
+  Ground truth for the LinFill-120 Syringe Filling Station (Elara Automation GmbH).
+  Derived from EA-DS-LF120-EN Rev. 2.1 datasheet (2024-04-01).
+  Covers all six selected submodels: Nameplate, HierarchicalStructures, AID, Skills,
+  Capabilities, OperationalData.
+
+expected_submodels:
+  # ---- DigitalNameplate -------------------------------------------------------
+  DigitalNameplate:
+    submodelElements:
+      # Mandatory nameplate fields — must be present and correct
+      - idShort: ManufacturerName
+        semanticId: "0112/2///61987#ABA565#009"
+        expected_value_contains: "Elara Automation"
+        required: true
+
+      - idShort: ManufacturerProductDesignation
+        semanticId: "0112/2///61987#ABA567#009"
+        expected_value_contains: "LinFill"
+        required: true
+
+      - idShort: ContactInformation
+        semanticId: "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
+        required: true
+
+      - idShort: OrderCodeOfManufacturer
+        semanticId: "0112/2///61987#ABA950#008"
+        expected_value_contains: "EA-LF120"
+        required: true
+
+      - idShort: SerialNumber
+        expected_value_contains: "EA-LF-2024-00472"
+        required: true
+
+      # Optional nameplate fields — datasheet provides clear values; flagged so we
+      # can measure how many the model nails but not penalised if omitted.
+      - idShort: YearOfConstruction
+        expected_value_contains: "2024"
+        required: false
+
+      - idShort: DateOfManufacture
+        expected_value_contains: "2024-03-15"
+        required: false
+
+      - idShort: CountryOfOrigin
+        expected_value_contains: "DE"
+        required: false
+
+      - idShort: HardwareVersion
+        expected_value_contains: "2.1"
+        required: false
+
+      - idShort: FirmwareVersion
+        expected_value_contains: "1.4.2"
+        required: false
+
+      - idShort: URIOfTheProduct
+        expected_value_contains: "linfill-120"
+        required: false
+
+      - idShort: ManufacturerProductFamily
+        expected_value_contains: "LinFill"
+        required: false
+
+  # ---- HierarchicalStructures -------------------------------------------------
+  HierarchicalStructures:
+    submodelElements:
+      - idShort: ArcheType
+        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"
+        expected_value_contains: "OneDown"
+        required: true
+
+      - idShort: EntryNode
+        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+        required: true
+
+  # ---- AID (Asset Interfaces Description) -------------------------------------
+  AID:
+    submodelElements:
+      # The model may name the MQTT interface SMC differently (e.g. InterfaceMQTT,
+      # MQTTInterface) — we check the top-level interface SMC's semanticId only.
+      - idShort: InterfaceMQTT
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+        required: true
+
+      - idShort: EndpointMetadata
+        path: [InterfaceMQTT, EndpointMetadata]
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+        required: true
+
+      - idShort: InteractionMetadata
+        path: [InterfaceMQTT, InteractionMetadata]
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+        required: true
+
+  # ---- Skills (from MQTT subscribed commands) ---------------------------------
+  # Four commands in the datasheet: START / STOP / HOME / RESET
+  Skills:
+    submodelElements:
+      - idShort: Start
+        required: true
+      - idShort: Stop
+        required: true
+      - idShort: Home
+        required: true
+      - idShort: Reset
+        required: false   # mentioned in datasheet but secondary
+
+  # ---- Capabilities -----------------------------------------------------------
+  Capabilities:
+    submodelElements:
+      - idShort: CapabilitySet
+        required: true
+
+  # ---- OperationalData (from MQTT published topics) ---------------------------
+  OperationalData:
+    submodelElements:
+      - idShort: FillingState
+        required: true    # {base}/filling/state — primary runtime status
+      - idShort: CycleTime
+        required: false   # {base}/filling/cycletime
+      - idShort: SyringeWeight
+        required: false   # {base}/filling/syringeweight
+
+# Cross-submodel consistency checks run by eval_report.py
+expected_cross_references:
+  - skill: Start
+    references_aid_action: Start
+  - skill: Stop
+    references_aid_action: Stop
+  - skill: Home
+    references_aid_action: Home
+  - skill: Reset
+    references_aid_action: Reset

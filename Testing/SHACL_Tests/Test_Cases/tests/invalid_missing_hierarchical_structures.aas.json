@@ -1,0 +1,1756 @@
+{
+  "assetAdministrationShells": [
+    {
+      "idShort": "imaLoadingSystemAAS",
+      "modelType": "AssetAdministrationShell",
+      "id": "https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS",
+      "derivedFrom": {
+        "type": "ModelReference",
+        "keys": [
+          {
+            "type": "AssetAdministrationShell",
+            "value": "https://smartproductionlab.aau.dk/aas/templates/resource"
+          }
+        ]
+      },
+      "assetInformation": {
+        "assetKind": "Instance",
+        "globalAssetId": "https://smartproductionlab.aau.dk/assets/ZDNlYmVhZjItZTAyMC00NWMwLTg5NjEtODRiNTFkOWE0NzVl",
+        "specificAssetIds": [
+          {
+            "name": "serialNumber",
+            "value": "IMA-LS-2024-001",
+            "externalSubjectId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/aas/3/0/SpecificAssetId/SerialNumber"
+                }
+              ]
+            }
+          },
+          {
+            "name": "location",
+            "value": "InnoLab, Nybrovej, AAU",
+            "externalSubjectId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/aas/3/0/SpecificAssetId/Location"
+                }
+              ]
+            }
+          }
+        ],
+        "assetType": "https://smartproductionlab.aau.dk/Resource/CPPM/LoadingSystem/imaLoadingSystem"
+      },
+      "submodels": [
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "submodels": [
+    {
+      "idShort": "DigitalNameplate",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/nameplate/3/0/Nameplate"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "URIOfTheProduct",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABN590#002"
+              }
+            ]
+          },
+          "value": "https://smartproductionlab.aau.dk/assets/imaLoadingSystemAAS",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerName",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA565#009"
+              }
+            ]
+          },
+          "value": [
+            {
+              "language": "en",
+              "text": "IMA Group"
+            }
+          ]
+        },
+        {
+          "idShort": "ManufacturerProductDesignation",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA567#009"
+              }
+            ]
+          },
+          "value": [
+            {
+              "language": "en",
+              "text": "IMA Loading System"
+            }
+          ]
+        },
+        {
+          "idShort": "ContactInformation",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "Street",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO128#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "Via Emilia 428"
+                }
+              ]
+            },
+            {
+              "idShort": "Zipcode",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO129#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "40064"
+                }
+              ]
+            },
+            {
+              "idShort": "CityTown",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO132#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "Ozzano dell'Emilia"
+                }
+              ]
+            },
+            {
+              "idShort": "NationalCode",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO134#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "IT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "idShort": "OrderCodeOfManufacturer",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA950#008"
+              }
+            ]
+          },
+          "value": "IMA-LS-2024-001",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerArticleNumber",
+          "modelType": "Property",
+          "value": "IMA-LS-001",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "SerialNumber",
+          "modelType": "Property",
+          "value": "IMA-LS-2024-001",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "YearOfConstruction",
+          "modelType": "Property",
+          "value": "2024",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "CountryOfOrigin",
+          "modelType": "Property",
+          "value": "IT",
+          "valueType": "xs:string"
+        }
+      ]
+    },
+    {
+      "idShort": "AID",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "InterfaceMQTT",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+              }
+            ]
+          },
+          "supplementalSemanticIds": [
+            {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "http://www.w3.org/2011/mqtt"
+                }
+              ]
+            },
+            {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://www.w3.org/2019/wot/td"
+                }
+              ]
+            }
+          ],
+          "value": [
+            {
+              "idShort": "title",
+              "modelType": "Property",
+              "value": "IMA Loading System",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "EndpointMetadata",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "base",
+                  "modelType": "Property",
+                  "value": "mqtt://192.168.0.104:1883/NN/Nybrovej/InnoLab/Loading",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "contentType",
+                  "modelType": "Property",
+                  "value": "application/json",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "securityDefinitions",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "nosec_sc",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "scheme",
+                          "modelType": "Property",
+                          "value": "nosec",
+                          "valueType": "xs:string"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "idShort": "security",
+                  "modelType": "SubmodelElementList",
+                  "orderRelevant": true,
+                  "typeValueListElement": "Property",
+                  "valueTypeListElement": "xs:string",
+                  "value": [
+                    {
+                      "modelType": "Property",
+                      "value": "nosec_sc",
+                      "valueType": "xs:string"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "InteractionMetadata",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+                  }
+                ]
+              },
+              "supplementalSemanticIds": [
+                {
+                  "type": "ExternalReference",
+                  "keys": [
+                    {
+                      "type": "GlobalReference",
+                      "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"
+                    }
+                  ]
+                }
+              ],
+              "value": [
+                {
+                  "idShort": "actions",
+                  "modelType": "SubmodelElementCollection",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://www.w3.org/2019/wot/td#ActionAffordance"
+                      }
+                    ]
+                  },
+                  "value": [
+                    {
+                      "idShort": "Loading",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "Key",
+                          "modelType": "Property",
+                          "value": "Loading",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Title",
+                          "modelType": "Property",
+                          "value": "Loading",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Synchronous",
+                          "modelType": "Property",
+                          "value": "false",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "input",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/command.schema.json"
+                        },
+                        {
+                          "idShort": "output",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/commandResponse.schema.json"
+                        },
+                        {
+                          "idShort": "Forms",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "/CMD/Loading",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "op",
+                              "modelType": "Property",
+                              "value": "invokeAction",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_retain",
+                              "modelType": "Property",
+                              "value": "false",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_controlPacket",
+                              "modelType": "Property",
+                              "value": "subscribe",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_qos",
+                              "modelType": "Property",
+                              "value": "2",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "response",
+                              "modelType": "SubmodelElementCollection",
+                              "value": [
+                                {
+                                  "idShort": "contentType",
+                                  "modelType": "Property",
+                                  "value": "application/json",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "href",
+                                  "modelType": "Property",
+                                  "value": "/DATA/Loading",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_controlPacket",
+                                  "modelType": "Property",
+                                  "value": "publish",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_retain",
+                                  "modelType": "Property",
+                                  "value": "false",
+                                  "valueType": "xs:string"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "idShort": "Halt",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "Key",
+                          "modelType": "Property",
+                          "value": "Halt",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Title",
+                          "modelType": "Property",
+                          "value": "Halt",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Synchronous",
+                          "modelType": "Property",
+                          "value": "true",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "input",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/command.schema.json"
+                        },
+                        {
+                          "idShort": "Forms",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "/CMD/Halt",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "op",
+                              "modelType": "Property",
+                              "value": "invokeAction",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_retain",
+                              "modelType": "Property",
+                              "value": "false",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_controlPacket",
+                              "modelType": "Property",
+                              "value": "subscribe",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_qos",
+                              "modelType": "Property",
+                              "value": "2",
+                              "valueType": "xs:string"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "idShort": "Occupy",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "Key",
+                          "modelType": "Property",
+                          "value": "Occupy",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Title",
+                          "modelType": "Property",
+                          "value": "Occupy",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Synchronous",
+                          "modelType": "Property",
+                          "value": "true",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "input",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/command.schema.json"
+                        },
+                        {
+                          "idShort": "output",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/commandResponse.schema.json"
+                        },
+                        {
+                          "idShort": "Forms",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "/CMD/Occupy",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "op",
+                              "modelType": "Property",
+                              "value": "invokeAction",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_retain",
+                              "modelType": "Property",
+                              "value": "false",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_controlPacket",
+                              "modelType": "Property",
+                              "value": "subscribe",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_qos",
+                              "modelType": "Property",
+                              "value": "2",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "response",
+                              "modelType": "SubmodelElementCollection",
+                              "value": [
+                                {
+                                  "idShort": "contentType",
+                                  "modelType": "Property",
+                                  "value": "application/json",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "href",
+                                  "modelType": "Property",
+                                  "value": "/DATA/Occupy",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_controlPacket",
+                                  "modelType": "Property",
+                                  "value": "publish",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_retain",
+                                  "modelType": "Property",
+                                  "value": "false",
+                                  "valueType": "xs:string"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "idShort": "Release",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "Key",
+                          "modelType": "Property",
+                          "value": "Release",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Title",
+                          "modelType": "Property",
+                          "value": "Release",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Synchronous",
+                          "modelType": "Property",
+                          "value": "true",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "input",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/command.schema.json"
+                        },
+                        {
+                          "idShort": "output",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/commandResponse.schema.json"
+                        },
+                        {
+                          "idShort": "Forms",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "/CMD/Release",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "op",
+                              "modelType": "Property",
+                              "value": "invokeAction",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_retain",
+                              "modelType": "Property",
+                              "value": "false",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_controlPacket",
+                              "modelType": "Property",
+                              "value": "subscribe",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_qos",
+                              "modelType": "Property",
+                              "value": "2",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "response",
+                              "modelType": "SubmodelElementCollection",
+                              "value": [
+                                {
+                                  "idShort": "contentType",
+                                  "modelType": "Property",
+                                  "value": "application/json",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "href",
+                                  "modelType": "Property",
+                                  "value": "/DATA/Release",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_controlPacket",
+                                  "modelType": "Property",
+                                  "value": "publish",
+                                  "valueType": "xs:string"
+                                },
+                                {
+                                  "idShort": "mqv_retain",
+                                  "modelType": "Property",
+                                  "value": "false",
+                                  "valueType": "xs:string"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "idShort": "properties",
+                  "modelType": "SubmodelElementCollection",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"
+                      }
+                    ]
+                  },
+                  "value": [
+                    {
+                      "idShort": "StationState",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "Key",
+                          "modelType": "Property",
+                          "value": "StationState",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "Title",
+                          "modelType": "Property",
+                          "value": "StationState",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "output",
+                          "modelType": "File",
+                          "contentType": "application/schema+json",
+                          "value": "https://aausmartproductionlab.github.io/AP2030-UNS/MQTTSchemas/stationState.schema.json"
+                        },
+                        {
+                          "idShort": "Forms",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "/DATA/State",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_retain",
+                              "modelType": "Property",
+                              "value": "true",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_controlPacket",
+                              "modelType": "Property",
+                              "value": "publish",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "mqv_qos",
+                              "modelType": "Property",
+                              "value": "0",
+                              "valueType": "xs:string"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "OperationalData",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "PackMLState",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://www.omac.org/packml/state"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "State",
+              "modelType": "Property",
+              "value": "",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "InterfaceReference",
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+                  }
+                ]
+              },
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "properties"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "StationState"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "idShort": "OccupationState",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://smartproductionlab.aau.dk/stationOccupation"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "ProcessQueue",
+              "modelType": "Property",
+              "value": "[]",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "InterfaceReference",
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+                  }
+                ]
+              },
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "properties"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "StationState"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "Capabilities",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "CapabilitySet",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "LoadingContainer",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/Capability/Loading",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Loading",
+                  "modelType": "Capability",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://smartproductionlab.aau.dk/Capability/Loading"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "idShort": "realizedBy",
+                  "modelType": "SubmodelElementList",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                      }
+                    ]
+                  },
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "first": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "CapabilitySet"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "LoadingContainer"
+                          }
+                        ]
+                      },
+                      "second": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "Loading"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "Skills",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/ControlComponentType/1/0"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "Loading",
+          "description": [
+            {
+              "language": "en",
+              "text": "Loading function for pharmaceutical primary packaging"
+            }
+          ],
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "SemanticId",
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/skills/Loading",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "Loading",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Operation to invoke Loading action"
+                }
+              ],
+              "modelType": "Operation",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/skills/Loading"
+                  }
+                ]
+              },
+              "qualifiers": [
+                {
+                  "value": "http://registration-service:8087/operations/imaLoadingSystemAAS/Loading",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:string",
+                  "type": "invocationDelegation"
+                },
+                {
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:boolean",
+                  "type": "Synchronous"
+                }
+              ],
+              "outputVariables": [
+                {
+                  "value": {
+                    "idShort": "TimeStamp",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "TimeStamp"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The time stamp of the message in ISO 8601 format (xs:dateTime)"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                },
+                {
+                  "value": {
+                    "idShort": "State",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "State"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The state of the command being executed"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ],
+              "inoutputVariables": [
+                {
+                  "value": {
+                    "idShort": "Uuid",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "Uuid"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The UUID of the command"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ]
+            },
+            {
+              "idShort": "InterfaceReference",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Reference to Loading action interface"
+                }
+              ],
+              "modelType": "ReferenceElement",
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "actions"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "Loading"
+                  }
+                ]
+              }
+            },
+            {
+              "idShort": "StateMachine",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Current state of the asynchronous operation. Values: IDLE, RUNNING, SUCCESS, FAILURE. Poll this property to monitor operation progress."
+                }
+              ],
+              "modelType": "Property",
+              "value": "IDLE",
+              "valueType": "xs:string"
+            }
+          ]
+        },
+        {
+          "idShort": "Halt",
+          "description": [
+            {
+              "language": "en",
+              "text": "Halt the current operation"
+            }
+          ],
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "SemanticId",
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/skills/Halt",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "Halt",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Operation to invoke Halt action"
+                }
+              ],
+              "modelType": "Operation",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/skills/Halt"
+                  }
+                ]
+              },
+              "qualifiers": [
+                {
+                  "value": "http://registration-service:8087/operations/imaLoadingSystemAAS/Halt",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:string",
+                  "type": "invocationDelegation"
+                },
+                {
+                  "value": "true",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:boolean",
+                  "type": "OneWay"
+                }
+              ],
+              "inputVariables": [
+                {
+                  "value": {
+                    "idShort": "Uuid",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "Uuid"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ]
+            },
+            {
+              "idShort": "InterfaceReference",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Reference to Halt action interface"
+                }
+              ],
+              "modelType": "ReferenceElement",
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "actions"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "Halt"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "idShort": "Occupy",
+          "description": [
+            {
+              "language": "en",
+              "text": "Occupy the system for exclusive use"
+            }
+          ],
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "SemanticId",
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/skills/Occupy",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "Occupy",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Operation to invoke Occupy action"
+                }
+              ],
+              "modelType": "Operation",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/skills/Occupy"
+                  }
+                ]
+              },
+              "qualifiers": [
+                {
+                  "value": "http://registration-service:8087/operations/imaLoadingSystemAAS/Occupy",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:string",
+                  "type": "invocationDelegation"
+                },
+                {
+                  "value": "true",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:boolean",
+                  "type": "Synchronous"
+                }
+              ],
+              "outputVariables": [
+                {
+                  "value": {
+                    "idShort": "TimeStamp",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "TimeStamp"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The time stamp of the message in ISO 8601 format (xs:dateTime)"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                },
+                {
+                  "value": {
+                    "idShort": "State",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "State"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The state of the command being executed"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ],
+              "inoutputVariables": [
+                {
+                  "value": {
+                    "idShort": "Uuid",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "Uuid"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The UUID of the command"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ]
+            },
+            {
+              "idShort": "InterfaceReference",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Reference to Occupy action interface"
+                }
+              ],
+              "modelType": "ReferenceElement",
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "actions"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "Occupy"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "idShort": "Release",
+          "description": [
+            {
+              "language": "en",
+              "text": "Release the system from exclusive use"
+            }
+          ],
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "SemanticId",
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/skills/Release",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "Release",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Operation to invoke Release action"
+                }
+              ],
+              "modelType": "Operation",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/skills/Release"
+                  }
+                ]
+              },
+              "qualifiers": [
+                {
+                  "value": "http://registration-service:8087/operations/imaLoadingSystemAAS/Release",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:string",
+                  "type": "invocationDelegation"
+                },
+                {
+                  "value": "true",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:boolean",
+                  "type": "Synchronous"
+                }
+              ],
+              "outputVariables": [
+                {
+                  "value": {
+                    "idShort": "TimeStamp",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "TimeStamp"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The time stamp of the message in ISO 8601 format (xs:dateTime)"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                },
+                {
+                  "value": {
+                    "idShort": "State",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "State"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The state of the command being executed"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ],
+              "inoutputVariables": [
+                {
+                  "value": {
+                    "idShort": "Uuid",
+                    "displayName": [
+                      {
+                        "language": "en",
+                        "text": "Uuid"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language": "en",
+                        "text": "The UUID of the command"
+                      }
+                    ],
+                    "modelType": "Property",
+                    "valueType": "xs:string"
+                  }
+                }
+              ]
+            },
+            {
+              "idShort": "InterfaceReference",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Reference to Release action interface"
+                }
+              ],
+              "modelType": "ReferenceElement",
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "actions"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "Release"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

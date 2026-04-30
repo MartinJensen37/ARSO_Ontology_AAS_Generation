@@ -1,0 +1,182 @@
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix aas:   <https://admin-shell.io/aas/3/1/> .
+@prefix arso:  <https://w3id.org/2025/arso#> .
+
+# Manual SHACL rules for non-OWL constraints that still need graph traversal or warning checks.
+
+# Skill interface references must resolve to an InterfaceSMC in the same AAS.
+
+arso:SkillInterfaceRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "SkillInterfaceRef must target an InterfaceSMC in the same AAS's AID submodel" ;
+  sh:targetClass arso:CCInterfaceReferenceRef ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "arso:SkillInterfaceRef points at no AID Interface in the same AAS, or AID submodel is missing." ;
+    sh:select """
+      SELECT $this WHERE {
+        $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+        ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+        ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasSkillsSubmodel>               ?skillsSm .
+        ?skillsSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
+          ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                  ?iface .
+          ?iface  rdf:type                                              <https://w3id.org/2025/arso#InterfaceSMC> ;
+                  <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+      }
+    """ ;
+  ] .
+
+# Capability realizedBy targets must resolve to a Skill in the same AAS.
+
+arso:RealizedByRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "RealizedByRef must target a SkillSMC in the same AAS's Skills submodel" ;
+  sh:targetClass arso:CapabilityRealizedByRel ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "arso:RealizedByRef points at no Skill in the same AAS's Skills submodel." ;
+    sh:select """
+      SELECT $this WHERE {
+        $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+        ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+        ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasCapabilitiesSubmodel>         ?capsSm .
+        ?capsSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          ?shell  <https://w3id.org/2025/arso#hasSkillsSubmodel>       ?skillsSm .
+          ?skillsSm
+                  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                  ?skill .
+          ?skill  rdf:type                                              <https://w3id.org/2025/arso#SkillSMC> ;
+                  <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+      }
+    """ ;
+  ] .
+
+# Skill InterfaceReference targets must name an existing AID action.
+
+arso:SkillInterfaceRefActionShape
+  a sh:NodeShape ;
+  rdfs:label "Skill InterfaceReference must resolve to an existing AID action idShort" ;
+  sh:targetClass arso:SkillsSubmodel ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "A Skill InterfaceReference contains no key value that matches any action idShort in AID/…/InteractionMetadata/actions. Check that the referenced action name exists in the AID." ;
+    sh:select """
+      SELECT $this WHERE {
+        $this (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
+               | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>
+               | <https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+ ?refElem .
+        ?refElem rdf:type <https://admin-shell.io/aas/3/1/ReferenceElement> ;
+                 <https://admin-shell.io/aas/3/1/Referable/idShort> "InterfaceReference"^^xsd:string .
+
+        ?shell <https://w3id.org/2025/arso#hasSkillsSubmodel> $this .
+
+        FILTER NOT EXISTS {
+          ?refElem <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref     <https://admin-shell.io/aas/3/1/Reference/keys>         ?key .
+          ?key     <https://admin-shell.io/aas/3/1/Key/value>              ?keyVal .
+
+          ?shell <https://w3id.org/2025/arso#hasAIDSubmodel> ?aidSm .
+          ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
+                   | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+ ?actionsContainer .
+          ?actionsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "actions"^^xsd:string .
+          ?actionsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?actionSmc .
+          ?actionSmc <https://admin-shell.io/aas/3/1/Referable/idShort> ?keyVal .
+        }
+      }
+    """ ;
+  ] .
+
+# Capability realizedBy references must name an existing Skill.
+
+arso:RealizedByRefSkillShape
+  a sh:NodeShape ;
+  rdfs:label "Capability realizedBy reference must resolve to an existing Skill SMC idShort" ;
+  sh:targetClass arso:CapabilityRealizedByRel ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "A Capability realizedBy ReferenceElement contains no key value matching any Skill idShort in the Skills submodel." ;
+    sh:select """
+      SELECT $this WHERE {
+        $this (<https://admin-shell.io/aas/3/1/SubmodelElementList/value>
+               | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+ ?refElem .
+        ?refElem rdf:type <https://admin-shell.io/aas/3/1/ReferenceElement> .
+
+        ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm .
+        ?capsSm (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
+                 | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>
+                 | <https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+ $this .
+
+        FILTER NOT EXISTS {
+          ?refElem <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref     <https://admin-shell.io/aas/3/1/Reference/keys>         ?key .
+          ?key     <https://admin-shell.io/aas/3/1/Key/value>              ?keyVal .
+
+          ?shell <https://w3id.org/2025/arso#hasSkillsSubmodel> ?skillsSm .
+          ?skillsSm (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
+                     | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+ ?skillSmc .
+          ?skillSmc rdf:type <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+                    <https://admin-shell.io/aas/3/1/Referable/idShort> ?keyVal .
+        }
+      }
+    """ ;
+  ] .
+
+# InteractionMetadata blocks must contain at least one action.
+
+arso:InteractionMetadataHasActionsShape
+  a sh:NodeShape ;
+  rdfs:label "AID InteractionMetadataSMC must have an 'actions' collection with at least one entry" ;
+  sh:targetClass arso:InteractionMetadataSMC ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "InteractionMetadataSMC has no 'actions' SubmodelElementCollection or its actions collection is empty." ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?actionsContainer .
+          ?actionsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "actions"^^xsd:string .
+          ?actionsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?action .
+        }
+      }
+    """ ;
+  ] .
+
+# EntryNode should not be empty when HierarchicalStructures exists.
+
+arso:HierarchicalStructuresEntryNodeNonEmptyShape
+  a sh:NodeShape ;
+  rdfs:label "EntryNode in HierarchicalStructures should declare BoM content" ;
+  sh:targetClass arso:EntryNodeEntity ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:severity sh:Warning ;
+    sh:message "BomEntity has no Entity/statements (HasPart, IsPartOf, SameAs, BulkCount, child Entity)" ;
+    sh:select """
+      SELECT $this WHERE {
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/Entity/statements> ?stmt .
+        }
+      }
+    """ ;
+  ] .

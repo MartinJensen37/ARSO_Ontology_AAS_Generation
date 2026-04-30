@@ -1,0 +1,27 @@
+asset_name: "PlungerSet80"
+asset_type: "stoppering-station/syringe"
+protocol: "opcua"
+base_url: "https://smartproductionlab.aau.dk"
+
+selected_submodels:
+  - Nameplate
+  - HierarchicalStructures
+  - AID
+  - Skills
+  - Capabilities
+  - OperationalData
+
+# Main lifecycle/specification document (sent as PDF to Gemini, extracted as text for Claude).
+datasheet: "EA-LC-PS080-EN_Lifecycle.pdf"
+
+# Additional interface and structural documents.
+# The OPC UA NodeSet XML is read as text for both providers.
+# The BOM PDF is sent as extra inline_data to Gemini and extracted as text for Claude.
+interface_files:
+  - { path: "EA-NS-PS080.NodeSet2.xml",     kind: "opcua" }
+  - { path: "EA-LN-SPL01-EN_Line_BOM.pdf",  kind: "bom" }
+
+# Ground truth file relative to this equipment directory.
+ground_truth: "plungerset80_ground_truth.yaml"
+
+max_attempts: 3

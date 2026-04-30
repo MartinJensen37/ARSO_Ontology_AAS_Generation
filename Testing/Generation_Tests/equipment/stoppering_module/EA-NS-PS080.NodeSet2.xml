@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ============================================================
+  OPC UA NodeSet2 — PlungerSet-80 Automated Stoppering Station
+  Elara Automation GmbH  |  www.elara-automation.de
+  Document No : EA-NS-PS080.NodeSet2.xml
+  Revision    : 1.0
+  Released    : 2024-04-12
+  Firmware    : 1.4.2
+  Serial No.  : EA-PS-2024-00391
+  ============================================================
+
+  Namespace Index:
+    0  http://opcfoundation.org/UA/              (OPC UA base)
+    1  http://elara-automation.de/UA/PlungerSet80/  (this namespace)
+    2  http://opcfoundation.org/UA/Machinery/    (OPC UA for Machinery companion)
+    3  http://opcfoundation.org/UA/PackML/       (PackML state model companion)
+
+  Companion Specifications referenced (informative):
+    - OPC 40001-1 UA for Machinery (Part 1)
+    - OPC 30050   UA for PackML
+
+  NodeId Scheme (ns=1):
+    Objects       i=1000 – 1099
+    ObjectTypes   i=2000 – 2099
+    Variables     i=3000 – 3099
+    Methods       i=4000 – 4099
+    DataTypes     i=5000 – 5099
+    ReferenceTypes i=6000 – 6099
+  ============================================================
+-->
+<UANodeSet
+  xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:uax="http://opcfoundation.org/UA/2008/02/Types.xsd"
+  xsi:schemaLocation="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd UANodeSet.xsd"
+  LastModified="2024-04-12T00:00:00Z">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAMESPACE TABLE
+       ═══════════════════════════════════════════════════════════ -->
+  <NamespaceUris>
+    <Uri>http://opcfoundation.org/UA/</Uri>
+    <Uri>http://elara-automation.de/UA/PlungerSet80/</Uri>
+    <Uri>http://opcfoundation.org/UA/Machinery/</Uri>
+    <Uri>http://opcfoundation.org/UA/PackML/</Uri>
+  </NamespaceUris>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MODELS
+       ═══════════════════════════════════════════════════════════ -->
+  <Models>
+    <Model
+      ModelUri="http://elara-automation.de/UA/PlungerSet80/"
+      Version="1.0.0"
+      PublicationDate="2024-04-12T00:00:00Z">
+      <RequiredModel
+        ModelUri="http://opcfoundation.org/UA/"
+        Version="1.05.02"
+        PublicationDate="2022-11-01T00:00:00Z"/>
+      <RequiredModel
+        ModelUri="http://opcfoundation.org/UA/Machinery/"
+        Version="1.02.0"
+        PublicationDate="2023-01-01T00:00:00Z"/>
+    </Model>
+  </Models>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       OBJECT TYPE:  StopperingStationType
+       Extends BaseObjectType; describes a stoppering station.
+       ═══════════════════════════════════════════════════════════ -->
+  <UAObjectType
+    NodeId="ns=1;i=2000"
+    BrowseName="1:StopperingStationType"
+    IsAbstract="false">
+    <DisplayName>StopperingStationType</DisplayName>
+    <Description>Base object type for the PlungerSet-80 automated stoppering station.</Description>
+    <References>
+      <!-- Inherits from BaseObjectType -->
+      <Reference ReferenceType="HasSubtype" IsForward="false">i=58</Reference>
+      <!-- Child: State variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3000</Reference>
+      <!-- Child: CycleTime variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3001</Reference>
+      <!-- Child: MagazineCount variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3002</Reference>
+      <!-- Child: FirmwareVersion variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3003</Reference>
+      <!-- Child: SerialNumber variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3004</Reference>
+      <!-- Child: ErrorCode variable -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3005</Reference>
+      <!-- Child: Methods -->
+      <Reference ReferenceType="HasComponent">ns=1;i=4000</Reference>
+      <Reference ReferenceType="HasComponent">ns=1;i=4001</Reference>
+      <Reference ReferenceType="HasComponent">ns=1;i=4002</Reference>
+      <Reference ReferenceType="HasComponent">ns=1;i=4003</Reference>
+      <!-- Nameplate subobject -->
+      <Reference ReferenceType="HasComponent">ns=1;i=1010</Reference>
+      <!-- MachineryBuildingBlocks (informative link) -->
+      <Reference ReferenceType="HasComponent">ns=1;i=1020</Reference>
+    </References>
+  </UAObjectType>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       VARIABLE DECLARATIONS on StopperingStationType
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- State -->
+  <UAVariable
+    NodeId="ns=1;i=3000"
+    BrowseName="1:State"
+    DataType="String"
+    ValueRank="-1"
+    AccessLevel="3"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="500">
+    <DisplayName>State</DisplayName>
+    <Description>
+      Current operational state of the stoppering station.
+      Valid values: "IDLE" | "RUNNING" | "ERROR" | "HOMING".
+      Published on change (event-driven). Monitorable via subscription.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:String>IDLE</uax:String>
+    </Value>
+  </UAVariable>
+
+  <!-- CycleTime -->
+  <UAVariable
+    NodeId="ns=1;i=3001"
+    BrowseName="1:CycleTime"
+    DataType="Double"
+    ValueRank="-1"
+    AccessLevel="1"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="0">
+    <DisplayName>CycleTime</DisplayName>
+    <Description>
+      Duration of the last completed stoppering cycle in seconds (Double).
+      Updated on each cycle completion (RUNNING -> IDLE transition).
+      Units: seconds (EUInformation: s, UNECE code SEC).
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:Double>0.0</uax:Double>
+    </Value>
+  </UAVariable>
+
+  <!-- MagazineCount -->
+  <UAVariable
+    NodeId="ns=1;i=3002"
+    BrowseName="1:MagazineCount"
+    DataType="Int32"
+    ValueRank="-1"
+    AccessLevel="3"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="500">
+    <DisplayName>MagazineCount</DisplayName>
+    <Description>
+      Number of plungers remaining in the magazine (Int32).
+      Range: 0 – 4 (standard magazine) or 0 – 8 (EA-PS080-MAG-EXT).
+      Decremented by firmware after each successful insertion.
+      Writable to allow operator correction after manual magazine refill.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:Int32>4</uax:Int32>
+    </Value>
+  </UAVariable>
+
+  <!-- FirmwareVersion -->
+  <UAVariable
+    NodeId="ns=1;i=3003"
+    BrowseName="1:FirmwareVersion"
+    DataType="String"
+    ValueRank="-1"
+    AccessLevel="1"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="-1">
+    <DisplayName>FirmwareVersion</DisplayName>
+    <Description>Firmware version string currently running on the ESP32 (read-only).</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:String>1.4.2</uax:String>
+    </Value>
+  </UAVariable>
+
+  <!-- SerialNumber -->
+  <UAVariable
+    NodeId="ns=1;i=3004"
+    BrowseName="1:SerialNumber"
+    DataType="String"
+    ValueRank="-1"
+    AccessLevel="1"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="-1">
+    <DisplayName>SerialNumber</DisplayName>
+    <Description>Manufacturer serial number of this unit (read-only).</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:String>EA-PS-2024-00391</uax:String>
+    </Value>
+  </UAVariable>
+
+  <!-- ErrorCode -->
+  <UAVariable
+    NodeId="ns=1;i=3005"
+    BrowseName="1:ErrorCode"
+    DataType="UInt32"
+    ValueRank="-1"
+    AccessLevel="1"
+    UserAccessLevel="1"
+    MinimumSamplingInterval="500">
+    <DisplayName>ErrorCode</DisplayName>
+    <Description>
+      Active error code (UInt32). Zero indicates no active fault.
+      Non-zero values (see §ErrorCodes below):
+        0x0001  HOMING_TIMEOUT     Lift did not reach limit switch within 15 s.
+        0x0002  INSERTION_FAULT    Linear actuator did not complete stroke within 5 s.
+        0x0004  SERVO_STALL        SG90 servo stall detected (current overload).
+        0x0008  MAGAZINE_EMPTY     MagazineCount reached 0; Start inhibited.
+        0x0010  COMMS_WATCHDOG     OPC UA session watchdog expired (configurable, default 120 s).
+        0x0020  ACTUATOR_RETRACT   Linear actuator failed to retract within 4 s.
+      Codes are OR-combined if multiple faults are present.
+      Cleared by the Reset method (state ERROR -> IDLE).
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:UInt32>0</uax:UInt32>
+    </Value>
+  </UAVariable>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       METHOD DECLARATIONS on StopperingStationType
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Method: Start -->
+  <UAMethod
+    NodeId="ns=1;i=4000"
+    BrowseName="1:Start"
+    Executable="true"
+    UserExecutable="true">
+    <DisplayName>Start</DisplayName>
+    <Description>
+      Initiates a single stoppering cycle.
+      Preconditions: State == "IDLE" AND MagazineCount > 0.
+      Sequence: servo advances one plunger to insertion chamber;
+                lift lowers to insertion height;
+                linear actuator extends (insertion stroke 20 mm);
+                linear actuator retracts;
+                lift returns to home position;
+                MagazineCount decremented;
+                CycleTime updated;
+                State transitions IDLE -> RUNNING -> IDLE.
+      Returns: StatusCode Good on acceptance; Bad_InvalidState if precondition not met.
+      Expected cycle duration: approximately 5 – 12 seconds depending on plunger type.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4000-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4000-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <!-- Start — InputArguments (none) -->
+  <UAVariable
+    NodeId="ns=1;i=4000-InputArgs"
+    BrowseName="InputArguments"
+    DataType="Argument"
+    ValueRank="1"
+    ArrayDimensions="0">
+    <DisplayName>InputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:ListOfExtensionObject/>
+    </Value>
+  </UAVariable>
+
+  <!-- Start — OutputArguments (none) -->
+  <UAVariable
+    NodeId="ns=1;i=4000-OutputArgs"
+    BrowseName="OutputArguments"
+    DataType="Argument"
+    ValueRank="1"
+    ArrayDimensions="0">
+    <DisplayName>OutputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value>
+      <uax:ListOfExtensionObject/>
+    </Value>
+  </UAVariable>
+
+  <!-- Method: Stop -->
+  <UAMethod
+    NodeId="ns=1;i=4001"
+    BrowseName="1:Stop"
+    Executable="true"
+    UserExecutable="true">
+    <DisplayName>Stop</DisplayName>
+    <Description>
+      Halts the current stoppering cycle immediately.
+      Preconditions: State == "RUNNING".
+      Behaviour: All actuators de-energised; lift returns to homed position.
+      CycleTime is NOT updated (partial cycle).
+      MagazineCount is NOT decremented (plunger not inserted).
+      State transitions: RUNNING -> IDLE.
+      Returns: StatusCode Good on acceptance; Bad_InvalidState if State != RUNNING.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4001-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4001-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAVariable NodeId="ns=1;i=4001-InputArgs" BrowseName="InputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>InputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=4001-OutputArgs" BrowseName="OutputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>OutputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <!-- Method: Home -->
+  <UAMethod
+    NodeId="ns=1;i=4002"
+    BrowseName="1:Home"
+    Executable="true"
+    UserExecutable="true">
+    <DisplayName>Home</DisplayName>
+    <Description>
+      Executes a lift homing sequence.
+      Accepted in any state (including ERROR and HOMING).
+      Behaviour: Lift motor drives down until the homing limit switch is actuated;
+                 position reference is set;
+                 lift raises to standby height (10 mm above home).
+      State transitions: * -> HOMING -> IDLE.
+      Timeout: 15 seconds (generates ErrorCode 0x0001 HOMING_TIMEOUT if limit switch not reached).
+      Returns: StatusCode Good on acceptance.
+      Note: Home MUST be called at least once after power-on before issuing Start.
+             The State variable will read "ERROR" with ErrorCode 0x0001 on power-on
+             until the first successful Home cycle completes.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4002-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4002-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAVariable NodeId="ns=1;i=4002-InputArgs" BrowseName="InputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>InputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=4002-OutputArgs" BrowseName="OutputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>OutputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <!-- Method: Reset -->
+  <UAMethod
+    NodeId="ns=1;i=4003"
+    BrowseName="1:Reset"
+    Executable="true"
+    UserExecutable="true">
+    <DisplayName>Reset</DisplayName>
+    <Description>
+      Clears an active fault condition and returns State to IDLE.
+      Preconditions: State == "ERROR".
+      Behaviour: ErrorCode register is set to 0x0000;
+                 all actuators are de-energised (safe state);
+                 State transitions ERROR -> IDLE.
+      Note: Reset does NOT re-home the lift. A Home call is recommended after
+            INSERTION_FAULT (0x0002) or ACTUATOR_RETRACT (0x0020) to ensure
+            correct positional reference.
+      Returns: StatusCode Good on acceptance; Bad_InvalidState if State != ERROR.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4003-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4003-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAVariable NodeId="ns=1;i=4003-InputArgs" BrowseName="InputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>InputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=4003-OutputArgs" BrowseName="OutputArguments"
+    DataType="Argument" ValueRank="1" ArrayDimensions="0">
+    <DisplayName>OutputArguments</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+      <Reference ReferenceType="HasModellingRule">i=78</Reference>
+    </References>
+    <Value><uax:ListOfExtensionObject/></Value>
+  </UAVariable>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       OBJECTS
+       ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Root instance: PlungerSet80 -->
+  <UAObject
+    NodeId="ns=1;i=1000"
+    BrowseName="1:PlungerSet80"
+    EventNotifier="0">
+    <DisplayName>PlungerSet80</DisplayName>
+    <Description>
+      Root object for the PlungerSet-80 Automated Stoppering Station.
+      Serial: EA-PS-2024-00391 | Order: EA-PS080-230V-EU
+      Manufacturer: Elara Automation GmbH | Firmware: 1.4.2
+    </Description>
+    <References>
+      <!-- Organises in Objects folder -->
+      <Reference ReferenceType="Organizes" IsForward="false">i=85</Reference>
+      <!-- Type definition -->
+      <Reference ReferenceType="HasTypeDefinition">ns=1;i=2000</Reference>
+      <!-- Variable: State -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3010</Reference>
+      <!-- Variable: CycleTime -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3011</Reference>
+      <!-- Variable: MagazineCount -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3012</Reference>
+      <!-- Variable: FirmwareVersion -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3013</Reference>
+      <!-- Variable: SerialNumber -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3014</Reference>
+      <!-- Variable: ErrorCode -->
+      <Reference ReferenceType="HasComponent">ns=1;i=3015</Reference>
+      <!-- Method: Start -->
+      <Reference ReferenceType="HasComponent">ns=1;i=4010</Reference>
+      <!-- Method: Stop -->
+      <Reference ReferenceType="HasComponent">ns=1;i=4011</Reference>
+      <!-- Method: Home -->
+      <Reference ReferenceType="HasComponent">ns=1;i=4012</Reference>
+      <!-- Method: Reset -->
+      <Reference ReferenceType="HasComponent">ns=1;i=4013</Reference>
+      <!-- Sub-object: Nameplate -->
+      <Reference ReferenceType="HasComponent">ns=1;i=1010</Reference>
+      <!-- Sub-object: OperationalData -->
+      <Reference ReferenceType="HasComponent">ns=1;i=1020</Reference>
+      <!-- Sub-object: MachineryComponents (hierarchy) -->
+      <Reference ReferenceType="HasComponent">ns=1;i=1030</Reference>
+    </References>
+  </UAObject>
+
+  <!-- ── Nameplate sub-object ──────────────────────────────────── -->
+  <UAObject NodeId="ns=1;i=1010" BrowseName="2:Nameplate">
+    <DisplayName>Nameplate</DisplayName>
+    <Description>OPC UA for Machinery Nameplate — identification data for the PlungerSet-80.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+  </UAObject>
+
+  <!-- Nameplate variables -->
+  <UAVariable NodeId="ns=1;i=3020" BrowseName="2:Manufacturer"
+    DataType="LocalizedText" ValueRank="-1" AccessLevel="1">
+    <DisplayName>Manufacturer</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:LocalizedText><uax:Locale>en</uax:Locale><uax:Text>Elara Automation GmbH</uax:Text></uax:LocalizedText></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3021" BrowseName="2:ManufacturerUri"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>ManufacturerUri</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>https://elara-automation.de</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3022" BrowseName="2:Model"
+    DataType="LocalizedText" ValueRank="-1" AccessLevel="1">
+    <DisplayName>Model</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:LocalizedText><uax:Locale>en</uax:Locale><uax:Text>PlungerSet-80</uax:Text></uax:LocalizedText></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3023" BrowseName="2:ProductInstanceUri"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>ProductInstanceUri</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>https://elara-automation.de/products/plungerset-80/EA-PS-2024-00391</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3024" BrowseName="2:SerialNumber"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>SerialNumber</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>EA-PS-2024-00391</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3025" BrowseName="2:HardwareRevision"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>HardwareRevision</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>1.3</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3026" BrowseName="2:SoftwareRevision"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>SoftwareRevision</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>1.4.2</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3027" BrowseName="2:YearOfConstruction"
+    DataType="UInt16" ValueRank="-1" AccessLevel="1">
+    <DisplayName>YearOfConstruction</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:UInt16>2024</uax:UInt16></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3028" BrowseName="2:InitialOperationDate"
+    DataType="DateTime" ValueRank="-1" AccessLevel="1">
+    <DisplayName>InitialOperationDate</DisplayName>
+    <Description>Date of first commissioning; to be set during IQ.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:DateTime>0001-01-01T00:00:00Z</uax:DateTime></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3029" BrowseName="2:OrderNumber"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>OrderNumber</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1010</Reference>
+    </References>
+    <Value><uax:String>EA-PS080-230V-EU</uax:String></Value>
+  </UAVariable>
+
+  <!-- ── OperationalData sub-object ───────────────────────────── -->
+  <UAObject NodeId="ns=1;i=1020" BrowseName="1:OperationalData">
+    <DisplayName>OperationalData</DisplayName>
+    <Description>Live operational variables for dashboard integration.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+  </UAObject>
+
+  <UAVariable NodeId="ns=1;i=3030" BrowseName="1:TotalCycles"
+    DataType="UInt64" ValueRank="-1" AccessLevel="1">
+    <DisplayName>TotalCycles</DisplayName>
+    <Description>Cumulative stoppering cycles since firmware flash (non-volatile, persisted in NVS).</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1020</Reference>
+    </References>
+    <Value><uax:UInt64>0</uax:UInt64></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3031" BrowseName="1:UptimeSeconds"
+    DataType="UInt32" ValueRank="-1" AccessLevel="1"
+    MinimumSamplingInterval="5000">
+    <DisplayName>UptimeSeconds</DisplayName>
+    <Description>Seconds since last power-on or firmware reset (UInt32). Overflows after ~136 years.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1020</Reference>
+    </References>
+    <Value><uax:UInt32>0</uax:UInt32></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3032" BrowseName="1:LastCycleTimestamp"
+    DataType="DateTime" ValueRank="-1" AccessLevel="1">
+    <DisplayName>LastCycleTimestamp</DisplayName>
+    <Description>UTC timestamp of the last completed stoppering cycle.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1020</Reference>
+    </References>
+    <Value><uax:DateTime>0001-01-01T00:00:00Z</uax:DateTime></Value>
+  </UAVariable>
+
+  <!-- ── MachineryComponents sub-object (hierarchy) ───────────── -->
+  <UAObject NodeId="ns=1;i=1030" BrowseName="2:MachineryComponents">
+    <DisplayName>MachineryComponents</DisplayName>
+    <Description>
+      Child component list for AAS HierarchicalStructures submodel.
+      Follows OPC 40001-1 UA for Machinery component organisation.
+    </Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+  </UAObject>
+
+  <!-- Component variables (identification only; no runtime values) -->
+  <UAVariable NodeId="ns=1;i=3040" BrowseName="1:ESP32ControllerModule"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>ESP32ControllerModule</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>ESP32-WROOM-32 | WiFi 802.11 b/g/n | Dual-core 240 MHz | 4 MB Flash</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3041" BrowseName="1:MotorControllerBoard"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>MotorControllerBoard</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>L298N Dual H-Bridge | 5 V onboard regulator | 2 A/channel</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3042" BrowseName="1:LiftMotor"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>LiftMotor</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>12 V DC | 1.2 Nm | 80 RPM no-load | L298N switched</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3043" BrowseName="1:LeadScrewAssembly"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>LeadScrewAssembly</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>8 mm diameter | 2 mm pitch | 150 mm travel | shared with LinFill-120</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3044" BrowseName="1:LinearInsertActuator"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>LinearInsertActuator</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>12 V | 20 mm stroke | 50 N rated force | retract ~8 mm/s | extend ~5 mm/s</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3045" BrowseName="1:ServoFeedMotor"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>ServoFeedMotor</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>SG90 9g servo | 5 V | 1.8 kg·cm stall torque | 2-stage 1:4 gear | 720° / 20 mm travel</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3046" BrowseName="1:HomingLimitSwitch"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>HomingLimitSwitch</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>Straight lever limit switch | snap-action | 5 A 250 VAC | IP40</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3047" BrowseName="1:PlungerMagazineAssembly"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>PlungerMagazineAssembly</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1030</Reference>
+    </References>
+    <Value><uax:String>Triangular-profile channel | PLA (3D-printed) | 4-plunger standard | 8-plunger with EA-PS080-MAG-EXT</uax:String></Value>
+  </UAVariable>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       INSTANTIATED variables and methods on PlungerSet80 object
+       (instances bound to the type declarations above)
+       ───────────────────────────────────────────────────────────── -->
+
+  <UAVariable NodeId="ns=1;i=3010" BrowseName="1:State"
+    DataType="String" ValueRank="-1" AccessLevel="3"
+    UserAccessLevel="1" MinimumSamplingInterval="500">
+    <DisplayName>State</DisplayName>
+    <Description>Current state: IDLE | RUNNING | ERROR | HOMING</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:String>IDLE</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3011" BrowseName="1:CycleTime"
+    DataType="Double" ValueRank="-1" AccessLevel="1"
+    UserAccessLevel="1" MinimumSamplingInterval="0">
+    <DisplayName>CycleTime</DisplayName>
+    <Description>Last completed cycle duration (seconds, Double).</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:Double>0.0</uax:Double></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3012" BrowseName="1:MagazineCount"
+    DataType="Int32" ValueRank="-1" AccessLevel="3"
+    UserAccessLevel="3" MinimumSamplingInterval="500">
+    <DisplayName>MagazineCount</DisplayName>
+    <Description>Remaining plungers in magazine (0–4 standard, 0–8 extended).</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:Int32>4</uax:Int32></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3013" BrowseName="1:FirmwareVersion"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>FirmwareVersion</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:String>1.4.2</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3014" BrowseName="1:SerialNumber"
+    DataType="String" ValueRank="-1" AccessLevel="1">
+    <DisplayName>SerialNumber</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:String>EA-PS-2024-00391</uax:String></Value>
+  </UAVariable>
+
+  <UAVariable NodeId="ns=1;i=3015" BrowseName="1:ErrorCode"
+    DataType="UInt32" ValueRank="-1" AccessLevel="1"
+    MinimumSamplingInterval="500">
+    <DisplayName>ErrorCode</DisplayName>
+    <Description>Active fault bitmask (0 = no fault). See type description for codes.</Description>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+    </References>
+    <Value><uax:UInt32>0</uax:UInt32></Value>
+  </UAVariable>
+
+  <!-- Instantiated Methods -->
+  <UAMethod NodeId="ns=1;i=4010" BrowseName="1:Start" Executable="true" UserExecutable="true">
+    <DisplayName>Start</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4000-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4000-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAMethod NodeId="ns=1;i=4011" BrowseName="1:Stop" Executable="true" UserExecutable="true">
+    <DisplayName>Stop</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4001-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4001-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAMethod NodeId="ns=1;i=4012" BrowseName="1:Home" Executable="true" UserExecutable="true">
+    <DisplayName>Home</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4002-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4002-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+  <UAMethod NodeId="ns=1;i=4013" BrowseName="1:Reset" Executable="true" UserExecutable="true">
+    <DisplayName>Reset</DisplayName>
+    <References>
+      <Reference ReferenceType="HasTypeDefinition">i=77</Reference>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1000</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4003-InputArgs</Reference>
+      <Reference ReferenceType="HasProperty">ns=1;i=4003-OutputArgs</Reference>
+    </References>
+  </UAMethod>
+
+</UANodeSet>

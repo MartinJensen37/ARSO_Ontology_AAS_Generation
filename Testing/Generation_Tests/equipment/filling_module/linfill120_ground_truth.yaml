@@ -1,0 +1,297 @@
+asset_name: "LinFill120"
+description: |
+  Ground truth for the LinFill-120 Vertical Syringe Filling Station (Elara Automation GmbH).
+  Derived from EA-LC-LF120-EN Rev. 1.1 (lifecycle) and EA-MI-LF120-EN Rev. 1.0 (MQTT interface).
+  Covers all six selected submodels: Nameplate, HierarchicalStructures, AID,
+  Skills, Capabilities, OperationalData.
+  Communication protocol: MQTT 3.1.1 over IEEE 802.11 b/g/n WiFi (2.4 GHz).
+
+# required: true  -> must be present and correct; penalise if missing
+# required: false -> value is available in documents; score if found, do not penalise absence
+
+expected_submodels:
+
+  # ── DigitalNameplate ────────────────────────────────────────────────────────
+  DigitalNameplate:
+    submodelElements:
+
+      - idShort: ManufacturerName
+        semanticId: "0112/2///61987#ABA565#009"
+        expected_value_contains: "Elara Automation"
+        required: true
+
+      - idShort: ManufacturerProductDesignation
+        semanticId: "0112/2///61987#ABA567#009"
+        expected_value_contains: "LinFill-120"
+        required: true
+
+      - idShort: ContactInformation
+        semanticId: "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
+        required: true
+
+      - idShort: OrderCodeOfManufacturer
+        semanticId: "0112/2///61987#ABA950#008"
+        expected_value_contains: "EA-LF120-230V-EU"
+        required: true
+
+      - idShort: SerialNumber
+        expected_value_contains: "EA-LF-2024-00472"
+        required: true
+
+      - idShort: YearOfConstruction
+        expected_value_contains: "2024"
+        required: false
+
+      - idShort: DateOfManufacture
+        expected_value_contains: "2024-03-15"
+        required: false
+
+      - idShort: CountryOfOrigin
+        expected_value_contains: "DE"
+        required: false
+
+      - idShort: HardwareVersion
+        expected_value_contains: "2.1"
+        required: false
+
+      - idShort: FirmwareVersion
+        expected_value_contains: "1.4.2"
+        required: false
+
+      - idShort: URIOfTheProduct
+        expected_value_contains: "linfill-120"
+        required: false
+
+      - idShort: ManufacturerProductFamily
+        expected_value_contains: "LinFill"
+        required: false
+
+      - idShort: ManufacturerAddress
+        expected_value_contains: "Stuttgart"
+        required: false
+
+  # ── HierarchicalStructures ──────────────────────────────────────────────────
+  HierarchicalStructures:
+    submodelElements:
+
+      - idShort: ArcheType
+        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"
+        expected_value_contains: "OneDown"
+        required: true
+
+      - idShort: EntryNode
+        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+        required: true
+
+    children:
+      - idShort: ESP32ControllerModule
+        required: true
+
+      - idShort: L298NMotorControllerBoard
+        required: true
+
+      - idShort: LiftMotor
+        required: true
+
+      - idShort: LeadScrewAssembly
+        required: true
+
+      - idShort: HomingLimitSwitch
+        required: false
+
+      - idShort: TopLimitSwitch
+        required: false
+
+      - idShort: RemovableNeedleTopAssembly
+        required: false
+
+  # ── AID (Asset Interfaces Description) — MQTT ───────────────────────────────
+  AID:
+    interface_type: "MQTT"
+    submodelElements:
+
+      - idShort: InterfaceMQTT
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+        required: true
+
+      - idShort: EndpointMetadata
+        path: [InterfaceMQTT, EndpointMetadata]
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+        required: true
+        expected_properties:
+          protocol: "MQTT"
+          version: "3.1.1"
+          port_plain: "1883"
+          port_tls: "8883"
+          client_id_pattern: "linfill120-{serialNumber}"
+          keepalive_s: "60"
+          clean_session: "false"
+          qos: "1"
+
+      - idShort: InteractionMetadata
+        path: [InterfaceMQTT, InteractionMetadata]
+        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+        required: true
+
+    affordances:
+
+      - idShort: FillingState
+        affordance_type: "property"
+        topic: "{base}/filling/state"
+        payload_type: "string"
+        qos: 1
+        retained: true
+        valid_values: ["IDLE", "RUNNING", "ERROR", "HOMING"]
+        required: true
+
+      - idShort: CycleTime
+        affordance_type: "event"
+        topic: "{base}/filling/cycletime"
+        payload_type: "float"
+        unit: "seconds"
+        qos: 1
+        retained: false
+        required: false
+
+      - idShort: SyringeWeight
+        affordance_type: "event"
+        topic: "{base}/filling/syringeweight"
+        payload_type: "float"
+        unit: "grams"
+        qos: 1
+        retained: false
+        required: false
+
+      - idShort: Command
+        affordance_type: "action"
+        topic: "{base}/filling/cmd"
+        payload_type: "string"
+        valid_values: ["START", "STOP", "HOME", "RESET"]
+        qos: 1
+        retained: false
+        required: true
+
+    lwt:
+      topic: "{base}/filling/state"
+      payload: "ERROR"
+      qos: 1
+      retain: true
+      required: true
+
+  # ── Skills ──────────────────────────────────────────────────────────────────
+  Skills:
+    submodelElements:
+
+      - idShort: Start
+        required: true
+        precondition: "State == IDLE"
+        result_state: "RUNNING -> IDLE"
+        side_effects:
+          - "CycleTime published on completion"
+          - "SyringeWeight published on completion if balance connected"
+
+      - idShort: Stop
+        required: true
+        precondition: "State == RUNNING"
+        result_state: "IDLE"
+        side_effects:
+          - "CycleTime NOT published (partial cycle)"
+
+      - idShort: Home
+        required: true
+        precondition: "Any state"
+        result_state: "HOMING -> IDLE"
+        side_effects:
+          - "Position reference set at lower limit switch"
+          - "Must be called once after power-on before first Start"
+
+      - idShort: Reset
+        required: false
+        precondition: "State == ERROR"
+        result_state: "IDLE"
+        side_effects:
+          - "Fault flag cleared; no re-homing"
+
+  # ── Capabilities ────────────────────────────────────────────────────────────
+  Capabilities:
+    submodelElements:
+
+      - idShort: CapabilitySet
+        required: true
+
+    capabilities:
+
+      - idShort: SyringeFilling
+        description: "Vertical needle actuation into a pre-positioned syringe for controlled fill."
+        required: true
+
+      - idShort: WeightMeasurement
+        description: "Post-fill syringe weight via external balance; averaged over 3 readings (fw >= 1.4.2)."
+        required: false
+
+      - idShort: LiftPositioning
+        description: "150 mm vertical travel, +/-0.5 mm repeatability after homing."
+        required: false
+
+      - idShort: MQTTConnectivity
+        description: "MQTT 3.1.1 client; QoS 1; TLS 1.2; LWT on state topic; keepalive 60 s."
+        required: false
+
+  # ── OperationalData ─────────────────────────────────────────────────────────
+  OperationalData:
+    submodelElements:
+
+      - idShort: FillingState
+        required: true
+        data_type: "string"
+        source_topic: "{base}/filling/state"
+        valid_values: ["IDLE", "RUNNING", "ERROR", "HOMING"]
+        update_trigger: "on state change"
+        retained: true
+
+      - idShort: CycleTime
+        required: false
+        data_type: "float"
+        unit: "seconds"
+        source_topic: "{base}/filling/cycletime"
+        update_trigger: "on cycle completion (RUNNING -> IDLE)"
+        retained: false
+
+      - idShort: SyringeWeight
+        required: false
+        data_type: "float"
+        unit: "grams"
+        source_topic: "{base}/filling/syringeweight"
+        update_trigger: "on cycle completion"
+        retained: false
+        averaging: "3 readings (firmware >= 1.4.2)"
+
+# ── Cross-submodel consistency checks ───────────────────────────────────────
+expected_cross_references:
+  - skill: Start
+    references_aid_affordance: Command
+    expected_payload: "START"
+  - skill: Stop
+    references_aid_affordance: Command
+    expected_payload: "STOP"
+  - skill: Home
+    references_aid_affordance: Command
+    expected_payload: "HOME"
+  - skill: Reset
+    references_aid_affordance: Command
+    expected_payload: "RESET"
+  - operational_data: FillingState
+    references_aid_affordance: FillingState
+  - operational_data: CycleTime
+    references_aid_affordance: CycleTime
+  - operational_data: SyringeWeight
+    references_aid_affordance: SyringeWeight
+
+# ── Negative checks ──────────────────────────────────────────────────────────
+must_not_contain:
+  - "opc.tcp"
+  - "OPC UA"
+  - "NodeId"
+  - "BrowseName"
+  - "ns=1"
+  - "PlungerSet"

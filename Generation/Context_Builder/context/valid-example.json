@@ -1,0 +1,271 @@
+{
+  "assetAdministrationShells": [
+    {
+      "modelType": "AssetAdministrationShell",
+      "id": "https://smartproductionlab.aau.dk/aas/ExampleRobot",
+      "idShort": "ExampleRobot_AAS",
+      "assetInformation": {
+        "assetKind": "Instance",
+        "globalAssetId": "https://smartproductionlab.aau.dk/assets/ExampleRobot"
+      },
+      "submodels": [
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/DigitalNameplate"}]},
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/HierarchicalStructures"}]},
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Capabilities"}]},
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Skills"}]},
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/OperationalData"}]},
+        {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/AID"}]}
+      ]
+    }
+  ],
+  "submodels": [
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/DigitalNameplate",
+      "idShort": "DigitalNameplate",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/nameplate/3/0/Nameplate"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "submodelElements": [
+        {"modelType": "MultiLanguageProperty", "idShort": "ManufacturerName", "value": [{"language": "en", "text": "Example GmbH"}]},
+        {"modelType": "MultiLanguageProperty", "idShort": "ManufacturerProductDesignation", "value": [{"language": "en", "text": "Example Robot Arm"}]},
+        {"modelType": "Property", "idShort": "SerialNumber", "valueType": "xs:string", "value": "SN-2024-001"},
+        {"modelType": "Property", "idShort": "YearOfConstruction", "valueType": "xs:string", "value": "2024"},
+        {"modelType": "Property", "idShort": "HardwareVersion", "valueType": "xs:string", "value": "1.0"},
+        {"modelType": "Property", "idShort": "SoftwareVersion", "valueType": "xs:string", "value": "2.3.1"}
+      ]
+    },
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/HierarchicalStructures",
+      "idShort": "HierarchicalStructures",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "displayName": [{"language": "en", "text": "ExampleRobot"}],
+      "submodelElements": [
+        {
+          "modelType": "Property",
+          "idShort": "ArcheType",
+          "valueType": "xs:string",
+          "value": "OneUp",
+          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/ArcheType"}]}
+        },
+        {
+          "modelType": "Entity",
+          "idShort": "ExampleRobot",
+          "entityType": "SelfManagedEntity",
+          "globalAssetId": "https://smartproductionlab.aau.dk/assets/ExampleRobot",
+          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/EntryNode"}]},
+          "statements": [
+            {
+              "modelType": "Entity",
+              "idShort": "ParentLine",
+              "entityType": "SelfManagedEntity",
+              "globalAssetId": "https://smartproductionlab.aau.dk/assets/ParentLine",
+              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/Node"}]},
+              "statements": [
+                {
+                  "modelType": "ReferenceElement",
+                  "idShort": "SameAs",
+                  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/SameAs"}]},
+                  "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/EntryNode"}]}],
+                  "value": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ParentLine/HierarchicalStructures"}, {"type": "Entity", "value": "ExampleRobot"}]}
+                }
+              ]
+            },
+            {
+              "modelType": "RelationshipElement",
+              "idShort": "IsPartOf_ParentLine",
+              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/HasPart"}]},
+              "first": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/HierarchicalStructures"}, {"type": "Entity", "value": "ExampleRobot"}]},
+              "second": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/HierarchicalStructures"}, {"type": "Entity", "value": "ExampleRobot"}, {"type": "Entity", "value": "ParentLine"}]}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Capabilities",
+      "idShort": "Capabilities",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/Capabilities#1/0"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "submodelElements": [
+        {
+          "modelType": "SubmodelElementCollection",
+          "idShort": "CapabilitySet",
+          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/Capabilities#CapabilitySet"}]},
+          "value": [
+            {
+              "modelType": "SubmodelElementCollection",
+              "idShort": "PickAndPlace",
+              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/Capabilities#Capability"}]},
+              "value": [
+                {"modelType": "Property", "idShort": "SemanticId", "valueType": "xs:string", "value": "https://smartproductionlab.aau.dk/capabilities/PickAndPlace"},
+                {
+                  "modelType": "Capability",
+                  "idShort": "PickAndPlace",
+                  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/capabilities/PickAndPlace"}]}
+                },
+                {
+                  "modelType": "SubmodelElementList",
+                  "idShort": "realizedBy",
+                  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/Capabilities#realizedBy"}]},
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "idShort": "PickItem",
+                      "first": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Capabilities"}, {"type": "SubmodelElementCollection", "value": "CapabilitySet"}, {"type": "SubmodelElementCollection", "value": "PickAndPlace"}]},
+                      "second": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Skills"}, {"type": "SubmodelElementCollection", "value": "PickItem"}]}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/Skills",
+      "idShort": "Skills",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/Skills#1/0"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "submodelElements": [
+        {
+          "modelType": "SubmodelElementCollection",
+          "idShort": "PickItem",
+          "value": [
+            {"modelType": "Property", "idShort": "SemanticId", "valueType": "xs:string", "value": "https://smartproductionlab.aau.dk/skills/PickItem"},
+            {
+              "modelType": "Operation",
+              "idShort": "PickItem",
+              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/skills/PickItem"}]},
+              "qualifiers": [
+                {"type": "invocationDelegation", "valueType": "xs:string", "value": "mqtt://broker.example.com/robot/pick", "kind": "ConceptQualifier"},
+                {"type": "synchronous", "valueType": "xs:boolean", "value": "true", "kind": "ConceptQualifier"}
+              ],
+              "inputVariables": [
+                {"value": {"modelType": "Property", "idShort": "targetPosition", "valueType": "xs:string"}}
+              ],
+              "outputVariables": [
+                {"value": {"modelType": "Property", "idShort": "success", "valueType": "xs:boolean"}}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/OperationalData",
+      "idShort": "OperationalData",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/Variables/1/0/Submodel"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "submodelElements": [
+        {
+          "modelType": "Property",
+          "idShort": "JointTemperature",
+          "valueType": "xs:anyURI",
+          "value": "https://smartproductionlab.aau.dk/variables/JointTemperature",
+          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/variables/JointTemperature"}]}
+        }
+      ]
+    },
+    {
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/ExampleRobot/AID",
+      "idShort": "AID",
+      "kind": "Instance",
+      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"}]},
+      "administration": {"version": "1", "revision": "1"},
+      "submodelElements": [
+        {
+          "modelType": "SubmodelElementCollection",
+          "idShort": "InterfaceMQTT",
+          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"}]},
+          "supplementalSemanticIds": [
+            {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1/binding/mqtt"}]},
+            {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1"}]}
+          ],
+          "value": [
+            {"modelType": "Property", "idShort": "title", "valueType": "xs:string", "value": "MQTT Interface"},
+            {
+              "modelType": "SubmodelElementCollection",
+              "idShort": "EndpointMetadata",
+              "value": [
+                {"modelType": "Property", "idShort": "base", "valueType": "xs:anyURI", "value": "mqtt://broker.example.com"},
+                {"modelType": "Property", "idShort": "contentType", "valueType": "xs:string", "value": "application/json"}
+              ]
+            },
+            {
+              "modelType": "SubmodelElementCollection",
+              "idShort": "InteractionMetadata",
+              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"}]},
+              "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"}]}],
+              "value": [
+                {
+                  "modelType": "SubmodelElementCollection",
+                  "idShort": "properties",
+                  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"}]},
+                  "value": [
+                    {
+                      "modelType": "SubmodelElementCollection",
+                      "idShort": "JointTemperature",
+                      "value": [
+                        {"modelType": "Property", "idShort": "Key", "valueType": "xs:string", "value": "JointTemperature"},
+                        {"modelType": "Property", "idShort": "Title", "valueType": "xs:string", "value": "Joint Temperature"},
+                        {
+                          "modelType": "SubmodelElementCollection",
+                          "idShort": "Forms",
+                          "value": [
+                            {"modelType": "Property", "idShort": "href", "valueType": "xs:string", "value": "robot/telemetry/temperature"},
+                            {"modelType": "Property", "idShort": "op", "valueType": "xs:string", "value": "observeproperty"},
+                            {"modelType": "Property", "idShort": "mqv_retain", "valueType": "xs:string", "value": "false"}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "modelType": "SubmodelElementCollection",
+                  "idShort": "actions",
+                  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#ActionAffordance"}]},
+                  "value": [
+                    {
+                      "modelType": "SubmodelElementCollection",
+                      "idShort": "PickItem",
+                      "value": [
+                        {"modelType": "Property", "idShort": "Key", "valueType": "xs:string", "value": "PickItem"},
+                        {"modelType": "Property", "idShort": "Title", "valueType": "xs:string", "value": "Pick Item"},
+                        {"modelType": "Property", "idShort": "Synchronous", "valueType": "xs:boolean", "value": "true"},
+                        {
+                          "modelType": "SubmodelElementCollection",
+                          "idShort": "Forms",
+                          "value": [
+                            {"modelType": "Property", "idShort": "href", "valueType": "xs:string", "value": "robot/skills/pick"},
+                            {"modelType": "Property", "idShort": "op", "valueType": "xs:string", "value": "invokeaction"},
+                            {"modelType": "Property", "idShort": "contentType", "valueType": "xs:string", "value": "application/json"}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "conceptDescriptions": []
+}

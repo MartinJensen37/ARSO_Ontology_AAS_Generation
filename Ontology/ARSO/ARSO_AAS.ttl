@@ -1,0 +1,328 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix css:  <http://www.w3id.org/hsu-aut/css#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso>
+  rdf:type owl:Ontology ;
+  owl:versionIRI <https://w3id.org/2025/arso/0.4.0> ;
+  owl:imports <http://www.w3id.org/hsu-aut/css> ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  owl:imports <https://w3id.org/2025/arso/modules/nameplate> ;
+  owl:imports <https://w3id.org/2025/arso/modules/hierarchical-structures> ;
+  owl:imports <https://w3id.org/2025/arso/modules/aid> ;
+  owl:imports <https://w3id.org/2025/arso/modules/skills> ;
+  owl:imports <https://w3id.org/2025/arso/modules/capabilities> ;
+  owl:imports <https://w3id.org/2025/arso/modules/operational-data> ;
+  owl:imports <https://w3id.org/2025/arso/modules/parameters> ;
+  rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.
+
+  This ontology:
+    - imports the official AAS v3.1 ontology for structural validation
+    - imports per-submodel modules that define element types and internal constraints
+    - defines the CSS Resource ↔ AAS link and cross-submodel dependencies here
+    - uses AAS properties (submodelElements, value, etc.) for containment
+    - adds arso: properties only for cross-submodel dependency checks
+
+  Structural/formatting validation is handled by the AAS ontology + SHACL.
+  This ontology adds ONLY domain-specific constraints on top.""" .
+
+
+#################################################################
+#################################################################
+##
+##  MODULE 0: CSS RESOURCE ↔ AAS LINK
+##
+##  Connects the real-world CSS Resource concept to its AAS
+##  digital twin representation. This is the root of all
+##  cross-submodel dependency reasoning.
+##
+#################################################################
+#################################################################
+
+arso:hasAAS rdf:type owl:ObjectProperty ;
+  rdfs:domain css:Resource ;
+  rdfs:range aas:AssetAdministrationShell ;
+  rdfs:comment "Connects a CSS Resource to the AAS that represents it." .
+
+arso:representsResource rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:domain aas:AssetAdministrationShell ;
+  rdfs:range css:Resource ;
+  owl:inverseOf arso:hasAAS ;
+  rdfs:comment "The CSS Resource this AAS represents." .
+
+# Each Resource has exactly one AAS
+css:Resource rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasAAS ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass aas:AssetAdministrationShell ] .
+
+# Each AAS represents exactly one Resource
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:representsResource ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass css:Resource ] .
+
+
+#################################################################
+##  Convenience: AAS → typed submodel direct links
+##
+##  The AAS ontology uses aas:AssetAdministrationShell/submodels
+##  → aas:Reference (indirection). For OWL reasoning over
+##  cross-submodel dependencies, we need direct typed links.
+##  The JSON-to-RDF projection creates these.
+#################################################################
+
+arso:hasSubmodel rdf:type owl:ObjectProperty ;
+  rdfs:domain aas:AssetAdministrationShell ;
+  rdfs:range aas:Submodel ;
+  rdfs:comment "Direct link from AAS to a submodel instance (bypassing Reference indirection)." .
+
+arso:hasDigitalNameplateSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:DigitalNameplateSubmodel .
+
+arso:hasHierarchicalStructuresSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:HierarchicalStructuresSubmodel .
+
+arso:hasAIDSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:AIDSubmodel .
+
+arso:hasSkillsSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:SkillsSubmodel .
+
+arso:hasCapabilitiesSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:CapabilitiesSubmodel .
+
+arso:hasOperationalDataSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:OperationalDataSubmodel .
+
+arso:hasParametersSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:ParametersSubmodel .
+
+
+#################################################################
+#################################################################
+##
+##  CROSS-SUBMODEL DEPENDENCY CONSTRAINTS
+##
+##  These use arso:hasSubmodel (direct links) because the
+##  AAS reference indirection prevents OWL from reasoning
+##  about submodel types across the shell.
+##
+#################################################################
+#################################################################
+
+# --- Mandatory submodels ---
+
+# Every AAS must have exactly one DigitalNameplate
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasDigitalNameplateSubmodel ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:DigitalNameplateSubmodel ] .
+
+# Every AAS must have exactly one HierarchicalStructures
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasHierarchicalStructuresSubmodel ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:HierarchicalStructuresSubmodel ] .
+
+# At most one AID
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasAIDSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:AIDSubmodel ] .
+
+# At most one Skills submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSkillsSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:SkillsSubmodel ] .
+
+# At most one Capabilities submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasCapabilitiesSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:CapabilitiesSubmodel ] .
+
+# At most one OperationalData submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasOperationalDataSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:OperationalDataSubmodel ] .
+
+# At most one Parameters submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasParametersSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:ParametersSubmodel ] .
+
+# --- Conditional dependencies ---
+
+# Skills present → AID required
+[ rdf:type owl:Class ;
+  owl:intersectionOf (
+    aas:AssetAdministrationShell
+    [ rdf:type owl:Restriction ;
+      owl:onProperty arso:hasSubmodel ;
+      owl:someValuesFrom arso:SkillsSubmodel ] )
+] rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSubmodel ;
+  owl:someValuesFrom arso:AIDSubmodel ] .
+
+# OperationalData present → AID required
+[ rdf:type owl:Class ;
+  owl:intersectionOf (
+    aas:AssetAdministrationShell
+    [ rdf:type owl:Restriction ;
+      owl:onProperty arso:hasSubmodel ;
+      owl:someValuesFrom arso:OperationalDataSubmodel ] )
+] rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSubmodel ;
+  owl:someValuesFrom arso:AIDSubmodel ] .
+
+# Parameters present → AID required
+[ rdf:type owl:Class ;
+  owl:intersectionOf (
+    aas:AssetAdministrationShell
+    [ rdf:type owl:Restriction ;
+      owl:onProperty arso:hasSubmodel ;
+      owl:someValuesFrom arso:ParametersSubmodel ] )
+] rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSubmodel ;
+  owl:someValuesFrom arso:AIDSubmodel ] .
+
+# Capabilities present ↔ Skills present (mutual)
+[ rdf:type owl:Class ;
+  owl:intersectionOf (
+    aas:AssetAdministrationShell
+    [ rdf:type owl:Restriction ;
+      owl:onProperty arso:hasSubmodel ;
+      owl:someValuesFrom arso:CapabilitiesSubmodel ] )
+] rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSubmodel ;
+  owl:someValuesFrom arso:SkillsSubmodel ] .
+
+[ rdf:type owl:Class ;
+  owl:intersectionOf (
+    aas:AssetAdministrationShell
+    [ rdf:type owl:Restriction ;
+      owl:onProperty arso:hasSubmodel ;
+      owl:someValuesFrom arso:SkillsSubmodel ] )
+] rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasSubmodel ;
+  owl:someValuesFrom arso:CapabilitiesSubmodel ] .
+
+## Named classes to make conditional dependencies convertible to SHACL
+arso:HasSkillsAAS
+  a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      aas:AssetAdministrationShell
+      [ a owl:Restriction ;
+        owl:onProperty arso:hasSubmodel ;
+        owl:someValuesFrom arso:SkillsSubmodel ]
+    )
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty arso:hasSubmodel ;
+    owl:someValuesFrom arso:AIDSubmodel
+  ] .
+
+arso:HasOperationalDataAAS
+  a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      aas:AssetAdministrationShell
+      [ a owl:Restriction ;
+        owl:onProperty arso:hasSubmodel ;
+        owl:someValuesFrom arso:OperationalDataSubmodel ]
+    )
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty arso:hasSubmodel ;
+    owl:someValuesFrom arso:AIDSubmodel
+  ] .
+
+arso:HasParametersAAS
+  a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      aas:AssetAdministrationShell
+      [ a owl:Restriction ;
+        owl:onProperty arso:hasSubmodel ;
+        owl:someValuesFrom arso:ParametersSubmodel ]
+    )
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty arso:hasSubmodel ;
+    owl:someValuesFrom arso:AIDSubmodel
+  ] .
+
+arso:HasCapabilitiesAAS
+  a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      aas:AssetAdministrationShell
+      [ a owl:Restriction ;
+        owl:onProperty arso:hasSubmodel ;
+        owl:someValuesFrom arso:CapabilitiesSubmodel ]
+    )
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty arso:hasSubmodel ;
+    owl:someValuesFrom arso:SkillsSubmodel
+  ] .
+
+arso:HasSkillsFromCapabilitiesAAS
+  a owl:Class ;
+  owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      aas:AssetAdministrationShell
+      [ a owl:Restriction ;
+        owl:onProperty arso:hasSubmodel ;
+        owl:someValuesFrom arso:SkillsSubmodel ]
+    )
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty arso:hasSubmodel ;
+    owl:someValuesFrom arso:CapabilitiesSubmodel
+  ] .
+

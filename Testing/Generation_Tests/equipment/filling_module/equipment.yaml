@@ -1,0 +1,27 @@
+asset_name: "LinFill120"
+asset_type: "filling-station/syringe"
+protocol: "mqtt"
+base_url: "https://smartproductionlab.aau.dk"
+
+selected_submodels:
+  - Nameplate
+  - HierarchicalStructures
+  - AID
+  - Skills
+  - Capabilities
+  - OperationalData
+
+# Main lifecycle/specification document (sent as PDF to Gemini, extracted as text for Claude).
+datasheet: "EA-LC-LF120-EN_Lifecycle.pdf"
+
+# Additional interface and structural documents.
+# PDFs are sent as extra inline_data parts to Gemini and extracted as text for Claude.
+# XML files are read as text for both providers.
+interface_files:
+  - { path: "EA-MI-LF120-EN_MQTT_Interface.pdf", kind: "mqtt-spec" }
+  - { path: "EA-LN-SPL01-EN_Line_BOM.pdf",        kind: "bom" }
+
+# Ground truth file relative to this equipment directory.
+ground_truth: "linfill120_ground_truth.yaml"
+
+max_attempts: 3

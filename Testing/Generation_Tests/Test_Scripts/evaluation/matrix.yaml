@@ -1,0 +1,20 @@
+# Matrix sweep for the model comparison study.
+#
+# Each config is one "full" run (feedback loop enabled, up to max_attempts).
+# Attempt 1 = zero-shot; subsequent attempts show the validation layer's impact.
+# Per-attempt violation counts are stored in attempts_detail[] in results.jsonl.
+#
+# Run with:
+#   python -m evaluation.run_eval --matrix evaluation/matrix.yaml --run-id <run_id>
+
+repetitions: 1
+
+equipment:
+  - v2/filling_module
+  - v2/stoppering_module
+
+configs:
+  - { provider: claude,  model: claude-sonnet-4-6,          mode: json-description, pipeline: v2 }
+  - { provider: claude,  model: claude-haiku-4-5-20251001,   mode: json-description, pipeline: v2 }
+  - { provider: gemini,  model: gemini-3.1-pro-preview,      mode: json-description, pipeline: v2 }
+  - { provider: gemini,  model: gemini-3-flash-preview,      mode: json-description, pipeline: v2 }

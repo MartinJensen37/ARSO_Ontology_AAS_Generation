@@ -1,0 +1,128 @@
+uncertainty_rules: |
+  ## Handling Uncertainty
+  If you cannot find a specific value in the provided specification, use this exact marker:
+    "[VERIFY: <reason>]"
+
+  Examples:
+    "value": "[VERIFY: SerialNumber not found in datasheet]"
+    "value": "[VERIFY: YearOfConstruction unclear — datasheet mentions 2022 revision but no manufacture date]"
+
+  Rules:
+  - Use [VERIFY: ...] ONLY when genuinely unsure AND the field is mandatory.
+  - For OPTIONAL fields whose value is not present in the spec sheet,
+    OMIT the field entirely from the JSON. Do not emit a [VERIFY: ...] placeholder.
+    Examples of optional Nameplate fields: DateOfManufacture, YearOfConstruction,
+    HardwareVersion, SoftwareVersion, FirmwareVersion, CountryOfOrigin,
+    ManufacturerProductFamily, BatchNumber, URIOfTheProduct.
+  - NEVER use [VERIFY: ...] in identifier/reference fields: idShort, id, globalAssetId, keys[].value, semanticId keys.
+  - idShort values MUST contain only letters, digits, and underscore.
+  - When unsure about identifier-like values, generate a stable AAS-safe token instead of a placeholder.
+  - Never write "test", "example", "placeholder", "N/A", or empty strings.
+  - Always give a helpful reason so the human reviewer knows what to look for.
+
+system_base: |
+  You are an expert in the Asset Administration Shell (AAS) standard (Part 2 v3.1) and the ResourceAAS ontology used at Aalborg University Smart Production Lab.
+
+  Your task: generate a COMPLETE and DETAILED AAS JSON document from the component specification sheet provided by the user.
+
+  CRITICAL RULES:
+  - Read EVERY detail from the specification and use it to populate ALL submodel fields.
+  - Output ONLY a single valid JSON object. No prose, no markdown fences.
+  - Every submodel must have fully populated submodelElements arrays.
+  {uncertainty_rules}
+
+system_base_json_description: |
+  You are an expert in the Asset Administration Shell (AAS) standard (Part 2 v3.1) and the ResourceAAS ontology used at Aalborg University Smart Production Lab.
+
+  Your task: populate a ResourceAAS profile JSON template from the component specification sheet.
+
+  CRITICAL RULES:
+  - Keep the provided JSON structure and keys.
+  - Fill values carefully from the specification.
+  - Return a PROFILE JSON object only (single root object with profile fields), not a full AAS package.
+  - Do NOT output top-level AAS package keys such as: assetAdministrationShells, submodels, conceptDescriptions.
+  - For date-like fields (for example DateOfManufacture):
+      * if the spec sheet states a date, return lexical form YYYY-MM-DD;
+      * if the spec sheet does NOT state the date, OMIT the field entirely
+        from the JSON (do not emit a [VERIFY: ...] marker — it is optional).
+  - Output ONLY JSON. No prose, no markdown fences.
+  {uncertainty_rules}
+
+user_spec_note_gemini_with_pdf: |
+  (The full component specification is in the attached PDF — read it carefully.)
+
+user_spec_note_no_pdf: |
+  No PDF provided. Generate realistic values for '{asset_name}'.
+
+user_spec_note_text_with_pdf: |
+  ## Component Specification (extracted from PDF)
+
+  {pdf_text}
+
+user_prompt_base: |
+  Generate a complete, fully-populated AAS JSON for this component.
+
+  Asset Name:         {asset_name}
+  Base URL:           {base_url}
+  Submodels to build: {submodels}
+
+  {spec_note}
+
+  Where you are uncertain about a value, use [VERIFY: reason] as the value.
+  Output the complete AAS JSON now.
+
+user_prompt_base_json_description: |
+  Populate the following ResourceAAS profile JSON for this component.
+
+  Asset Name:         {asset_name}
+  Base URL:           {base_url}
+  Submodels to build: {submodels}
+
+  {spec_note}
+
+  Semantic guidance for what each field should contain:
+
+  {profile_semantic_guide_json}
+
+  Use this JSON structure and fill values:
+
+  {profile_example_json}
+
+  Return ONLY the complete populated JSON profile object.
+  Do not return a full AAS package (no assetAdministrationShells/submodels/conceptDescriptions).
+
+retry_template: |
+  Your AAS JSON has validation errors (attempt {attempt}/{max_attempts}). Fix ALL issues listed below and return the corrected complete JSON.
+
+  ## Metamodel Validation Issues (BaSyx)
+  {metamodel_issue_lines}
+
+  ## Ontology Validation Issues (SHACL)
+  {ontology_issue_lines}
+
+  Important:
+  - Keep [VERIFY: ...] only for uncertain data values, never for identifiers/references.
+  - Ensure idShort/id/globalAssetId/reference key values are AAS-safe and never contain placeholders.
+  - Fix only structural/schema issues.
+  - Return the complete corrected AAS JSON.
+
+retry_template_json_description: |
+  Your profile JSON produced validation issues (attempt {attempt}/{max_attempts}).
+  Fix ALL issues listed below and return the corrected complete JSON profile object.
+
+  ## Profile Validation Issues
+  {metamodel_issue_lines}
+
+  ## Additional Context
+  {ontology_issue_lines}
+
+  Important:
+  - Return a PROFILE JSON object only. Never return full AAS package keys (assetAdministrationShells/submodels/conceptDescriptions).
+  - Keep [VERIFY: ...] only for uncertain data values on MANDATORY fields, never for identifiers/references.
+  - For OPTIONAL fields with unknown values (DateOfManufacture, YearOfConstruction,
+    HardwareVersion, SoftwareVersion, FirmwareVersion, CountryOfOrigin,
+    ManufacturerProductFamily, BatchNumber, URIOfTheProduct), OMIT the field
+    entirely instead of emitting a [VERIFY: ...] placeholder.
+  - Ensure idShort/id/globalAssetId/reference key values are AAS-safe and never contain placeholders.
+  - For DateOfManufacture, only include the field if you have a concrete YYYY-MM-DD value.
+  - Return ONLY the complete corrected JSON profile object.
