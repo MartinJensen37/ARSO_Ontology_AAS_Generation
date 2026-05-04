@@ -200,7 +200,7 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
     Returns (conforms, all_issues, metamodel_issues, ontology_issues).
     """
     try:
-        from Transformation.AAS_Builder.AAS_to_RDF.aas_to_rdf import convert as aas_to_rdf_convert
+        from Transformation.AAS_to_RDF.aas_to_rdf import convert as aas_to_rdf_convert
     except ImportError as exc:
         msg = f"v2 validator: cannot import Transformation.AAS_Builder.AAS_to_RDF.aas_to_rdf ({exc})"
         return False, [{"source": "validation", "severity": "Violation", "message": msg}], \

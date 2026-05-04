@@ -1,0 +1,54 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# Parameters (Submodel)
+#   └─ ParameterEntry [SMC, 1..*]
+#        ├─ name [Property]
+#        ├─ value [Property]
+#        ├─ valueType [Property]
+#        └─ unit [Property, optional]
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/parameters>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Parameters (Custom).""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:ParametersSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Parameters Submodel" ;
+  rdfs:comment "Custom — Static configuration parameters." .
+
+
+#################################################################
+# ELEMENT TYPES
+#################################################################
+
+arso:ParameterEntrySMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "A parameter entry within the Parameters submodel." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+arso:ParametersSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:ParameterEntrySMC ] .

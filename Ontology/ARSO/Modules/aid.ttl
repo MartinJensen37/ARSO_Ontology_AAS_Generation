@@ -1,0 +1,377 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# AID (Submodel)
+#   └─ {interface_name} [SMC Interface, 1..*]
+#        ├─ title               [Property, xs:string, 1]
+#        ├─ created             [Property, xs:dateTime, 0..1]
+#        ├─ modified            [Property, xs:dateTime, 0..1]
+#        ├─ support             [Property, xs:anyURI, 0..1]
+#        ├─ EndpointMetadata    [SMC, 1]
+#        │    ├─ base              [Property, xs:anyURI, 1]
+#        │    ├─ contentType       [Property, xs:string, 0..1]
+#        │    ├─ security          [SML of Property xs:string, 1]
+#        │    ├─ securityDefinitions [SMC, 1]
+#        │    │    └─ {scheme_name}  [SMC SecurityScheme, 1..*]
+#        │    │         ├─ scheme    [Property, xs:string, 1]
+#        │    │         └─ ...       [scheme-specific properties]
+#        │    ├─ modv_mostSignificantByte  [Property, xs:boolean, 0..1]
+#        │    └─ modv_mostSignificantWord  [Property, xs:boolean, 0..1]
+#        ├─ InteractionMetadata [SMC, 0..1]
+#        │    ├─ properties [SMC, 0..1]
+#        │    │    └─ {prop_name}  [SMC PropertyDefinition, 0..*]
+#        │    │         ├─ key          [Property, xs:string, 0..1]
+#        │    │         ├─ type         [Property, xs:string, 0..1]
+#        │    │         ├─ description  [MLP, 0..1]
+#        │    │         ├─ observable   [Property, xs:boolean, 0..1]
+#        │    │         └─ forms        [SMC, 1]
+#        │    │              ├─ href            [Property, xs:string, 1]
+#        │    │              ├─ contentType     [Property, xs:string, 0..1]
+#        │    │              ├─ security        [SML, 0..1]
+#        │    │              ├─ subprotocol     [Property, xs:string, 0..1]
+#        │    │              ├─ htv_methodName  [Property, xs:string, 0..1]
+#        │    │              ├─ modv_function   [Property, xs:string, 0..1]
+#        │    │              ├─ modv_address    [Property, xs:unsignedShort, 0..1]
+#        │    │              └─ mqv_topic       [Property, xs:string, 0..1]
+#        │    ├─ actions  [SMC, 0..1]
+#        │    │    └─ {action_name} [SMC ActionDefinition, 0..*]
+#        │    │         └─ forms  [SMC, 1]
+#        │    └─ events   [SMC, 0..1]
+#        │         └─ {event_name}  [SMC EventDefinition, 0..*]
+#        │              └─ forms  [SMC, 1]
+#        └─ ExternalDescriptor [SMC, 0..1]
+#             └─ {file}  [File, 1..*]
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/aid>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Asset Interfaces Description (IDTA 02017-1-1, W3C WoT TD aligned).
+
+  Submodel semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel
+  Interface semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:AIDSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Asset Interfaces Description Submodel" ;
+  rdfs:comment "IDTA 02017 — Asset Interfaces Description." .
+
+
+#################################################################
+# ELEMENT TYPES — Interface level
+#################################################################
+
+arso:InterfaceSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC Interface within AID (one per communication interface). semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface" .
+
+arso:InterfaceTitleProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property title (xs:string) — human-readable name of the Interface." .
+
+arso:InterfaceCreatedProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property created (xs:dateTime) — creation timestamp of the Interface." .
+
+arso:InterfaceModifiedProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modified (xs:dateTime) — last-modified timestamp of the Interface." .
+
+arso:InterfaceSupportProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property support (xs:anyURI) — URI for developer support." .
+
+
+#################################################################
+# ELEMENT TYPES — EndpointMetadata
+#################################################################
+
+arso:EndpointMetadataSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC EndpointMetadata within Interface — transport-layer binding." .
+
+arso:EndpointBaseProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property base (xs:anyURI) — base URI for all forms in this Interface." .
+
+arso:ContentTypeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property contentType (xs:string) — default media type (e.g. application/json)." .
+
+arso:SecuritySML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML security — list of active security scheme names (xs:string) referencing securityDefinitions." .
+
+arso:SecurityDefinitionsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC securityDefinitions — container for named security scheme SMCs." .
+
+arso:SecuritySchemeSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC {scheme_name} — a security scheme definition (nosec_sc, basic_sc, apikey_sc, etc.)." .
+
+arso:SchemeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property scheme (xs:string) — security scheme type identifier (nosec, basic, apikey, bearer, psk, digest, oauth2, combo, auto)." .
+
+# Modbus EndpointMetadata fields
+arso:ModvMostSignificantByteProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modv_mostSignificantByte (xs:boolean) — byte order flag for Modbus." .
+
+arso:ModvMostSignificantWordProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modv_mostSignificantWord (xs:boolean) — word order flag for Modbus." .
+
+
+#################################################################
+# ELEMENT TYPES — InteractionMetadata
+#################################################################
+
+arso:InteractionMetadataSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC InteractionMetadata within Interface — WoT interaction affordances." .
+
+arso:PropertiesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC properties — container for PropertyDefinition SMCs (WoT PropertyAffordances)." .
+
+arso:ActionsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC actions — container for ActionDefinition SMCs (WoT ActionAffordances)." .
+
+arso:EventsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC events — container for EventDefinition SMCs (WoT EventAffordances)." .
+
+arso:PropertyDefinitionSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC {prop_name} — a PropertyAffordance (readable/observable/writable data point). Must have a forms SMC." .
+
+arso:ActionDefinitionSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC {action_name} — an ActionAffordance (invokable operation). Must have a forms SMC." .
+
+arso:EventDefinitionSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC {event_name} — an EventAffordance (subscribable notification). Must have a forms SMC." .
+
+
+#################################################################
+# ELEMENT TYPES — Forms (protocol binding)
+#################################################################
+
+arso:FormsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC forms — protocol binding for an interaction affordance. Must contain href." .
+
+arso:HrefProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property href (xs:string) — target URI for this form." .
+
+# HTTP binding
+arso:HtvMethodNameProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property htv_methodName (xs:string) — HTTP method (GET, POST, PUT, DELETE, PATCH)." .
+
+# Modbus binding
+arso:ModvFunctionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modv_function (xs:string) — Modbus function code name." .
+
+arso:ModvAddressProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modv_address (xs:unsignedShort) — Modbus register address." .
+
+arso:ModvQuantityProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property modv_quantity (xs:unsignedShort) — number of Modbus registers." .
+
+# MQTT binding
+arso:MqvTopicProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property mqv_topic (xs:string) — MQTT topic." .
+
+arso:MqvRetainProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property mqv_retain (xs:boolean) — MQTT retain flag." .
+
+# OPC UA binding — EndpointMetadata properties
+arso:UavProtocolProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property protocol (xs:string) — transport protocol, e.g. 'OPC UA'. OPC UA EndpointMetadata." .
+
+arso:UavEncodingProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property encoding (xs:string) — message encoding, typically 'TCP Binary'. OPC UA EndpointMetadata." .
+
+arso:UavPortProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property port (xs:string) — OPC UA endpoint port, typically '4840'. OPC UA EndpointMetadata." .
+
+arso:UavNamespaceUriProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property namespace_uri (xs:string) — OPC UA application namespace URI from the NodeSet <NamespaceUri> element. OPC UA EndpointMetadata." .
+
+arso:UavNamespaceIndexProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property namespace_index (xs:string) — namespace index for application nodes, typically '1'. OPC UA EndpointMetadata." .
+
+# OPC UA binding — security scheme classes (IDTA 02017-1-1 §7.4)
+arso:OPCUAChannelSecuritySchemeSMC rdf:type owl:Class ;
+  rdfs:subClassOf arso:SecuritySchemeSMC ;
+  rdfs:comment "SMC opcua_channel_sc — OPC UA channel security scheme. semanticId: http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityChannelScheme" .
+
+arso:UavSecurityModeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property security_mode (xs:string) — OPC UA MessageSecurityMode: None, Sign, or SignAndEncrypt." .
+
+arso:UavSecurityPolicyProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property security_policy (xs:string) — OPC UA SecurityPolicy URI, e.g. Basic256Sha256." .
+
+arso:OPCUAAuthenticationSecuritySchemeSMC rdf:type owl:Class ;
+  rdfs:subClassOf arso:SecuritySchemeSMC ;
+  rdfs:comment "SMC opcua_authentication_sc — OPC UA user authentication scheme. semanticId: http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityAuthenticationScheme" .
+
+arso:UavUserIdentityTokenProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property user_token_type (xs:string) — OPC UA user identity token type: Anonymous, UserName, Certificate, or IssuedToken." .
+
+# OPC UA binding — Forms properties
+arso:UavNodeIdProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property opc_node_id (xs:string) — full OPC UA NodeId string, e.g. 'ns=1;s=PlungerSet80/Methods/Start'. Used in Forms SMC for actions and properties." .
+
+arso:UavNamespaceProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property opc_namespace (xs:string) — namespace index for the node, e.g. '1'. Used in Forms SMC." .
+
+
+#################################################################
+# ELEMENT TYPES — ExternalDescriptor
+#################################################################
+
+arso:ExternalDescriptorSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ExternalDescriptor — container for File references to external TD documents." .
+
+arso:ExternalDescriptorFile rdf:type owl:Class ;
+  rdfs:subClassOf aas:File ;
+  rdfs:comment "File within ExternalDescriptor — path to an external TD document." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+# AID must contain at least one Interface
+arso:AIDSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:InterfaceSMC ] .
+
+# Each Interface must have title (mandatory, cardinality 1)
+arso:InterfaceSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:InterfaceTitleProperty ] .
+
+# Each Interface must contain EndpointMetadata (mandatory)
+arso:InterfaceSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:EndpointMetadataSMC ] .
+
+# Each EndpointMetadata must contain base URI (mandatory)
+arso:EndpointMetadataSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:EndpointBaseProperty ] .
+
+# Each EndpointMetadata must contain security SML (mandatory)
+arso:EndpointMetadataSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SecuritySML ] .
+
+# Each EndpointMetadata must contain securityDefinitions (mandatory)
+arso:EndpointMetadataSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SecurityDefinitionsSMC ] .
+
+# securityDefinitions must contain at least one SecurityScheme
+arso:SecurityDefinitionsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SecuritySchemeSMC ] .
+
+# Each SecurityScheme must have a scheme property
+arso:SecuritySchemeSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SchemeProperty ] .
+
+# Each PropertyDefinition must have a forms SMC
+arso:PropertyDefinitionSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:FormsSMC ] .
+
+# Each ActionDefinition must have a forms SMC
+arso:ActionDefinitionSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:FormsSMC ] .
+
+# Each EventDefinition must have a forms SMC
+arso:EventDefinitionSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:FormsSMC ] .
+
+# Each forms SMC must contain href (mandatory)
+arso:FormsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:HrefProperty ] .
+
+# ExternalDescriptor must contain at least one File
+arso:ExternalDescriptorSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:ExternalDescriptorFile ] .
+
+# PropertiesSMC may only contain PropertyDefinition children
+arso:PropertiesSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:allValuesFrom arso:PropertyDefinitionSMC ] .
+
+# ActionsSMC may only contain ActionDefinition children
+arso:ActionsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:allValuesFrom arso:ActionDefinitionSMC ] .
+
+# EventsSMC may only contain EventDefinition children
+arso:EventsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:allValuesFrom arso:EventDefinitionSMC ] .

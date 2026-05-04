@@ -1,0 +1,327 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# Nameplate (Submodel)
+#   ├─ URIOfTheProduct [Property, xs:anyURI, 1]
+#   ├─ ManufacturerName [MLP, 1]
+#   ├─ ManufacturerProductDesignation [MLP, 1]
+#   ├─ AddressInformation [SMC, 1]
+#   ├─ OrderCodeOfManufacturer [Property, xs:string, 1]
+#   ├─ Markings [SML, 0..1]
+#   │    └─ Markings__00__ [SMC, 1..*]
+#   │         ├─ MarkingName [Property, xs:string, 1]
+#   │         └─ MarkingFile [File, 1]
+#   └─ AssetSpecificProperties [SMC, 0..1]
+#        └─ GuidelineSpecificProperties [SML, 0..1]
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/nameplate>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Digital Nameplate (IDTA 02006-3-0, November 2024).
+
+  Submodel semanticId: https://admin-shell.io/idta/nameplate/3/0/Nameplate""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:DigitalNameplateSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Digital Nameplate Submodel" ;
+  rdfs:comment "IDTA 02006-3-0 — Digital Nameplate for Industrial Equipment." .
+
+
+#################################################################
+# ELEMENT TYPES — top-level mandatory properties
+#################################################################
+
+arso:URIOfTheProductProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property URIOfTheProduct (xs:anyURI) — unique global identification of the product instance. semanticId: 0112/2///61987#ABN590#002. Mandatory (cardinality 1) in v3.0." .
+
+arso:ManufacturerNameMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerName — legally valid designation of the manufacturer. semanticId: 0112/2///61987#ABA565#009. Mandatory." .
+
+arso:ManufacturerProductDesignationMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerProductDesignation — short description of the product. semanticId: 0112/2///61987#ABA567#009. Mandatory." .
+
+arso:OrderCodeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property OrderCodeOfManufacturer (xs:string) — unique order identifier. semanticId: 0112/2///61987#ABA950#008. Mandatory (changed from optional in v2)." .
+
+
+#################################################################
+# ELEMENT TYPES — AddressInformation (drop-in, mandatory)
+#################################################################
+
+arso:AddressInformationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC AddressInformation — drop-in from IDTA 02002 (Contact Informations). semanticId: https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation. Mandatory per IDTA 02006-3-0." .
+
+arso:AddressStreetMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP Street within AddressInformation — mandatory per section 3.2. semanticId: 0173-1#02-AAO128#002." .
+
+arso:AddressZipcodeMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP Zipcode within AddressInformation — mandatory per section 3.2. semanticId: 0173-1#02-AAO129#002." .
+
+arso:AddressCityTownMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP CityTown within AddressInformation — mandatory per section 3.2. semanticId: 0173-1#02-AAO132#002." .
+
+arso:AddressNationalCodeMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP NationalCode within AddressInformation — mandatory per section 3.2. semanticId: 0173-1#02-AAO134#002." .
+
+
+#################################################################
+# ELEMENT TYPES — top-level optional properties
+#################################################################
+
+arso:ManufacturerProductRootMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerProductRoot — top level of 3-level manufacturer product hierarchy. semanticId: 0112/2///61360_7#AAS011#001. Optional (0..1)." .
+
+arso:ManufacturerProductFamilyMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerProductFamily — second level of 3-level manufacturer product hierarchy. semanticId: 0112/2///61987#ABP464#002. Optional (0..1)." .
+
+arso:ManufacturerProductTypeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ManufacturerProductType (xs:string) — characteristic to differentiate products within a family. semanticId: 0112/2///61987#ABA300#008. Optional (0..1)." .
+
+arso:ProductArticleNumberProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ProductArticleNumberOfManufacturer (xs:string) — unique product identifier of the manufacturer. semanticId: 0112/2///61987#ABA581#007. Optional (0..1)." .
+
+arso:SerialNumberProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property SerialNumber (xs:string) — unique identifier for the manufactured device. semanticId: 0112/2///61987#ABA951#009. Optional (0..1)." .
+
+arso:YearOfConstructionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property YearOfConstruction (xs:string) — year manufacturing process completed. semanticId: 0112/2///61987#ABP000#002. Optional (0..1); changed from mandatory in v2." .
+
+arso:DateOfManufactureProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property DateOfManufacture (xs:date) — date item was manufactured. semanticId: 0112/2///61987#ABB757#007. Optional (0..1)." .
+
+arso:HardwareVersionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property HardwareVersion (xs:string) — version of hardware supplied with device. semanticId: 0112/2///61987#ABA926#008. Optional (0..1)." .
+
+arso:FirmwareVersionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property FirmwareVersion (xs:string) — version of firmware supplied with device. semanticId: 0112/2///61987#ABA302#006. Optional (0..1)." .
+
+arso:SoftwareVersionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property SoftwareVersion (xs:string) — version of software used by the device. semanticId: 0112/2///61987#ABA601#008. Optional (0..1)." .
+
+arso:CountryOfOriginProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property CountryOfOrigin (xs:string) — DIN EN ISO 3166-1 alpha-2 country code. semanticId: 0112/2///61987#ABP462#001. Optional (0..1)." .
+
+arso:UniqueFacilityIdentifierProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property UniqueFacilityIdentifier (xs:string) — unique string for identification of locations/buildings in the product's value chain. semanticId: https://admin-shell.io/idta/nameplate/3/0/UniqueFacilityIdentifier. New in v3.0. Optional (0..1)." .
+
+arso:CompanyLogoFile rdf:type owl:Class ;
+  rdfs:subClassOf aas:File ;
+  rdfs:comment "File CompanyLogo — graphic mark representing the company/organisation/product. semanticId: 0112/2///61987#ABP463#001. Optional (0..1)." .
+
+
+#################################################################
+# ELEMENT TYPES — Markings (SML in v3)
+#################################################################
+
+arso:MarkingsSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML Markings — list of product markings (CE marking etc.). semanticId: 0112/2///61360_7#AAS006#001. Changed from SMC to SML in v3.0. Optional (0..1)." .
+
+arso:MarkingSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC Markings__00__ — single marking information entry within Markings SML. semanticId: 0112/2///61360_7#AAS009#001. Must contain MarkingName and MarkingFile." .
+
+arso:MarkingNameProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property MarkingName (xs:string) — common name of the marking (preferably IRDI from IEC CDD or ECLASS). semanticId: 0112/2///61987#ABA231#009. Mandatory within MarkingSMC." .
+
+arso:MarkingFileFile rdf:type owl:Class ;
+  rdfs:subClassOf aas:File ;
+  rdfs:comment "File MarkingFile — conformity symbol image of the marking. semanticId: 0112/2///61987#ABO100#002. Mandatory within MarkingSMC." .
+
+arso:DesignationOfCertOrApprovalProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property DesignationOfCertificateOrApproval (xs:string) — certificate/approval identifier without spaces. semanticId: 0112/2///61987#ABH783#003. Optional (0..1)." .
+
+arso:IssueDateProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property IssueDate (xs:date) — date the certificate was issued (CCYY-MM-DD). semanticId: 0112/2///61987#ABO097#001. Optional (0..1)." .
+
+arso:ExpiryDateProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ExpiryDate (xs:date) — date the certificate expires (CCYY-MM-DD). semanticId: 0112/2///61987#ABH830#002. Optional (0..1)." .
+
+arso:MarkingAdditionalTextProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property MarkingAdditionalText (xs:string) — additional plain-text marking information (e.g. notified body ID). semanticId: 0112/2///61987#ABB146#007. Optional (0..*)." .
+
+
+#################################################################
+# ELEMENT TYPES — AssetSpecificProperties
+#################################################################
+
+arso:AssetSpecificPropertiesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC AssetSpecificProperties — asset-specific nameplate properties not covered by the standard structure. semanticId: 0173-1#02-ABI218#003/0173-1#01-AGZ672#004. Optional (0..1)." .
+
+arso:GuidelineSpecificPropertiesSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML GuidelineSpecificProperties — list of per-guideline property groups within AssetSpecificProperties. semanticId: 0173-1#02-ABI219#003/0173-1#01-AHD205#004. Optional (0..1)." .
+
+arso:GuidelineSpecificPropertiesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC GuidelineSpecificProperties__00__ — one set of properties for a specific guideline/regulation. semanticId: 0173-1#01-AHD205#004. Must contain GuidelineForConformityDeclaration." .
+
+arso:GuidelineForConformityDeclarationProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property GuidelineForConformityDeclaration (xs:string) — guideline/stipulation/legislation used for conformity determination. semanticId: 0173-1#02-AAO856#002. Mandatory within GuidelineSpecificPropertiesSMC." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS — Nameplate submodel mandatory elements
+#################################################################
+
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:URIOfTheProductProperty ] .
+
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:ManufacturerNameMLP ] .
+
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:ManufacturerProductDesignationMLP ] .
+
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:AddressInformationSMC ] .
+
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:OrderCodeProperty ] .
+
+# At most one AddressInformation
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:AddressInformationSMC ] .
+
+# At most one Markings SML
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:MarkingsSML ] .
+
+# At most one AssetSpecificProperties
+arso:DigitalNameplateSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:AssetSpecificPropertiesSMC ] .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS — AddressInformation mandatory fields
+#################################################################
+
+arso:AddressInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:AddressStreetMLP ] .
+
+arso:AddressInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:AddressZipcodeMLP ] .
+
+arso:AddressInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:AddressCityTownMLP ] .
+
+arso:AddressInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:AddressNationalCodeMLP ] .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS — Markings SML
+#################################################################
+
+# Markings SML must contain at least one MarkingSMC
+arso:MarkingsSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:someValuesFrom arso:MarkingSMC ] .
+
+# Each MarkingSMC must have MarkingName (mandatory)
+arso:MarkingSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:MarkingNameProperty ] .
+
+# Each MarkingSMC must have MarkingFile (mandatory)
+arso:MarkingSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:MarkingFileFile ] .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS — AssetSpecificProperties
+#################################################################
+
+# GuidelineSpecificProperties SML is at most one within AssetSpecificProperties
+arso:AssetSpecificPropertiesSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:GuidelineSpecificPropertiesSML ] .
+
+# GuidelineSpecificProperties SML must contain at least one GuidelineSpecificPropertiesSMC
+arso:GuidelineSpecificPropertiesSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:someValuesFrom arso:GuidelineSpecificPropertiesSMC ] .
+
+# Each GuidelineSpecificPropertiesSMC must have GuidelineForConformityDeclaration (mandatory)
+arso:GuidelineSpecificPropertiesSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:GuidelineForConformityDeclarationProperty ] .

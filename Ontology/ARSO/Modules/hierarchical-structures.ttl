@@ -1,0 +1,152 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# HierarchicalStructures (Submodel)
+#   ├─ EntryNode [Entity, 1] — root of BoM tree
+#   │    ├─ Node [Entity, 1..*] (recursive)
+#   │    ├─ SameAs [RelationshipElement, 0..*]
+#   │    ├─ IsPartOf [RelationshipElement, 0..*] XOR
+#   │    └─ HasPart [RelationshipElement, 0..*]
+#   └─ ArcheType [Property, xs:string, 1] — Full | OneDown | OneUp
+# Additional non-OWL checks: self-managed constraints and HasPart/IsPartOf exclusivity.
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/hierarchical-structures>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Hierarchical Structures enabling Bills of Material (IDTA 02011-1-1, June 2024).
+
+  Submodel semanticId: https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:HierarchicalStructuresSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Hierarchical Structures Submodel" ;
+  rdfs:comment "IDTA 02011-1-1 — Hierarchical Structures enabling Bills of Material." .
+
+
+#################################################################
+# ELEMENT TYPES — Entity nodes
+#################################################################
+
+arso:EntryNodeEntity rdf:type owl:Class ;
+  rdfs:subClassOf aas:Entity ;
+  rdfs:comment "Entity EntryNode — root of the BoM tree. Must be SelfManagedEntity reflecting the asset administered by this AAS. Exactly one per submodel." .
+
+arso:NodeEntity rdf:type owl:Class ;
+  rdfs:subClassOf aas:Entity ;
+  rdfs:comment "Entity Node — a BoM node at any level below EntryNode. Can be Co-managed or Self-managed. Recursive: may contain further NodeEntity instances in its statements." .
+
+
+#################################################################
+# ELEMENT TYPES — Submodel-level properties
+#################################################################
+
+arso:ArcheTypeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ArcheType (xs:string) — hierarchy archetype: 'Full', 'OneDown', or 'OneUp'. Value constraint enforced via SPARQL SHACL." .
+
+# OWL constraints to allow owl->shacl conversion for ArcheType and SelfManaged entities
+arso:ArcheTypeProperty rdfs:subClassOf [
+  a owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Property/value> ;
+  owl:allValuesFrom [
+    a rdfs:Datatype ;
+    owl:oneOf ( "Full" "OneDown" "OneUp" )
+  ]
+] , [
+  a owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Property/value> ;
+  owl:minCardinality 1
+] , [
+  a owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Property/value> ;
+  owl:maxCardinality 1
+] .
+
+# Self-managed entity class requiring globalAssetId when entityType indicates SelfManagedEntity
+arso:SelfManagedBomEntity
+  a owl:Class ;
+  rdfs:subClassOf aas:Entity ;
+  rdfs:comment "Entity with entityType SelfManagedEntity that must have a globalAssetId." ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty <https://admin-shell.io/aas/3/1/Entity/entityType> ;
+    owl:hasValue <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity>
+  ] ;
+  rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty <https://admin-shell.io/aas/3/1/Entity/globalAssetId> ;
+    owl:minCardinality 1
+  ] .
+
+
+#################################################################
+# ELEMENT TYPES — Relationships (used in both EntryNode and Node statements)
+#################################################################
+
+arso:HasPartRelationship rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement HasPart — parent→child logical connection. Mutually exclusive with IsPartOf per entity. Both first and second must reference an EntryNodeEntity or NodeEntity in the same submodel." .
+
+arso:IsPartOfRelationship rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement IsPartOf — child→parent logical connection. Mutually exclusive with HasPart per entity. Both first and second must reference an EntryNodeEntity or NodeEntity in the same submodel." .
+
+arso:SameAsRelationship rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement SameAs — links two entities representing the same asset, within or across submodels. Both first and second must reference an EntryNodeEntity or NodeEntity." .
+
+
+#################################################################
+# ELEMENT TYPES — Node-only elements
+#################################################################
+
+arso:BulkCountProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property BulkCount (xs:unsignedLong) — count of identical bulk items represented by this node. Only valid on NodeEntity; presence implies the node represents a type-level asset, not a specific instance." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+# HierarchicalStructuresSubmodel must contain exactly 1 EntryNode and exactly 1 ArcheType
+arso:HierarchicalStructuresSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:EntryNodeEntity ] .
+
+arso:HierarchicalStructuresSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:ArcheTypeProperty ] .
+
+# EntryNode must have at least 1 Node in its statements
+arso:EntryNodeEntity rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Entity/statements> ;
+  owl:someValuesFrom arso:NodeEntity ] .
+
+# NodeEntity may have BulkCount (at most 1)
+arso:NodeEntity rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Entity/statements> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:BulkCountProperty ] .

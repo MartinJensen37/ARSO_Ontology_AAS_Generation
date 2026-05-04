@@ -1,0 +1,257 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# CapabilityDescription (Submodel)
+#   └─ CapabilitySet [SMC, 1..*]
+#        └─ CapabilityContainer [SMC, 1..*]
+#             ├─ Capability [Capability, 1]
+#             ├─ CapabilityComment [MLP, 0..1]
+#             ├─ PropertySet [SMC, 0..*]
+#             │    └─ PropertyContainer [SMC, 1..*]
+#             │         ├─ SameProperty [RelationshipElement, 0..*]
+#             │         ├─ PropertyComment [MLP, 0..1]
+#             │         └─ CapabilityPropertyType [abstract, 1]
+#             └─ CapabilityRelations [SMC, 0..1]
+#                  ├─ CapabilityRealizedBy [RelationshipElement, 0..*]
+#                  ├─ ComposedOfSet [SMC, 0..1]
+#                  ├─ GeneralizedBySet [SMC, 0..1]
+#                  └─ ConstraintSet [SMC, 0..*]
+# Cross-submodel note: CapabilityRealizedBy.second must reference a Skill in the same AAS.
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/capabilities>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Capability Description (IDTA 02020-1-0).
+
+  Submodel semanticId: https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0
+  Cross-submodel: CapabilityRealizedBy.second must reference a Skill in the Skills SM of the same AAS (enforced via SPARQL SHACL).""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:CapabilitiesSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Capability Description Submodel" ;
+  rdfs:comment "IDTA 02020 — Capability Description." .
+
+
+#################################################################
+# ELEMENT TYPES — CapabilitySet / CapabilityContainer
+#################################################################
+
+arso:CapabilitySetSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC CapabilitySet — groups CapabilityContainers for one use case of the asset." .
+
+arso:CapabilityContainerSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC CapabilityContainer — holds exactly one Capability element plus optional descriptive elements." .
+
+arso:CapabilityElement rdf:type owl:Class ;
+  rdfs:subClassOf aas:Capability ;
+  rdfs:comment "Capability element — implementation-independent specification of a function in industrial production. semanticId: https://admin-shell.io/idta/CapabilityDescription/Capability/1/0. Qualified by CapabilityRoleQualifier (Required|Offered|NotAssigned)." .
+
+arso:CapabilityCommentMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP CapabilityComment — individual human-readable comment for the capability." .
+
+
+#################################################################
+# ELEMENT TYPES — PropertySet / PropertyContainer
+#################################################################
+
+arso:PropertySetSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC PropertySet — set of properties describing the capability in more detail." .
+
+arso:PropertyContainerSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC PropertyContainer — holds one CapabilityPropertyType instance plus SameProperty and PropertyComment." .
+
+arso:SamePropertyRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement SameProperty — links the property in this PropertyContainer (first) to an identical property in another Submodel or external source (second)." .
+
+arso:PropertyCommentMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP PropertyComment — general human-readable description of the property." .
+
+
+#################################################################
+# ELEMENT TYPES — CapabilityRelations
+#################################################################
+
+arso:CapabilityRelationsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC CapabilityRelations — optional container for all relationships of a capability." .
+
+arso:CapabilityRealizedByRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement CapabilityRealizedBy — first: Capability in this SM; second: Skill in the Skills Submodel of the same AAS. Cross-SM enforcement via SPARQL SHACL." .
+
+
+#################################################################
+# ELEMENT TYPES — ComposedOfSet
+#################################################################
+
+arso:ComposedOfSetSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ComposedOfSet — created when the capability is composed of sub-capabilities." .
+
+arso:ComposedOfContainerSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ComposedOfContainer — one composition record; must contain at least 2 CapabilityComposedOf relationships." .
+
+arso:CapabilityComposedOfRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement CapabilityComposedOf — first: composed capability; second: one of its sub-capabilities. Minimum 2 per ComposedOfContainer." .
+
+arso:ComposedOfCommentMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ComposedOfComment — human-readable description of the composition." .
+
+
+#################################################################
+# ELEMENT TYPES — GeneralizedBySet
+#################################################################
+
+arso:GeneralizedBySetSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC GeneralizedBySet — created when generalizations of the capability exist." .
+
+arso:CapabilityGeneralizedByRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement CapabilityGeneralizedBy — first: this capability (to be generalized); second: a more general capability." .
+
+
+#################################################################
+# ELEMENT TYPES — ConstraintSet
+#################################################################
+
+arso:ConstraintSetSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ConstraintSet — created when constraints on the capability exist. Must contain at least one PropertyConstraintContainer or TransitionConstraintContainer (SM-CapabilityDescription-2)." .
+
+arso:PropertyConstraintContainerSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC PropertyConstraintContainer — one property constraint record. Contains: PropertyConstraintType (abstract, 1), PropertyConditionalType (1), ConstraintPropertyRelations (1)." .
+
+arso:TransitionConstraintContainerSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC TransitionConstraintContainer — one transition constraint record. Contains: TransitionConstrainedBy (1), TransitionConditionalType (1)." .
+
+arso:ConstraintPropertyRelationsSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ConstraintPropertyRelations — contains all ConstraintHasProperty relationships for a PropertyConstraintContainer." .
+
+arso:ConstraintHasPropertyRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement ConstraintHasProperty — first: PropertyConstraint; second: Property from a PropertyContainer." .
+
+arso:TransitionConstrainedByRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  rdfs:comment "RelationshipElement TransitionConstrainedBy — first: constrained Capability; second: constraining Capability from another CapabilityContainer." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+# CapabilitiesSubmodel must contain at least one CapabilitySet
+arso:CapabilitiesSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:someValuesFrom arso:CapabilitySetSMC ] .
+
+# CapabilitySet must contain at least one CapabilityContainer
+arso:CapabilitySetSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:CapabilityContainerSMC ] .
+
+# CapabilityContainer must contain exactly one Capability element (mandatory)
+arso:CapabilityContainerSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:CapabilityElement ] .
+
+# CapabilityContainer must contain at most one CapabilityRelations
+arso:CapabilityContainerSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:CapabilityRelationsSMC ] .
+
+# PropertySet must contain at least one PropertyContainer
+arso:PropertySetSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:PropertyContainerSMC ] .
+
+# CapabilityRelations.ComposedOfSet: at most one
+arso:CapabilityRelationsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:ComposedOfSetSMC ] .
+
+# CapabilityRelations.GeneralizedBySet: at most one
+arso:CapabilityRelationsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:GeneralizedBySetSMC ] .
+
+# ComposedOfSet must contain at least one ComposedOfContainer
+arso:ComposedOfSetSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:ComposedOfContainerSMC ] .
+
+# GeneralizedBySet must contain at least one CapabilityGeneralizedBy
+arso:GeneralizedBySetSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:CapabilityGeneralizedByRel ] .
+
+# ConstraintSet must contain PropertyConstraintContainer or TransitionConstraintContainer (SM-CapabilityDescription-2)
+arso:ConstraintSetSMC rdfs:subClassOf [
+  rdf:type owl:Class ;
+  owl:unionOf (
+    [ rdf:type owl:Restriction ;
+      owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      owl:someValuesFrom arso:PropertyConstraintContainerSMC ]
+    [ rdf:type owl:Restriction ;
+      owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      owl:someValuesFrom arso:TransitionConstraintContainerSMC ] ) ] .
+
+# PropertyConstraintContainer must have ConstraintPropertyRelations (mandatory, exactly 1)
+arso:PropertyConstraintContainerSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:ConstraintPropertyRelationsSMC ] .
+
+# ConstraintPropertyRelations must contain at least one ConstraintHasProperty
+arso:ConstraintPropertyRelationsSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:ConstraintHasPropertyRel ] .
+
+# TransitionConstraintContainer must contain TransitionConstrainedBy (1)
+arso:TransitionConstraintContainerSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TransitionConstrainedByRel ] .
