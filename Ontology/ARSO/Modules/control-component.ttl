@@ -31,10 +31,10 @@
 # ONTOLOGY METADATA
 #################################################################
 
-<https://w3id.org/2025/arso/modules/skills>
+<https://w3id.org/2025/arso/modules/control-component>
   rdf:type owl:Ontology ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
-  rdfs:comment """ARSO module: Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
+  rdfs:comment """ARSO module: Control Component / Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
 
   Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0
   Cross-submodel: CCInterfaceReferenceRef targets are validated in SPARQL SHACL.""" .

@@ -1,0 +1,294 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# TechnicalData (Submodel)
+#   ├─ GeneralInformation [SMC, 1]
+#   │    ├─ ManufacturerName [MLP, 1]
+#   │    ├─ CompanyLogo [File, 0..1]
+#   │    ├─ ManufacturerProductDesignation [MLP, 1]
+#   │    ├─ ManufacturerArticleNumber [Property, xs:string, 1]
+#   │    ├─ ManufacturerOrderCode [Property, xs:string, 1]
+#   │    └─ ProductImages [SML, 0..1]
+#   │         └─ ProductImage [SMC, 1..*]
+#   │              ├─ ImageFile [File, 1]
+#   │              └─ ImageNote [MLP, 0..1]
+#   ├─ ProductClassifications [SML, 0..*]
+#   │    └─ ProductClassification [SMC, 1..*]
+#   ├─ TechnicalPropertyAreas [SML, 0..*]
+#   │    └─ TechnicalPropertyArea [SMC, 1..*]
+#   ├─ FurtherInformation [SMC, 0..1]
+#   │    ├─ TextStatement [MLP, 0..1]
+#   │    └─ ValidDate [Property, xs:date, 0..1]
+#   └─ SpecificDescriptions [SML, 0..*]
+#        └─ SpecificDescription [SMC, 1..*]
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/technical-data>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Technical Data (IDTA 02003-2-0).
+
+  Submodel semanticId: https://admin-shell.io/idta-02003-2-0""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:TechnicalDataSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Technical Data Submodel" ;
+  rdfs:comment "IDTA 02003 — Technical Data for product-related information." .
+
+
+#################################################################
+# ELEMENT TYPES — GeneralInformation
+#################################################################
+
+arso:TechnicalGeneralInformationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC GeneralInformation — mandatory top-level container for general product information." .
+
+arso:TechnicalManufacturerNameMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerName — legally valid designation of the manufacturer." .
+
+arso:TechnicalCompanyLogoFile rdf:type owl:Class ;
+  rdfs:subClassOf aas:File ;
+  rdfs:comment "File CompanyLogo — company logo image." .
+
+arso:TechnicalManufacturerProductDesignationMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ManufacturerProductDesignation — short description of the product." .
+
+arso:TechnicalManufacturerArticleNumberProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ManufacturerArticleNumber (xs:string) — unique product identifier of the manufacturer." .
+
+arso:TechnicalManufacturerOrderCodeProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ManufacturerOrderCode (xs:string) — unique code used for ordering." .
+
+arso:TechnicalProductImagesSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML ProductImages — list of product images." .
+
+arso:TechnicalProductImageSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ProductImage — one product image entry with file and optional note." .
+
+arso:TechnicalImageFile rdf:type owl:Class ;
+  rdfs:subClassOf aas:File ;
+  rdfs:comment "File ImageFile — pictorial representation of the product." .
+
+arso:TechnicalImageNoteMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP ImageNote — note or explanation about the product image." .
+
+
+#################################################################
+# ELEMENT TYPES — ProductClassifications
+#################################################################
+
+arso:TechnicalProductClassificationsSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML ProductClassifications — list of product classification entries." .
+
+arso:TechnicalProductClassificationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC ProductClassification — one classification record with classification system metadata." .
+
+arso:TechnicalClassificationSystemProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ClassificationSystem (xs:string) — classification system identifier." .
+
+arso:TechnicalClassificationSystemVersionProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ClassificationSystemVersion (xs:string) — version of the classification system." .
+
+arso:TechnicalClassificationSystemUrlProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ClassificationSystemUrl (xs:string) — URL of the classification system." .
+
+arso:TechnicalProductClassIdProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ProductClassId (xs:string) — class identifier." .
+
+arso:TechnicalProductClassCodedNameProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ProductClassCodedName (xs:string) — coded class name." .
+
+arso:TechnicalProductClassNameProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ProductClassName (xs:string) — human-readable class name." .
+
+
+#################################################################
+# ELEMENT TYPES — TechnicalPropertyAreas
+#################################################################
+
+arso:TechnicalPropertyAreasSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML TechnicalPropertyAreas — list of technical property area entries." .
+
+arso:TechnicalPropertyAreaSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC TechnicalPropertyArea — one technical property area entry." .
+
+
+#################################################################
+# ELEMENT TYPES — FurtherInformation
+#################################################################
+
+arso:TechnicalFurtherInformationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC FurtherInformation — optional top-level container for additional notes." .
+
+arso:TechnicalTextStatementMLP rdf:type owl:Class ;
+  rdfs:subClassOf aas:MultiLanguageProperty ;
+  rdfs:comment "MLP TextStatement — note or explanation about the product." .
+
+arso:TechnicalValidDateProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  rdfs:comment "Property ValidDate (xs:date) — validity date for the further information entry." .
+
+
+#################################################################
+# ELEMENT TYPES — SpecificDescriptions
+#################################################################
+
+arso:TechnicalSpecificDescriptionsSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  rdfs:comment "SML SpecificDescriptions — list of specific description entries." .
+
+arso:TechnicalSpecificDescriptionSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  rdfs:comment "SMC SpecificDescription — one specific description entry." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+# TechnicalDataSubmodel must contain exactly one GeneralInformation container.
+arso:TechnicalDataSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:TechnicalGeneralInformationSMC ] .
+
+# TechnicalDataSubmodel may contain any number of classification/property/description lists.
+arso:TechnicalDataSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:allValuesFrom [
+    a owl:Class ;
+    owl:unionOf (
+      arso:TechnicalGeneralInformationSMC
+      arso:TechnicalProductClassificationsSML
+      arso:TechnicalPropertyAreasSML
+      arso:TechnicalFurtherInformationSMC
+      arso:TechnicalSpecificDescriptionsSML
+    )
+  ]
+] .
+
+# GeneralInformation must contain the standard technical data fields.
+arso:TechnicalGeneralInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TechnicalManufacturerNameMLP ] .
+
+arso:TechnicalGeneralInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TechnicalManufacturerProductDesignationMLP ] .
+
+arso:TechnicalGeneralInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TechnicalManufacturerArticleNumberProperty ] .
+
+arso:TechnicalGeneralInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TechnicalManufacturerOrderCodeProperty ] .
+
+# ProductImages, if present, contains only ProductImage entries.
+arso:TechnicalProductImagesSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:allValuesFrom arso:TechnicalProductImageSMC ] .
+
+arso:TechnicalProductImagesSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:someValuesFrom arso:TechnicalProductImageSMC ] .
+
+# ProductImage entries must contain the image file.
+arso:TechnicalProductImageSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:TechnicalImageFile ] .
+
+# ProductClassification entries should only contain the core classification fields.
+arso:TechnicalProductClassificationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:allValuesFrom [
+    a owl:Class ;
+    owl:unionOf (
+      arso:TechnicalClassificationSystemProperty
+      arso:TechnicalClassificationSystemVersionProperty
+      arso:TechnicalClassificationSystemUrlProperty
+      arso:TechnicalProductClassIdProperty
+      arso:TechnicalProductClassCodedNameProperty
+      arso:TechnicalProductClassNameProperty
+    )
+  ]
+] .
+
+# Technical property areas may contain nested area records.
+arso:TechnicalPropertyAreasSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:allValuesFrom arso:TechnicalPropertyAreaSMC ] .
+
+arso:TechnicalPropertyAreasSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:someValuesFrom arso:TechnicalPropertyAreaSMC ] .
+
+# FurtherInformation may contain a text statement and an optional date.
+arso:TechnicalFurtherInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:TechnicalTextStatementMLP ] .
+
+arso:TechnicalFurtherInformationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:TechnicalValidDateProperty ] .
+
+# Specific descriptions are a list of nested description entries.
+arso:TechnicalSpecificDescriptionsSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:allValuesFrom arso:TechnicalSpecificDescriptionSMC ] .
+
+arso:TechnicalSpecificDescriptionsSML rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+  owl:someValuesFrom arso:TechnicalSpecificDescriptionSMC ] .

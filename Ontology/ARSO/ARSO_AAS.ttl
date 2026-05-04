@@ -18,10 +18,11 @@
   owl:imports <https://w3id.org/2025/arso/modules/nameplate> ;
   owl:imports <https://w3id.org/2025/arso/modules/hierarchical-structures> ;
   owl:imports <https://w3id.org/2025/arso/modules/aid> ;
-  owl:imports <https://w3id.org/2025/arso/modules/skills> ;
+  owl:imports <https://w3id.org/2025/arso/modules/control-component> ;
   owl:imports <https://w3id.org/2025/arso/modules/capabilities> ;
   owl:imports <https://w3id.org/2025/arso/modules/operational-data> ;
   owl:imports <https://w3id.org/2025/arso/modules/parameters> ;
+  owl:imports <https://w3id.org/2025/arso/modules/technical-data> ;
   rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.
 
   This ontology:
