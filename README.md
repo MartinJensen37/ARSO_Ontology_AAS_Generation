@@ -40,6 +40,8 @@ The framework is designed to keep the LLM task focused and controllable. The LLM
 
 This reduces the risk of malformed AAS JSON and makes the generated output easier to validate, correct, and extend.
 
+
+![Simplified architecture for the generation pipeline.](images/architecture.png)
 ---
 
 ## Repository Structure
