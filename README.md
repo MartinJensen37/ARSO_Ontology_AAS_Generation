@@ -137,18 +137,5 @@ The project builds on concepts from the Asset Administration Shell ecosystem, se
 
 ## Licence
 
-Licence information will be added later.
+This project is licensed under the MIT License.
 
-If no licence has been selected yet, please add one before public reuse of the repository.
-
----
-
-## Contact
-
-For questions, issues, or collaboration requests, please open an issue in this repository.
-
-Repository:
-
-```text
-https://github.com/MartinJensen37/ARSO_Ontology_AAS_Generation
-```
