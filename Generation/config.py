@@ -1,6 +1,6 @@
 ﻿"""
-Loads generation/config.yaml and exposes a single Config dataclass.
-All other modules import from here â€” no scattered os.environ calls elsewhere.
+Loads Generation/config.yaml and exposes a Config dataclass.
+All modules import from here - no scattered os.environ calls elsewhere.
 """
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ class Config:
     # Paths (resolved at load time)
     gen_dir: Path                   # generation/
     root_dir: Path                  # repo root
-    context_dir: Path               # api/context/
+    context_dir: Path               # Generation/Context_Builder/context
     rag_dir: Path                   # generation/RAG/
     output_json: Path
     output_issues: Path
