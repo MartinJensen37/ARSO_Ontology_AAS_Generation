@@ -57,15 +57,15 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from Generation.config import load_config, Config  # noqa: E402
-from Generation.Context_Builder.context_loader import load_context  # noqa: E402
-from Generation.Context_Builder.RAG.rag_loader import load_rag  # noqa: E402
-from Generation.Context_Builder.RAG.prompt_builder import build_system_instruction, build_user_prompt  # noqa: E402
-from Generation.Context_Builder.Parsing.pdf_extractor import extract_pdf_text  # noqa: E402
-from Generation.pipeline import run_pipeline  # noqa: E402
-from Validation.Validator.validator import run_shacl  # noqa: E402
+from Generation.config import load_config, Config  
+from Generation.Context_Builder.context_loader import load_context  
+from Generation.Context_Builder.RAG.rag_loader import load_rag  
+from Generation.Context_Builder.RAG.prompt_builder import build_system_instruction, build_user_prompt  
+from Generation.Context_Builder.Parsing.pdf_extractor import extract_pdf_text  
+from Generation.pipeline import run_pipeline  
+from Validation.Validator.validator import run_shacl  
 
-from evaluation import metrics as M  # noqa: E402
+from Testing.Generation_Tests.Test_Scripts import metrics as M  
 
 
 _EVAL_DIR = Path(__file__).resolve().parent

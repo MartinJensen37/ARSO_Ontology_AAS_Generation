@@ -38,7 +38,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from evaluation.aggregate import _load_jsonl, derive_cell_stats, write_csv  # noqa: E402
+from Testing.Generation_Tests.Test_Scripts.aggregate import _load_jsonl, derive_cell_stats, write_csv  # noqa: E402
 
 try:
     import matplotlib

@@ -1,59 +1,55 @@
-﻿"""Pure metric functions for the evaluation harness â€” no I/O, no globals.
+﻿"""Pure metric functions for evaluation harness.
 
-Every function takes a generated AAS dict (post-builder) and/or a ground-truth
-manifest dict, returns a dict of numeric/boolean metrics. The runner aggregates
-these into a single JSONL row per experiment.
+Each function returns a dict of metrics. Keys used by downstream reports:
 
-Wire-format keys that downstream `aggregate.py` and `plot_results.py` rely on:
+Conformance:
+- shacl_conforms (bool)
+- shacl_metamodel_count (int) AAS SHACL violations
+- shacl_ontology_count (int) ARSO domain SHACL violations
+- shacl_violation_count (int) total
+- attempts (int) retry-loop attempts (1 = no retry)
+- wallclock_seconds (float)
 
-  â”€â”€ Conformance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    shacl_conforms             bool
-    shacl_metamodel_count      int â€” AAS-spec SHACL violations
-    shacl_ontology_count       int â€” ARSO domain SHACL violations
-    shacl_violation_count      int â€” total
-    attempts                   int â€” pipeline retry-loop attempts (1 = no retry)
-    wallclock_seconds          float
+Coverage / accuracy:
+- submodel_coverage (float 0-1) fraction of expected submodels present
+- sme_coverage (float 0-1) fraction of expected SMEs present
+- mandatory_sme_coverage (float 0-1) coverage on required SMEs
+- optional_sme_coverage (float 0-1) coverage on optional SMEs
+- sme_precision (float 0-1) matched / generated
+- sme_recall (float 0-1) matched / expected = sme_coverage
+- sme_f1 (float 0-1) harmonic mean
+- hallucination_rate (float 0-1) generated SMEs not in expected = 1 - precision
+- expected_submodels (int)
+- expected_smes (int)
+- present_smes (int)
+- generated_smes (int)
 
-  â”€â”€ Coverage / accuracy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    submodel_coverage          float [0, 1] â€” fraction of expected submodels present
-    sme_coverage               float [0, 1] â€” fraction of expected SMEs present
-    mandatory_sme_coverage     float [0, 1] â€” coverage on `required: true` SMEs only
-    optional_sme_coverage      float [0, 1] â€” coverage on `required: false` SMEs only
-    sme_precision              float [0, 1] â€” matched / generated
-    sme_recall                 float [0, 1] â€” matched / expected = sme_coverage
-    sme_f1                     float [0, 1] â€” harmonic mean
-    hallucination_rate         float [0, 1] â€” generated SMEs not in expected = 1 âˆ’ precision
-    expected_submodels         int
-    expected_smes              int
-    present_smes               int
-    generated_smes             int
+Semantic IDs:
+- semanticid_present_rate (float 0-1) fraction of generated SMEs with any semanticId
+- semanticid_idta_alignment (float 0-1) fraction with a known IDTA/ARSO prefix
+- semanticid_exact_match (float 0-1) fraction matching expected URL exactly
+- semanticid_per_submodel (dict[str, float]) exact_match by submodel idShort
 
-  â”€â”€ Semantic IDs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    semanticid_present_rate     float [0, 1] â€” fraction of generated SMEs with ANY semanticId
-    semanticid_idta_alignment   float [0, 1] â€” fraction with a known IDTA/ARSO prefix
-    semanticid_exact_match      float [0, 1] â€” fraction matching the expected URL exactly
-    semanticid_per_submodel     dict[str, float] â€” exact_match sliced by submodel idShort
+Value quality:
+- value_substring_match (float 0-1) when ground truth has expected_value_contains
+- verify_rate (float 0-1) fraction of generated SME values with [VERIFY:]
+- value_total (int) SMEs with non-empty values
+- verify_total (int) SMEs flagged with [VERIFY:]
+- idshort_format_violations (int) idShorts failing ^[A-Za-z0-9_]+$
+- value_format_violations (int) bad xs:date, malformed xsd:int values, etc.
 
-  â”€â”€ Value quality â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    value_substring_match       float [0, 1] â€” when ground truth has expected_value_contains
-    verify_rate                 float [0, 1] â€” fraction of generated SME values with [VERIFY:]
-    value_total                 int â€” number of SMEs with non-empty values
-    verify_total                int â€” number of SMEs flagged with [VERIFY:]
-    idshort_format_violations   int â€” idShorts failing ^[A-Za-z0-9_]+$
-    value_format_violations     int â€” bad xs:date, malformed xsd:int values, etc.
+Cross-reference correctness:
+- skill_links_to_aid_action (float 0-1) Skills with a valid AID action target
+- capability_realizedby_skill (float 0-1) Capabilities pointing at a real Skill
+- bom_globalassetid_present (bool) SelfManagedEntity has globalAssetId
+- archetype_value_in_enum (bool) ArcheType in {Full, OneDown, OneUp}
 
-  â”€â”€ Cross-reference correctness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    skill_links_to_aid_action     float [0, 1] â€” Skills with a valid AID action target
-    capability_realizedby_skill   float [0, 1] â€” Capabilities pointing at a real Skill
-    bom_globalassetid_present     bool â€” SelfManagedEntity has globalAssetId
-    archetype_value_in_enum       bool â€” ArcheType âˆˆ {Full, OneDown, OneUp}
-
-  â”€â”€ Efficiency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    input_chars_estimate        int â€” system_prompt + user_prompt char count
-    output_chars_estimate       int â€” final AAS JSON char count
-    input_tokens_estimate       int â€” input_chars // 4 (rough OpenAI tokenizer)
-    output_tokens_estimate      int â€” output_chars // 4
-    cost_estimate_usd           float â€” provider price table Ã— tokens (best-effort)
+Efficiency:
+- input_chars_estimate (int) system_prompt + user_prompt char count
+- output_chars_estimate (int) final AAS JSON char count
+- input_tokens_estimate (int) input_chars // 4
+- output_tokens_estimate (int) output_chars // 4
+- cost_estimate_usd (float) provider price table x tokens
 """
 from __future__ import annotations
 
