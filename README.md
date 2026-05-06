@@ -133,8 +133,6 @@ pip install -e .
 
 This work was supported by **Novo Nordisk AMSAT**.
 
-The project builds on concepts from the Asset Administration Shell ecosystem, semantic web technologies, SHACL validation, and ontology-based modelling for industrial digital twins.
-
 ---
 
 ## Licence
