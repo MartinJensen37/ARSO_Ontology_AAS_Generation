@@ -1964,7 +1964,8 @@ monitored and transitions triggered.
         <https://w3id.org/2025/arso/modules/nameplate>,
         <https://w3id.org/2025/arso/modules/operational-data>,
         <https://w3id.org/2025/arso/modules/parameters>,
-        <https://w3id.org/2025/arso/modules/skills> ;
+        <https://w3id.org/2025/arso/modules/control-component>,
+        <https://w3id.org/2025/arso/modules/technical-data> ;
     owl:versionIRI <https://w3id.org/2025/arso/0.4.0> .
 
 <https://w3id.org/2025/arso#CapabilityCommentMLP> a owl:Class ;
@@ -3750,8 +3751,8 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
            └─ unit [Property, optional]""" ;
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
-<https://w3id.org/2025/arso/modules/skills> a owl:Ontology ;
-    rdfs:comment """ARSO module: Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
+<https://w3id.org/2025/arso/modules/control-component> a owl:Ontology ;
+    rdfs:comment """ARSO module: Control Component / Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
 
   Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0
 
