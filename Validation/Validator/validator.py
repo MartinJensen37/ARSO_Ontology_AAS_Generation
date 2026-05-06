@@ -20,7 +20,7 @@ _AAS_SHACL_SHAPES_TTL  = _SHACL_MANUAL_DIR / "aas-shacl-schema.ttl"
 _ARSO_GENERATED_SHAPES = _SHACL_GENERATED_DIR / "shapes.generated.shacl.ttl"
 
 
-# Catalog: official URL â†’ local file (mirror of ontology/catalog-v001.xml entries).
+# Catalog: official URL -> local file (mirror of ontology/catalog-v001.xml entries).
 _IMPORT_CATALOG: dict[str, Path] = {
     "https://admin-shell.io/aas/3/1/": _AAS_RDF_ONTOLOGY_TTL,
     "https://admin-shell.io/aas/3/1":  _AAS_RDF_ONTOLOGY_TTL,
@@ -91,7 +91,7 @@ def _strip_abstract_class_constraints(shapes_graph: Graph) -> int:
     """Remove sh:class triples that reference abstract AAS classes.
 
     These require RDFS inference to satisfy (via subclass chains). Enabling
-    inference triggers ~1200 spurious 'abstract class — use a subclass'
+    inference triggers ~1200 spurious 'abstract class - use a subclass'
     violations from the AAS SHACL spec, so inference stays off and the
     abstract-class constraints are dropped instead.
     """
@@ -154,7 +154,7 @@ def _is_aas_shape(report_graph: Graph, validation_result: URIRef) -> bool:
       1. sh:sourceShape IRI starts with the AAS namespace
       2. sh:sourceConstraintComponent path traverses an AAS-namespaced property
       3. sh:resultPath property is in the AAS namespace
-    Any one of these is sufficient â€” covers blank-node shapes too.
+    Any one of these is sufficient; covers blank-node shapes too.
     """
     source_shape = report_graph.value(validation_result, SH.sourceShape)
     if source_shape is not None and str(source_shape).startswith(_AAS_NS_PREFIX):
@@ -236,7 +236,7 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
         shapes_loaded = True
 
     # Manual SHACL rules: anything in shacl/manual/*.shacl.ttl. These cover the
-    # constraints OWL â†’ SHACL derivation cannot express (cross-submodel
+    # constraints OWL-to-SHACL derivation cannot express (cross-submodel
     # references, value enums, etc.).
     if _SHACL_MANUAL_DIR.exists():
         for manual_path in sorted(_SHACL_MANUAL_DIR.glob("*.shacl.ttl")):
@@ -268,7 +268,7 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
             shacl_graph=shapes,
             # inference="none": the serializer emits both the AAS class and the
             # cssx subclass directly, so no rdfs subClassOf chasing is needed.
-            # Enabling rdfs inference triggers ~1200 spurious "abstract class â€”
+            # Enabling rdfs inference triggers ~1200 spurious "abstract class -
             # use a subclass" violations from the AAS SHACL spec.
             inference="none",
             advanced=True,
