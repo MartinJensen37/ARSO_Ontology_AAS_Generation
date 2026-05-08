@@ -194,6 +194,64 @@ def _extract_issues(report_graph: Graph) -> list[dict]:
     return issues
 
 
+def _load_shapes() -> tuple[Graph, bool]:
+    """Load all project SHACL shapes into a single graph. Returns (shapes, loaded)."""
+    shapes = Graph()
+    loaded = False
+    if _AAS_SHACL_SHAPES_TTL.exists():
+        shapes.parse(str(_AAS_SHACL_SHAPES_TTL), format="turtle")
+        loaded = True
+    if _ARSO_GENERATED_SHAPES.exists():
+        shapes.parse(str(_ARSO_GENERATED_SHAPES), format="turtle")
+        loaded = True
+    # Manual SHACL rules cover constraints OWL-to-SHACL derivation cannot express
+    # (cross-submodel references, value enums, etc.).
+    if _SHACL_MANUAL_DIR.exists():
+        for manual_path in sorted(_SHACL_MANUAL_DIR.glob("*.shacl.ttl")):
+            try:
+                shapes.parse(str(manual_path), format="turtle")
+                loaded = True
+            except Exception as exc:
+                print(f"  warning: skipping {manual_path.name}: {exc}")
+    return shapes, loaded
+
+
+def validate_rdf_graph(data_graph: Graph) -> tuple[bool, list[dict]]:
+    """Validate a pre-built RDF graph against the project SHACL shapes.
+
+    Called by the Guidance engine to validate profile config graphs without
+    an AAS JSON round-trip. Returns (conforms, issues) using the same issue
+    format as run_shacl.
+    """
+    shapes, loaded = _load_shapes()
+    if not loaded:
+        return True, []
+
+    n = _strip_abstract_class_constraints(shapes)
+    if n:
+        print(f"  Stripped {n} abstract-class sh:class constraints (require inference)")
+    n = _expand_dash_has_value_with_class(shapes)
+    if n:
+        print(f"  Expanded {n} dash:hasValueWithClass -> sh:qualifiedValueShape")
+
+    try:
+        conforms, report_graph, _ = pyshacl.validate(
+            data_graph,
+            shacl_graph=shapes,
+            inference="none",
+            advanced=True,
+            allow_warnings=True,
+            allow_infos=True,
+            meta_shacl=False,
+            debug=False,
+        )
+    except Exception as exc:
+        msg = f"pyshacl invocation failed: {exc}"
+        return False, [{"source": "validation", "severity": "Violation", "message": msg}]
+
+    return bool(conforms), _extract_issues(report_graph)
+
+
 def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dict], list[dict]]:
     """v2 unified validation. Same return signature as v1's `run_shacl`.
 
@@ -226,26 +284,7 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
     if _AAS_RDF_ONTOLOGY_TTL.exists() and _AAS_RDF_ONTOLOGY_TTL.resolve() not in visited:
         _load_with_imports(data_graph, _AAS_RDF_ONTOLOGY_TTL, visited)
 
-    shapes = Graph()
-    shapes_loaded = False
-    if _AAS_SHACL_SHAPES_TTL.exists():
-        shapes.parse(str(_AAS_SHACL_SHAPES_TTL), format="turtle")
-        shapes_loaded = True
-    if _ARSO_GENERATED_SHAPES.exists():
-        shapes.parse(str(_ARSO_GENERATED_SHAPES), format="turtle")
-        shapes_loaded = True
-
-    # Manual SHACL rules: anything in shacl/manual/*.shacl.ttl. These cover the
-    # constraints OWL-to-SHACL derivation cannot express (cross-submodel
-    # references, value enums, etc.).
-    if _SHACL_MANUAL_DIR.exists():
-        for manual_path in sorted(_SHACL_MANUAL_DIR.glob("*.shacl.ttl")):
-            try:
-                shapes.parse(str(manual_path), format="turtle")
-                shapes_loaded = True
-            except Exception as exc:  # don't let one bad file kill validation
-                print(f"  warning: skipping {manual_path.name}: {exc}")
-
+    shapes, shapes_loaded = _load_shapes()
     if not shapes_loaded:
         msg = (
             "v2 validator: no SHACL shapes loaded. Expected at "
