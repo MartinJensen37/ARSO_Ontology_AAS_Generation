@@ -48,7 +48,7 @@ def profile_document_to_aas_json(document: dict[str, Any], cfg: Config) -> str:
         )
 
     try:
-        from .Builder_Classes.AAS_generation.cli.generate_aas import AASGenerator
+        from .AAS_generation.core.generate_aas import AASGenerator
     except Exception as exc:  # pragma: no cover
         raise RuntimeError(f"Unable to import v2 AAS generation builder: {exc}") from exc
 

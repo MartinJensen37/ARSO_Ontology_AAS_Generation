@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-AAS Generator Script
-This script generates Asset Administration Shell (AAS) descriptions programmatically
-using the basyx-python-sdk from YAML configuration files.
+AAS Generator
 
-Usage:
-    python generate_aas.py --config aas_config.yaml --output output_dir/
+Generates Asset Administration Shell (AAS) descriptions programmatically
+using the basyx-python-sdk from JSON/YAML configuration files.
+Called by the API pipeline via Transformation.AAS_Builder.AAS_builder.
 """
 
 import json
@@ -17,7 +16,10 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from basyx.aas import model
 from basyx.aas.adapter.json import json_serialization
-from ..core import AASElementFactory, SchemaHandler, SemanticIdFactory, AASBuilder
+from .aas_builder import AASBuilder
+from .element_factory import AASElementFactory
+from .schema_handler import SchemaHandler
+from .semantic_ids import SemanticIdFactory
 from ..submodels import (
     DigitalNameplateSubmodelBuilder,
     AssetInterfacesBuilder,
@@ -369,7 +371,7 @@ class AASGenerator:
         repairs that can be applied with a single click.
 
         Hint suggestions are derived directly from the project SHACL shapes via
-        generation.guidance.ontology_guidance_engine — no constraint logic is
+        Guidance.ontology_guidance_engine — no constraint logic is
         duplicated in Python.  When the SHACL files change, hints update automatically.
         """
         suggestions: List[Dict[str, Any]] = []
@@ -500,7 +502,7 @@ class AASGenerator:
         # All hint-type suggestions come from the actual SHACL shapes.
         # No constraint logic is duplicated here.
         try:
-            from ..guidance.ontology_guidance_engine import check_config
+            from Guidance.ontology_guidance_engine import check_config
             shacl_hints = check_config(self.system_id, config)
             suggestions.extend(shacl_hints)
         except ImportError:
