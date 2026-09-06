@@ -1,0 +1,1065 @@
+@prefix aas: <https://admin-shell.io/aas/3/1/> .
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix css: <http://www.w3id.org/hsu-aut/css#> .
+@prefix ns1: <https://admin-shell.io/aas/3/1/SpecificAssetId/> .
+@prefix ns10: <https://admin-shell.io/aas/3/1/HasSemantics/> .
+@prefix ns11: <https://admin-shell.io/aas/3/1/AdministrativeInformation/> .
+@prefix ns12: <https://admin-shell.io/aas/3/1/Identifiable/> .
+@prefix ns13: <https://admin-shell.io/aas/3/1/MultiLanguageProperty/> .
+@prefix ns14: <https://admin-shell.io/aas/3/1/SubmodelElementCollection/> .
+@prefix ns15: <https://admin-shell.io/aas/3/1/Entity/> .
+@prefix ns16: <https://admin-shell.io/aas/3/1/AssetAdministrationShell/> .
+@prefix ns17: <https://admin-shell.io/aas/3/1/ReferenceElement/> .
+@prefix ns18: <https://admin-shell.io/aas/3/1/AssetInformation/> .
+@prefix ns19: <https://admin-shell.io/aas/3/1/LangStringTextType/> .
+@prefix ns2: <https://admin-shell.io/aas/3/1/Reference/> .
+@prefix ns3: <https://admin-shell.io/aas/3/1/Key/> .
+@prefix ns4: <https://admin-shell.io/aas/3/1/Referable/> .
+@prefix ns5: <https://admin-shell.io/aas/3/1/AbstractLangString/> .
+@prefix ns6: <https://admin-shell.io/aas/3/1/SubmodelElementList/> .
+@prefix ns7: <https://admin-shell.io/aas/3/1/Property/> .
+@prefix ns8: <https://admin-shell.io/aas/3/1/Submodel/> .
+@prefix ns9: <https://admin-shell.io/aas/3/1/RelationshipElement/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData> a aas:Submodel,
+        arso:OperationalDataSubmodel ;
+    rdfs:label "OperationalData" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_ref-123> ;
+    ns12:administration <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_admin-125> ;
+    ns12:id "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData"^^xsd:string ;
+    ns4:idShort "OperationalData"^^xsd:string ;
+    ns8:submodelElements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState> .
+
+<https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> a aas:AasSubmodelElements .
+
+<https://admin-shell.io/aas/3/1/AssetKind/Instance> a aas:AssetKind .
+
+<https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> a aas:KeyTypes .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS> a aas:AssetAdministrationShell ;
+    rdfs:label "imaLoadingSystemAAS" ;
+    ns16:assetInformation <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1> ;
+    ns16:derivedFrom <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-8> ;
+    ns16:submodels <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-10>,
+        <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-39>,
+        <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-66>,
+        <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-86> ;
+    ns12:id "https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS"^^xsd:string ;
+    ns4:idShort "imaLoadingSystemAAS"^^xsd:string ;
+    arso:hasCapabilitiesSubmodel <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities> ;
+    arso:hasDigitalNameplateSubmodel <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate> ;
+    arso:hasHierarchicalStructuresSubmodel <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures> ;
+    arso:hasSkillsSubmodel <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills> ;
+    arso:hasSubmodel <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills> ;
+    arso:representsResource <https://smartproductionlab.aau.dk/assets/ZDNlYmVhZjItZTAyMC00NWMwLTg5NjEtODRiNTFkOWE0NzVl> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1> a aas:AssetInformation ;
+    ns18:assetKind <https://admin-shell.io/aas/3/1/AssetKind/Instance> ;
+    ns18:assetType "https://smartproductionlab.aau.dk/Resource/CPPM/LoadingSystem/imaLoadingSystem"^^xsd:string ;
+    ns18:globalAssetId "https://smartproductionlab.aau.dk/assets/ZDNlYmVhZjItZTAyMC00NWMwLTg5NjEtODRiNTFkOWE0NzVl"^^xsd:string ;
+    ns18:specificAssetIds <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2>,
+        <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2> a aas:SpecificAssetId ;
+    ns1:externalSubjectId <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2/_ref-3> ;
+    ns1:name "serialNumber"^^xsd:string ;
+    ns1:value "IMA-LS-2024-001"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2/_ref-3> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2/_ref-3/_key-4> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-2/_ref-3/_key-4> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/aas/3/0/SpecificAssetId/SerialNumber"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5> a aas:SpecificAssetId ;
+    ns1:externalSubjectId <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5/_ref-6> ;
+    ns1:name "location"^^xsd:string ;
+    ns1:value "InnoLab, Nybrovej, AAU"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5/_ref-6> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5/_ref-6/_key-7> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_assetInformation-1/_specificAssetId-5/_ref-6/_key-7> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/aas/3/0/SpecificAssetId/Location"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-10> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-10/_key-11> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-10/_key-11> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-39> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-39/_key-40> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-39/_key-40> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-66> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-66/_key-67> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-66/_key-67> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-8> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-8/_key-9> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-8/_key-9> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> ;
+    ns3:value "https://smartproductionlab.aau.dk/aas/templates/resource"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-86> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-86/_key-87> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS#_ref-86/_key-87> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/assets/ZDNlYmVhZjItZTAyMC00NWMwLTg5NjEtODRiNTFkOWE0NzVl> a css:Resource ;
+    arso:hasAAS <https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet> a aas:SubmodelElementCollection,
+        arso:CapabilitySetSMC ;
+    rdfs:label "CapabilitySet" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/_ref-71> ;
+    ns4:idShort "CapabilitySet"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer> a aas:SubmodelElementCollection,
+        arso:CapabilityContainerSMC ;
+    rdfs:label "LoadingContainer" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/_ref-73> ;
+    ns4:idShort "LoadingContainer"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/SemanticId>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading> a aas:Capability,
+        arso:CapabilityElement ;
+    rdfs:label "Loading" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading/_ref-75> ;
+    ns4:idShort "Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading/_ref-75> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading/_ref-75/_key-76> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/Loading/_ref-75/_key-76> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/Capability/Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/SemanticId> a aas:Property ;
+    rdfs:label "SemanticId" ;
+    ns7:value "https://smartproductionlab.aau.dk/Capability/Loading"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SemanticId"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/_ref-73> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/_ref-73/_key-74> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/_ref-73/_key-74> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy> a aas:SubmodelElementList,
+        arso:CapabilityRealizedBySML ;
+    rdfs:label "realizedBy" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/_ref-77> ;
+    ns4:idShort "realizedBy"^^xsd:string ;
+    ns6:typeValueListElement <https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> ;
+    ns6:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/_ref-77> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/_ref-77/_key-78> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/_ref-77/_key-78> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0> a aas:RelationshipElement,
+        arso:CapabilityRealizedByRel ;
+    ns9:first <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79> ;
+    ns9:second <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-80>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-81>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-82> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-80> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-81> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "CapabilitySet"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-79/_key-82> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "LoadingContainer"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83/_key-84>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83/_key-85> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83/_key-84> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/LoadingContainer/realizedBy/item-0/_ref-83/_key-85> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/_ref-71> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/_ref-71/_key-72> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet/_ref-71/_key-72> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_admin-70> a aas:AdministrativeInformation ;
+    ns11:revision "0"^^xsd:string ;
+    ns11:version "1"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_ref-68> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_ref-68/_key-69> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_ref-68/_key-69> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType> a aas:Property,
+        arso:ArcheTypeProperty ;
+    rdfs:label "ArcheType" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType/_ref-44> ;
+    ns7:value "OneUp"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "ArcheType"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType/_ref-44> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType/_ref-44/_key-45> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType/_ref-44/_key-45> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode> a aas:Entity,
+        arso:EntryNodeEntity ;
+    rdfs:label "EntryNode" ;
+    ns15:entityType <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
+    ns15:globalAssetId "https://smartproductionlab.aau.dk/assets/ZDNlYmVhZjItZTAyMC00NWMwLTg5NjEtODRiNTFkOWE0NzVl"^^xsd:string ;
+    ns15:statements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS> ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/_ref-46> ;
+    ns4:idShort "EntryNode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS> a aas:RelationshipElement ;
+    rdfs:label "IsPartOf_aauFillingLineAAS" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-48> ;
+    ns4:idShort "IsPartOf_aauFillingLineAAS"^^xsd:string ;
+    ns9:first <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50> ;
+    ns9:second <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-48> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-48/_key-49> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-48/_key-49> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/Relationship/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50/_key-51>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50/_key-52> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50/_key-51> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-50/_key-52> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Entity> ;
+    ns3:value "EntryNode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-54>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-55>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-56> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-54> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-55> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Entity> ;
+    ns3:value "EntryNode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/IsPartOf_aauFillingLineAAS/_ref-53/_key-56> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Entity> ;
+    ns3:value "aauFillingLineAAS"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/_ref-46> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/_ref-46/_key-47> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/_ref-46/_key-47> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS> a aas:Entity,
+        arso:NodeEntity ;
+    rdfs:label "aauFillingLineAAS" ;
+    ns15:entityType <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
+    ns15:globalAssetId "https://smartproductionlab.aau.dk/assets/MWQ2ODY5ZDEtZTQ3Yy00NWU4LTlmYTAtNTI3YjVlMDk4MWFi"^^xsd:string ;
+    ns15:statements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs> ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/_ref-57> ;
+    ns4:idShort "aauFillingLineAAS"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs> a aas:ReferenceElement,
+        arso:SameAsRelationship ;
+    rdfs:label "SameAs" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-59> ;
+    ns10:supplementalSemanticIds <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-61> ;
+    ns4:idShort "SameAs"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-59> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-59/_key-60> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-59/_key-60> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-61> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-61/_key-62> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-61/_key-62> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63/_key-64>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63/_key-65> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63/_key-64> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/aauFillingLineAAS/HierarchicalStructures"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/SameAs/_ref-63/_key-65> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Entity> ;
+    ns3:value "EntryNode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/_ref-57> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/_ref-57/_key-58> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode/aauFillingLineAAS/_ref-57/_key-58> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_admin-43> a aas:AdministrativeInformation ;
+    ns11:revision "1"^^xsd:string ;
+    ns11:version "1"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_ref-41> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_ref-41/_key-42> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_ref-41/_key-42> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation> a aas:SubmodelElementCollection,
+        arso:AddressInformationSMC ;
+    rdfs:label "ContactInformation" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/_ref-23> ;
+    ns4:idShort "ContactInformation"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown> a aas:MultiLanguageProperty,
+        arso:AddressCityTownMLP ;
+    rdfs:label "CityTown" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_ref-31> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_lang-33> ;
+    ns4:idShort "CityTown"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_lang-33> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "Ozzano dell'Emilia"^^xsd:string ;
+    ns19:text "Ozzano dell'Emilia"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_ref-31> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_ref-31/_key-32> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/CityTown/_ref-31/_key-32> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0173-1#02-AAO132#002"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode> a aas:MultiLanguageProperty,
+        arso:AddressNationalCodeMLP ;
+    rdfs:label "NationalCode" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_ref-34> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_lang-36> ;
+    ns4:idShort "NationalCode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_lang-36> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "IT"^^xsd:string ;
+    ns19:text "IT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_ref-34> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_ref-34/_key-35> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/NationalCode/_ref-34/_key-35> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0173-1#02-AAO134#002"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street> a aas:MultiLanguageProperty,
+        arso:AddressStreetMLP ;
+    rdfs:label "Street" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_ref-25> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_lang-27> ;
+    ns4:idShort "Street"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_lang-27> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "Via Emilia 428"^^xsd:string ;
+    ns19:text "Via Emilia 428"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_ref-25> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_ref-25/_key-26> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Street/_ref-25/_key-26> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0173-1#02-AAO128#002"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode> a aas:MultiLanguageProperty,
+        arso:AddressZipcodeMLP ;
+    rdfs:label "Zipcode" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_ref-28> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_lang-30> ;
+    ns4:idShort "Zipcode"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_lang-30> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "40064"^^xsd:string ;
+    ns19:text "40064"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_ref-28> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_ref-28/_key-29> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/Zipcode/_ref-28/_key-29> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0173-1#02-AAO129#002"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/_ref-23> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/_ref-23/_key-24> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation/_ref-23/_key-24> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#CountryOfOrigin> a aas:Property ;
+    rdfs:label "CountryOfOrigin" ;
+    ns7:value "IT"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "CountryOfOrigin"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerArticleNumber> a aas:Property ;
+    rdfs:label "ManufacturerArticleNumber" ;
+    ns7:value "IMA-LS-001"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "ManufacturerArticleNumber"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName> a aas:MultiLanguageProperty,
+        arso:ManufacturerNameMLP ;
+    rdfs:label "ManufacturerName" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_ref-17> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_lang-19> ;
+    ns4:idShort "ManufacturerName"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_lang-19> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "IMA Group"^^xsd:string ;
+    ns19:text "IMA Group"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_ref-17> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_ref-17/_key-18> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName/_ref-17/_key-18> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0112/2///61987#ABA565#009"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation> a aas:MultiLanguageProperty,
+        arso:ManufacturerProductDesignationMLP ;
+    rdfs:label "ManufacturerProductDesignation" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_ref-20> ;
+    ns13:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_lang-22> ;
+    ns4:idShort "ManufacturerProductDesignation"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_lang-22> a aas:LangStringTextType ;
+    ns5:language "en"^^xsd:string ;
+    ns5:text "IMA Loading System"^^xsd:string ;
+    ns19:text "IMA Loading System"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_ref-20> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_ref-20/_key-21> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation/_ref-20/_key-21> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0112/2///61987#ABA567#009"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer> a aas:Property,
+        arso:OrderCodeProperty ;
+    rdfs:label "OrderCodeOfManufacturer" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer/_ref-37> ;
+    ns7:value "IMA-LS-2024-001"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "OrderCodeOfManufacturer"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer/_ref-37> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer/_ref-37/_key-38> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer/_ref-37/_key-38> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0112/2///61987#ABA950#008"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#SerialNumber> a aas:Property ;
+    rdfs:label "SerialNumber" ;
+    ns7:value "IMA-LS-2024-001"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SerialNumber"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct> a aas:Property,
+        arso:URIOfTheProductProperty ;
+    rdfs:label "URIOfTheProduct" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct/_ref-15> ;
+    ns7:value "https://smartproductionlab.aau.dk/assets/imaLoadingSystemAAS"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "URIOfTheProduct"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct/_ref-15> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct/_ref-15/_key-16> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct/_ref-15/_key-16> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "0112/2///61987#ABN590#002"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#YearOfConstruction> a aas:Property ;
+    rdfs:label "YearOfConstruction" ;
+    ns7:value "2024"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "YearOfConstruction"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_admin-14> a aas:AdministrativeInformation ;
+    ns11:revision "0"^^xsd:string ;
+    ns11:version "1"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_ref-12> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_ref-12/_key-13> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_ref-12/_key-13> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/nameplate/3/0/Nameplate"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState> a aas:SubmodelElementCollection ;
+    rdfs:label "OccupationState" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/_ref-136> ;
+    ns4:idShort "OccupationState"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/ProcessQueue> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-138> ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-138> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-138/_key-139> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-138/_key-139> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-141>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-142>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-143>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-144>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-145> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-141> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-142> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-143> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-144> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "properties"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/InterfaceReference/_ref-140/_key-145> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "StationState"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/ProcessQueue> a aas:Property ;
+    rdfs:label "ProcessQueue" ;
+    ns7:value "[]"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "ProcessQueue"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/_ref-136> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/_ref-136/_key-137> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#OccupationState/_ref-136/_key-137> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/stationOccupation"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState> a aas:SubmodelElementCollection ;
+    rdfs:label "PackMLState" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/_ref-126> ;
+    ns4:idShort "PackMLState"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/State> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-128> ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-128> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-128/_key-129> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-128/_key-129> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-131>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-132>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-133>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-134>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-135> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-131> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-132> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-133> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-134> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "properties"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/InterfaceReference/_ref-130/_key-135> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "StationState"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/State> a aas:Property ;
+    rdfs:label "State" ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "State"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/_ref-126> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/_ref-126/_key-127> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#PackMLState/_ref-126/_key-127> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://www.omac.org/packml/state"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_admin-125> a aas:AdministrativeInformation ;
+    ns11:revision "0"^^xsd:string ;
+    ns11:version "1"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_ref-123> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_ref-123/_key-124> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/OperationalData#_ref-123/_key-124> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt> a aas:SubmodelElementCollection ;
+    rdfs:label "Halt" ;
+    ns4:idShort "Halt"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/SemanticId> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt> a aas:Operation,
+        arso:SkillOperationElement ;
+    rdfs:label "Halt" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt/_ref-99> ;
+    ns4:idShort "Halt"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt/_ref-99> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt/_ref-99/_key-100> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/Halt/_ref-99/_key-100> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/skills/Halt"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-102>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-103>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-104>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-105>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-106> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-102> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-103> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-104> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-105> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "actions"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/InterfaceReference/_ref-101/_key-106> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "Halt"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt/SemanticId> a aas:Property ;
+    rdfs:label "SemanticId" ;
+    ns7:value "https://smartproductionlab.aau.dk/skills/Halt"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SemanticId"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading> a aas:SubmodelElementCollection ;
+    rdfs:label "Loading" ;
+    ns4:idShort "Loading"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/SemanticId>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/StateMachine> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-94>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-95>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-96>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-97>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-98> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-94> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-95> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-96> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-97> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "actions"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/InterfaceReference/_ref-93/_key-98> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading> a aas:Operation,
+        arso:SkillOperationElement ;
+    rdfs:label "Loading" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading/_ref-91> ;
+    ns4:idShort "Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading/_ref-91> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading/_ref-91/_key-92> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/Loading/_ref-91/_key-92> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/skills/Loading"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/SemanticId> a aas:Property ;
+    rdfs:label "SemanticId" ;
+    ns7:value "https://smartproductionlab.aau.dk/skills/Loading"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SemanticId"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading/StateMachine> a aas:Property ;
+    rdfs:label "StateMachine" ;
+    ns7:value "IDLE"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "StateMachine"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy> a aas:SubmodelElementCollection ;
+    rdfs:label "Occupy" ;
+    ns4:idShort "Occupy"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/SemanticId> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-110>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-111>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-112>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-113>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-114> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-110> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-111> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-112> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-113> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "actions"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/InterfaceReference/_ref-109/_key-114> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "Occupy"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy> a aas:Operation,
+        arso:SkillOperationElement ;
+    rdfs:label "Occupy" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy/_ref-107> ;
+    ns4:idShort "Occupy"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy/_ref-107> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy/_ref-107/_key-108> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/Occupy/_ref-107/_key-108> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/skills/Occupy"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy/SemanticId> a aas:Property ;
+    rdfs:label "SemanticId" ;
+    ns7:value "https://smartproductionlab.aau.dk/skills/Occupy"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SemanticId"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release> a aas:SubmodelElementCollection ;
+    rdfs:label "Release" ;
+    ns4:idShort "Release"^^xsd:string ;
+    ns14:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/SemanticId> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference> a aas:ReferenceElement ;
+    rdfs:label "InterfaceReference" ;
+    ns4:idShort "InterfaceReference"^^xsd:string ;
+    ns17:value <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-118>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-119>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-120>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-121>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-122> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-118> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> ;
+    ns3:value "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/AID"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-119> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InterfaceMQTT"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-120> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "InteractionMetadata"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-121> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "actions"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/InterfaceReference/_ref-117/_key-122> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> ;
+    ns3:value "Release"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release> a aas:Operation,
+        arso:SkillOperationElement ;
+    rdfs:label "Release" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release/_ref-115> ;
+    ns4:idShort "Release"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release/_ref-115> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release/_ref-115/_key-116> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/Release/_ref-115/_key-116> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://smartproductionlab.aau.dk/skills/Release"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release/SemanticId> a aas:Property ;
+    rdfs:label "SemanticId" ;
+    ns7:value "https://smartproductionlab.aau.dk/skills/Release"^^xsd:string ;
+    ns7:valueType <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> ;
+    ns4:idShort "SemanticId"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_admin-90> a aas:AdministrativeInformation ;
+    ns11:revision "0"^^xsd:string ;
+    ns11:version "1"^^xsd:string .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_ref-88> a aas:Reference ;
+    ns2:keys <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_ref-88/_key-89> ;
+    ns2:type <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_ref-88/_key-89> a aas:Key ;
+    ns3:type <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> ;
+    ns3:value "https://admin-shell.io/idta/ControlComponentType/1/0"^^xsd:string .
+
+<https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> a aas:EntityType .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities> a aas:Submodel,
+        arso:CapabilitiesSubmodel ;
+    rdfs:label "Capabilities" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_ref-68> ;
+    ns12:administration <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#_admin-70> ;
+    ns12:id "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities"^^xsd:string ;
+    ns4:idShort "Capabilities"^^xsd:string ;
+    ns8:submodelElements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Capabilities#CapabilitySet> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures> a aas:Submodel,
+        arso:HierarchicalStructuresSubmodel ;
+    rdfs:label "HierarchicalStructures" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_ref-41> ;
+    ns12:administration <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#_admin-43> ;
+    ns12:id "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures"^^xsd:string ;
+    ns4:idShort "HierarchicalStructures"^^xsd:string ;
+    ns8:submodelElements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#ArcheType>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/HierarchicalStructures#EntryNode> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate> a aas:Submodel,
+        arso:DigitalNameplateSubmodel ;
+    rdfs:label "DigitalNameplate" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_ref-12> ;
+    ns12:administration <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#_admin-14> ;
+    ns12:id "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate"^^xsd:string ;
+    ns4:idShort "DigitalNameplate"^^xsd:string ;
+    ns8:submodelElements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ContactInformation>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#CountryOfOrigin>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerArticleNumber>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerName>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#ManufacturerProductDesignation>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#OrderCodeOfManufacturer>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#SerialNumber>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#URIOfTheProduct>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Nameplate#YearOfConstruction> .
+
+<https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills> a aas:Submodel,
+        arso:SkillsSubmodel ;
+    rdfs:label "Skills" ;
+    ns10:semanticId <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_ref-88> ;
+    ns12:administration <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#_admin-90> ;
+    ns12:id "https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills"^^xsd:string ;
+    ns4:idShort "Skills"^^xsd:string ;
+    ns8:submodelElements <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Halt>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Loading>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Occupy>,
+        <https://smartproductionlab.aau.dk/submodels/instances/imaLoadingSystemAAS/Skills#Release> .
+
+<https://admin-shell.io/aas/3/1/KeyTypes/Entity> a aas:KeyTypes .
+
+<https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> a aas:DataTypeDefXsd .
+
+<https://admin-shell.io/aas/3/1/KeyTypes/Submodel> a aas:KeyTypes .
+
+<https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> a aas:ReferenceTypes .
+
+<https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> a aas:KeyTypes .
+
+<https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> a aas:KeyTypes .
+
+<https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> a aas:ReferenceTypes .
+

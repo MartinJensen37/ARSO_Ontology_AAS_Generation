@@ -9,9 +9,10 @@ import json
 import re
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import urlparse
 
 from rdflib import Graph, Literal, Namespace, URIRef
-from rdflib.namespace import RDF, RDFS, XSD
+from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 
 AAS  = Namespace("https://admin-shell.io/aas/3/1/")
@@ -19,178 +20,189 @@ CSS  = Namespace("http://www.w3id.org/hsu-aut/css#")
 ARSO = Namespace("https://w3id.org/2025/arso#")
 
 # ---------------------------------------------------------------------------
-# Semantic ID constants -- all known variants per submodel/SME type.
-# Multiple variants exist because the generation pipeline and the IDTA spec
-# have diverged over time. The converter recognises all of them.
+# Ontology-driven typing.
+#
+# Everything the converter needs to know about *which* semanticId or
+# structural position identifies *which* ARSO class is read directly out of
+# the ontology (via the arso:semanticId / arso:idShort / arso:parentClass /
+# arso:transitiveParentClass / arso:unconditionalAasType annotations declared
+# on each class -- see Ontology/ARSO/ARSO_AAS.ttl) rather than hand-copied
+# into Python. Adding a new submodel or element type that follows this
+# annotation convention needs no change here.
 # ---------------------------------------------------------------------------
 
-# Submodel-level semantic IDs
-_SM_NAMEPLATE_IDS = frozenset({
-    "https://admin-shell.io/idta/nameplate/3/0/Nameplate",  # IDTA 02006-3-0 (canonical)
-    "https://admin-shell.io/zvei/nameplate/2/0/Nameplate",  # ZVEI v2 (legacy pipeline)
-})
-_SM_HS_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel",
-})
-_SM_AID_IDS = frozenset({
-    "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel",
-})
-_SM_CAPABILITIES_IDS = frozenset({
-    "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0",  # ontology
-    "https://admin-shell.io/idta/CapabilityDescription/1/0",                    # legacy pipeline
-})
-_SM_SKILLS_IDS = frozenset({
-    "https://admin-shell.io/idta/ControlComponentType/1/0",           # ontology (IDTA 02015)
-    "https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel",    # legacy pipeline
-})
-_SM_OPERATIONAL_DATA_IDS = frozenset({
-    "https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel",
-})
-_SM_PARAMETERS_IDS = frozenset({
-    "https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel",
-})
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_ONTOLOGY_DIR = _REPO_ROOT / "Ontology"
+_ARSO_AAS_TTL = _ONTOLOGY_DIR / "ARSO" / "ARSO_AAS.ttl"
+_AAS_RDF_TTL = _ONTOLOGY_DIR / "AAS" / "aas-rdf-ontology.ttl"
+_CSS_TTL = _ONTOLOGY_DIR / "CSS" / "CSS-Ontology.ttl"
 
-# SME-level semantic IDs (nameplate elements)
-_NP_MANUFACTURER_NAME_IDS = frozenset({
-    "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerName",
-    "0112/2///61987#ABA565#009",  # IRDI from IDTA 02006-3-0 template
-})
-_NP_MANUFACTURER_PRODUCT_DESIGNATION_IDS = frozenset({
-    "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerProductDesignation",
-    "0112/2///61987#ABA567#009",
-})
-_NP_CONTACT_INFORMATION_IDS = frozenset({
-    "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ContactInformation",
-    "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation",
-})
-_NP_ORDER_CODE_IDS = frozenset({
-    "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/OrderCodeOfManufacturer",
-    "0112/2///61987#ABA950#008",
-})
-_NP_URI_OF_PRODUCT_IDS = frozenset({
-    "0112/2///61987#ABN590#002",
-})
+# External (non-ARSO-module) owl:imports that aren't reachable by relative
+# path guessing -- mirrors the catalog in Validation/Validator/validator.py
+# and Transformation/Generate_Shapes/generate_shapes.py.
+_EXTERNAL_IMPORT_CATALOG: dict[str, Path] = {
+    "https://admin-shell.io/aas/3/1/": _AAS_RDF_TTL,
+    "https://admin-shell.io/aas/3/1":  _AAS_RDF_TTL,
+    "http://admin-shell.io/aas/3/1/":  _AAS_RDF_TTL,
+    "http://www.w3id.org/hsu-aut/css": _CSS_TTL,
+    "http://www.w3id.org/hsu-aut/css/": _CSS_TTL,
+}
 
-# SME-level semantic IDs (hierarchical structures elements)
-_HS_ARCHETYPE_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0",
-})
-_HS_ENTRY_NODE_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0",
-})
-_HS_NODE_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0",
-})
-_HS_HAS_PART_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0",
-})
-_HS_IS_PART_OF_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/IsPartOf/1/0",
-})
-_HS_SAME_AS_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0",
-})
-_HS_BULK_COUNT_IDS = frozenset({
-    "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0",
-})
-
-# SME-level semantic IDs (AddressInformation child elements — ECLASS IRDIs per IDTA 02002)
-_NP_ADDRESS_STREET_IDS = frozenset({
-    "0173-1#02-AAO128#002",
-})
-_NP_ADDRESS_ZIPCODE_IDS = frozenset({
-    "0173-1#02-AAO129#002",
-})
-_NP_ADDRESS_CITY_TOWN_IDS = frozenset({
-    "0173-1#02-AAO132#002",
-})
-_NP_ADDRESS_NATIONAL_CODE_IDS = frozenset({
-    "0173-1#02-AAO134#002",
-})
-
-# SME-level semantic IDs (Capabilities elements)
-_CAP_SET_IDS = frozenset({
-    "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0",
-})
-_CAP_CONTAINER_IDS = frozenset({
-    "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0",
-})
-_CAP_ELEMENT_IDS = frozenset({
-    "https://admin-shell.io/idta/CapabilityDescription/Capability/1/0",
-})
-_CAP_REALIZED_BY_IDS = frozenset({
-    "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0",
-})
-
-# SME-level semantic IDs (AID elements)
-_AID_INTERFACE_IDS = frozenset({
-    "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface",
-})
-_AID_ENDPOINT_METADATA_IDS = frozenset({
-    "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata",
-})
-_AID_INTERACTION_METADATA_IDS = frozenset({
-    "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata",
-})
+ARSO_SEMANTIC_ID              = ARSO["semanticId"]
+ARSO_ID_SHORT                 = ARSO["idShort"]
+ARSO_PARENT_CLASS             = ARSO["parentClass"]
+ARSO_TRANSITIVE_PARENT_CLASS  = ARSO["transitiveParentClass"]
+ARSO_UNCONDITIONAL_AAS_TYPE   = ARSO["unconditionalAasType"]
+ARSO_HAS_SUBMODEL             = ARSO["hasSubmodel"]
 
 
-def _build_sid_map(pairs: list[tuple[frozenset[str], URIRef]]) -> dict[str, URIRef]:
-    """Flatten a list of (id_set, arso_type) pairs into a single lookup dict."""
-    out: dict[str, URIRef] = {}
-    for ids, arso_type in pairs:
-        for sid in ids:
-            out[sid] = arso_type
+def _resolve_ontology_import(import_uri: str, parent_file: Path) -> Path | None:
+    canon = import_uri.rstrip("/")
+    if import_uri in _EXTERNAL_IMPORT_CATALOG:
+        return _EXTERNAL_IMPORT_CATALOG[import_uri]
+    if canon in _EXTERNAL_IMPORT_CATALOG:
+        return _EXTERNAL_IMPORT_CATALOG[canon]
+    parsed = urlparse(import_uri)
+    if parsed.scheme in ("http", "https"):
+        # ARSO module imports (e.g. .../modules/nameplate) carry no file
+        # extension; the AAS/CSS externals above are caught by the catalog.
+        last_segment = Path(parsed.path).name
+        ttl_name = last_segment if last_segment.endswith(".ttl") else f"{last_segment}.ttl"
+        for candidate in (
+            parent_file.parent / ttl_name,
+            parent_file.parent / "Modules" / ttl_name,
+            parent_file.parent.parent / "Modules" / ttl_name,
+        ):
+            resolved = candidate.resolve()
+            if resolved.exists():
+                return resolved
+    return None
+
+
+def _load_ontology_with_imports(target: Graph, ontology_file: Path, visited: set[Path]) -> None:
+    resolved = ontology_file.resolve()
+    if resolved in visited or not resolved.exists():
+        return
+    visited.add(resolved)
+    sub_graph = Graph().parse(str(resolved), format="turtle")
+    target += sub_graph
+    for _, _, imported in sub_graph.triples((None, OWL.imports, None)):
+        local = _resolve_ontology_import(str(imported), resolved)
+        if local is not None:
+            _load_ontology_with_imports(target, local, visited)
+
+
+_ONTOLOGY_GRAPH_CACHE: Graph | None = None
+
+
+def _ontology_graph() -> Graph:
+    """Load and cache ARSO_AAS.ttl plus every module/base ontology it imports."""
+    global _ONTOLOGY_GRAPH_CACHE
+    if _ONTOLOGY_GRAPH_CACHE is None:
+        g = Graph()
+        _load_ontology_with_imports(g, _ARSO_AAS_TTL, set())
+        _ONTOLOGY_GRAPH_CACHE = g
+    return _ONTOLOGY_GRAPH_CACHE
+
+
+def _subclass_closure(ontology_g: Graph, cls: URIRef) -> Iterable[URIRef]:
+    """Yield cls and every class it transitively rdfs:subClassOf, in the ontology graph."""
+    stack = [cls]
+    seen: set[URIRef] = set()
+    while stack:
+        current = stack.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        yield current
+        for parent in ontology_g.objects(current, RDFS.subClassOf):
+            if isinstance(parent, URIRef):
+                stack.append(parent)
+
+
+def _is_submodel_class(ontology_g: Graph, cls: URIRef) -> bool:
+    return AAS.Submodel in _subclass_closure(ontology_g, cls)
+
+
+_CONTAINMENT_PROP_BY_AAS_BASE: dict[URIRef, URIRef] = {
+    AAS.Submodel:                  AAS["Submodel/submodelElements"],
+    AAS.SubmodelElementCollection: AAS["SubmodelElementCollection/value"],
+    AAS.SubmodelElementList:       AAS["SubmodelElementList/value"],
+    AAS.Entity:                    AAS["Entity/statements"],
+}
+
+
+def _containment_prop_for(ontology_g: Graph, cls: URIRef) -> URIRef | None:
+    """The AAS containment property (submodelElements/value/statements) through
+    which direct children of an RDF node typed `cls` are reached, derived from
+    which of the four base AAS container types `cls` is a subclass of."""
+    for ancestor in _subclass_closure(ontology_g, cls):
+        prop = _CONTAINMENT_PROP_BY_AAS_BASE.get(ancestor)
+        if prop is not None:
+            return prop
+    return None
+
+
+def _direct_aas_supertype(ontology_g: Graph, cls: URIRef) -> URIRef | None:
+    """The nearest ancestor of `cls` that is itself in the AAS namespace
+    (e.g. the official aas:Operation for arso:SkillOperationElement)."""
+    for ancestor in _subclass_closure(ontology_g, cls):
+        if str(ancestor).startswith(str(AAS)):
+            return ancestor
+    return None
+
+
+def _build_semantic_id_maps(ontology_g: Graph) -> tuple[dict[str, URIRef], dict[str, URIRef]]:
+    """Submodel-level and element-level semanticId -> ARSO class, read from
+    every `arso:semanticId` annotation in the ontology."""
+    submodel_map: dict[str, URIRef] = {}
+    element_map: dict[str, URIRef] = {}
+    for cls, _, value in ontology_g.triples((None, ARSO_SEMANTIC_ID, None)):
+        if not isinstance(cls, URIRef):
+            continue
+        target = submodel_map if _is_submodel_class(ontology_g, cls) else element_map
+        target[str(value)] = cls
+    return submodel_map, element_map
+
+
+def _build_typed_link_map(ontology_g: Graph) -> dict[URIRef, URIRef]:
+    """Submodel-subclass -> typed arso:hasXSubmodel link property on the AAS
+    shell, derived from each such property's declared rdfs:range."""
+    out: dict[URIRef, URIRef] = {}
+    for prop, _, submodel_cls in ontology_g.triples((None, RDFS.range, None)):
+        if (prop, RDFS.subPropertyOf, ARSO_HAS_SUBMODEL) in ontology_g:
+            out[submodel_cls] = prop
     return out
 
 
-# Submodel-level semanticId -> ARSO subclass (all known variants)
-SUBMODEL_TYPE_BY_SEMANTIC_ID: dict[str, URIRef] = _build_sid_map([
-    (_SM_NAMEPLATE_IDS,        ARSO.DigitalNameplateSubmodel),
-    (_SM_HS_IDS,               ARSO.HierarchicalStructuresSubmodel),
-    (_SM_AID_IDS,              ARSO.AIDSubmodel),
-    (_SM_CAPABILITIES_IDS,     ARSO.CapabilitiesSubmodel),
-    (_SM_SKILLS_IDS,           ARSO.SkillsSubmodel),
-    (_SM_OPERATIONAL_DATA_IDS, ARSO.OperationalDataSubmodel),
-    (_SM_PARAMETERS_IDS,       ARSO.ParametersSubmodel),
-])
+class _StructuralRules:
+    """Ontology-derived rules driving `_apply_structural_typing`.
 
-# SME-level semanticId -> ARSO subclass (all known variants)
-SME_TYPE_BY_SEMANTIC_ID: dict[str, URIRef] = _build_sid_map([
-    (_NP_MANUFACTURER_NAME_IDS,                ARSO.ManufacturerNameMLP),
-    (_NP_MANUFACTURER_PRODUCT_DESIGNATION_IDS, ARSO.ManufacturerProductDesignationMLP),
-    (_NP_CONTACT_INFORMATION_IDS,              ARSO.AddressInformationSMC),
-    (_NP_ORDER_CODE_IDS,                       ARSO.OrderCodeProperty),
-    (_NP_URI_OF_PRODUCT_IDS,                   ARSO.URIOfTheProductProperty),
-    (_NP_ADDRESS_STREET_IDS,                   ARSO.AddressStreetMLP),
-    (_NP_ADDRESS_ZIPCODE_IDS,                  ARSO.AddressZipcodeMLP),
-    (_NP_ADDRESS_CITY_TOWN_IDS,                ARSO.AddressCityTownMLP),
-    (_NP_ADDRESS_NATIONAL_CODE_IDS,            ARSO.AddressNationalCodeMLP),
-    (_HS_ARCHETYPE_IDS,                        ARSO.ArcheTypeProperty),
-    (_HS_ENTRY_NODE_IDS,                       ARSO.EntryNodeEntity),
-    (_HS_NODE_IDS,                             ARSO.NodeEntity),
-    (_HS_HAS_PART_IDS,                         ARSO.HasPartRelationship),
-    (_HS_IS_PART_OF_IDS,                       ARSO.IsPartOfRelationship),
-    (_HS_SAME_AS_IDS,                          ARSO.SameAsRelationship),
-    (_HS_BULK_COUNT_IDS,                       ARSO.BulkCountProperty),
-    (_AID_INTERFACE_IDS,                       ARSO.InterfaceSMC),
-    (_AID_ENDPOINT_METADATA_IDS,               ARSO.EndpointMetadataSMC),
-    (_AID_INTERACTION_METADATA_IDS,            ARSO.InteractionMetadataSMC),
-    (_CAP_SET_IDS,                             ARSO.CapabilitySetSMC),
-    (_CAP_CONTAINER_IDS,                       ARSO.CapabilityContainerSMC),
-    (_CAP_ELEMENT_IDS,                         ARSO.CapabilityElement),
-    (_CAP_REALIZED_BY_IDS,                     ARSO.CapabilityRealizedBySML),
-])
+    direct / transitive: {(parent_cls, idshort_or_None): child_cls}. A None
+    idshort means "apply unconditionally to every matching child of that
+    parent" (see arso:parentClass's doc comment in ARSO_AAS.ttl).
+    unconditional_aas_type: {aas_base_cls: arso_cls}, from arso:unconditionalAasType.
+    """
 
-# Submodel subclass -> typed-link property on AAS shell (drives SHACL constraints)
-_TYPED_LINK_BY_SUBTYPE: dict[URIRef, URIRef] = {
-    ARSO.DigitalNameplateSubmodel:       ARSO.hasDigitalNameplateSubmodel,
-    ARSO.HierarchicalStructuresSubmodel: ARSO.hasHierarchicalStructuresSubmodel,
-    ARSO.AIDSubmodel:                    ARSO.hasAIDSubmodel,
-    ARSO.CapabilitiesSubmodel:           ARSO.hasCapabilitiesSubmodel,
-    ARSO.SkillsSubmodel:                 ARSO.hasSkillsSubmodel,
-    ARSO.OperationalDataSubmodel:        ARSO.hasOperationalDataSubmodel,
-    ARSO.ParametersSubmodel:             ARSO.hasParametersSubmodel,
-}
+    def __init__(self, ontology_g: Graph) -> None:
+        self.direct: dict[tuple[URIRef, str | None], URIRef] = {}
+        self.transitive: dict[tuple[URIRef, str | None], URIRef] = {}
+        self.unconditional_aas_type: dict[URIRef, URIRef] = {}
+
+        for child, _, parent in ontology_g.triples((None, ARSO_PARENT_CLASS, None)):
+            idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
+            self.direct[(parent, str(idshorts[0]) if idshorts else None)] = child
+        for child, _, parent in ontology_g.triples((None, ARSO_TRANSITIVE_PARENT_CLASS, None)):
+            idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
+            self.transitive[(parent, str(idshorts[0]) if idshorts else None)] = child
+        for child, _, aas_cls in ontology_g.triples((None, ARSO_UNCONDITIONAL_AAS_TYPE, None)):
+            self.unconditional_aas_type[aas_cls] = child
+
+
+_ONTOLOGY = _ontology_graph()
+SUBMODEL_TYPE_BY_SEMANTIC_ID, SME_TYPE_BY_SEMANTIC_ID = _build_semantic_id_maps(_ONTOLOGY)
+_TYPED_LINK_BY_SUBTYPE: dict[URIRef, URIRef] = _build_typed_link_map(_ONTOLOGY)
+_STRUCTURAL_RULES = _StructuralRules(_ONTOLOGY)
 
 # AAS modelType -> official AAS class IRI
 _AAS_CLASS_BY_MODEL_TYPE: dict[str, URIRef] = {
@@ -564,69 +576,90 @@ def _walk_element(g: Graph, parent_uri: URIRef, parent_container_prop: URIRef,
             _walk_element(g, elem_uri, P_ENTITY_STATEMENTS, child, i)
 
 
+_ALL_CONTAINMENT_PROPS: tuple[URIRef, ...] = (
+    P_SUBMODEL_ELEMENTS, P_SMC_VALUE, P_SML_VALUE, P_ENTITY_STATEMENTS,
+)
+
+
+def _transitive_descendants(g: Graph, node: URIRef) -> Iterable[URIRef]:
+    """Every node transitively reachable from `node` via any AAS containment
+    property (submodelElements / SMC-value / SML-value / Entity-statements)."""
+    stack = [node]
+    seen: set[URIRef] = set()
+    while stack:
+        current = stack.pop()
+        for prop in _ALL_CONTAINMENT_PROPS:
+            for child in g.objects(current, prop):
+                if child not in seen:
+                    seen.add(child)
+                    stack.append(child)
+                    yield child
+
+
+def _idshort_of(g: Graph, node: URIRef) -> str | None:
+    values = list(g.objects(node, P_REFERABLE_ID_SHORT))
+    return str(values[0]) if values else None
+
+
 def _apply_structural_typing(g: Graph) -> None:
-    """Add ARSO types that depend on element position/modelType rather than semanticId.
+    """Add ARSO types that depend on element position/modelType rather than
+    semanticId, entirely from the ontology-derived rules in _STRUCTURAL_RULES
+    (see the arso:parentClass / arso:transitiveParentClass /
+    arso:unconditionalAasType annotations in the ontology modules)."""
 
-    Called once after all elements are walked.  Covers three patterns:
-    1. aas:Capability instances → always arso:CapabilityElement
-    2. Children of arso:InterfaceSMC typed by idShort
-    3. Children of arso:EndpointMetadataSMC typed by idShort
-    """
-    # 1. All Capability elements → arso:CapabilityElement
-    for cap_uri in list(g.subjects(RDF.type, AAS.Capability)):
-        g.add((cap_uri, RDF.type, ARSO.CapabilityElement))
+    # 1. Unconditional-AAS-type rules (e.g. every aas:Capability -> arso:CapabilityElement).
+    #    Safe only for AAS modelTypes specific to one concept -- see
+    #    arso:unconditionalAasType's doc comment in ARSO_AAS.ttl.
+    for aas_cls, arso_cls in _STRUCTURAL_RULES.unconditional_aas_type.items():
+        for node in list(g.subjects(RDF.type, aas_cls)):
+            g.add((node, RDF.type, arso_cls))
 
-    # 2+3. idShort-based typing for AID child elements
-    _IDSHORT_TYPE_BY_PARENT: dict[URIRef, dict[str, URIRef]] = {
-        ARSO.InterfaceSMC: {
-            "title":   ARSO.InterfaceTitleProperty,
-        },
-        ARSO.EndpointMetadataSMC: {
-            "base":                  ARSO.EndpointBaseProperty,
-            "contentType":           ARSO.ContentTypeProperty,
-            "securityDefinitions":   ARSO.SecurityDefinitionsSMC,
-            "security":              ARSO.SecuritySML,
-        },
-    }
-
-    for parent_arso_type, idshort_map in _IDSHORT_TYPE_BY_PARENT.items():
-        for parent_uri in g.subjects(RDF.type, parent_arso_type):
-            for child_uri in g.objects(parent_uri, P_SMC_VALUE):
-                id_short_vals = list(g.objects(child_uri, P_REFERABLE_ID_SHORT))
-                if not id_short_vals:
-                    continue
-                id_short = str(id_short_vals[0])
-                arso_type = idshort_map.get(id_short)
-                if arso_type is not None:
-                    g.add((child_uri, RDF.type, arso_type))
-
-    # CCType containers: type the three mandatory top-level SMCs of SkillsSubmodel
-    # by idShort (they use P_SUBMODEL_ELEMENTS, not P_SMC_VALUE).
-    _CC_CONTAINER_TYPES = {
-        "Interfaces": ARSO.CCInterfacesSMC,
-        "Skills":     ARSO.CCSkillsSMC,
-        "Errors":     ARSO.CCErrorsSMC,
-    }
-    for sm_uri in g.subjects(RDF.type, ARSO.SkillsSubmodel):
-        for child_uri in g.objects(sm_uri, P_SUBMODEL_ELEMENTS):
-            id_short_vals = list(g.objects(child_uri, P_REFERABLE_ID_SHORT))
-            if not id_short_vals:
+    # 2. Direct-child rules, run to a fixpoint: typing a child can make it the
+    #    parent for a subsequent rule (e.g. CCInterfacesSMC -> CCInterfaceSMC
+    #    -> CCInterfaceReferenceRef is two direct-child hops deep).
+    changed = True
+    while changed:
+        changed = False
+        for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.direct.items():
+            containment_prop = _containment_prop_for(_ONTOLOGY, parent_cls)
+            if containment_prop is None:
                 continue
-            arso_type = _CC_CONTAINER_TYPES.get(str(id_short_vals[0]))
-            if arso_type is not None:
-                g.add((child_uri, RDF.type, arso_type))
+            # Without an idShort anchor, still require the child's own official
+            # AAS modelType to match child_cls's declared AAS supertype, so an
+            # unconditional rule can't swallow unrelated siblings of a
+            # different modelType (e.g. a SubmodelElementCollection sibling
+            # of the intended Property).
+            base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
+            for parent_node in list(g.subjects(RDF.type, parent_cls)):
+                for child_node in g.objects(parent_node, containment_prop):
+                    if (child_node, RDF.type, child_cls) in g:
+                        continue
+                    if idshort is not None:
+                        if _idshort_of(g, child_node) != idshort:
+                            continue
+                    elif base_aas_type is not None:
+                        if (child_node, RDF.type, base_aas_type) not in g:
+                            continue
+                    g.add((child_node, RDF.type, child_cls))
+                    changed = True
 
-    # SecuritySchemeSMC: every direct child of SecurityDefinitionsSMC is a scheme SMC
-    for sec_def_uri in g.subjects(RDF.type, ARSO.SecurityDefinitionsSMC):
-        for scheme_uri in g.objects(sec_def_uri, P_SMC_VALUE):
-            g.add((scheme_uri, RDF.type, ARSO.SecuritySchemeSMC))
-
-    # SchemeProperty: the "scheme" Property inside any SecuritySchemeSMC
-    for scheme_smc_uri in g.subjects(RDF.type, ARSO.SecuritySchemeSMC):
-        for child_uri in g.objects(scheme_smc_uri, P_SMC_VALUE):
-            id_short_vals = list(g.objects(child_uri, P_REFERABLE_ID_SHORT))
-            if id_short_vals and str(id_short_vals[0]) == "scheme":
-                g.add((child_uri, RDF.type, ARSO.SchemeProperty))
+    # 3. Transitive rules, for the rare case where the real containment path
+    #    passes through an intermediate node the converter doesn't otherwise
+    #    type (e.g. a flat Skill SMC holding an Operation directly, rather
+    #    than the full nested CCType Interfaces/Skills/Errors structure).
+    #    Without an idShort anchor, disambiguation falls back to the child's
+    #    own official AAS modelType (e.g. aas:Operation).
+    for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.transitive.items():
+        base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
+        for parent_node in list(g.subjects(RDF.type, parent_cls)):
+            for descendant in list(_transitive_descendants(g, parent_node)):
+                if idshort is not None:
+                    if _idshort_of(g, descendant) != idshort:
+                        continue
+                elif base_aas_type is not None:
+                    if (descendant, RDF.type, base_aas_type) not in g:
+                        continue
+                g.add((descendant, RDF.type, child_cls))
 
 
 def _walk_submodel(g: Graph, shell_uri: URIRef, submodel: dict) -> URIRef | None:

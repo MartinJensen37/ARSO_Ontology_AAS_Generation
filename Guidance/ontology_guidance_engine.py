@@ -1,79 +1,63 @@
 """
 Ontology-driven SHACL guidance engine for the ResourceAAS editor.
 
-Converts a YAML generator-profile config to a lightweight RDF graph and
-validates it using the project's canonical SHACL shapes (via
-Validation.Validator.validator.validate_rdf_graph).
+Runs the project's canonical SHACL shapes (via
+Validation.Validator.validator.validate_rdf_graph) against the *real* AAS
+RDF projection (Transformation.AAS_to_RDF.aas_to_rdf.serialize) of a
+best-effort AAS dict built from the in-progress config — the same dict shape
+and the same RDF projection used for final validation, so a guidance hint can
+never disagree with what generation will ultimately enforce.
 
 Violations become "hint" suggestions surfaced in the UI guidance panel.
 Because the SHACL shapes are the single source of truth, no constraint
 logic is duplicated here — if the shapes change, guidance updates automatically.
+
+This replaces an earlier version that built its own lightweight RDF graph
+(via a now-removed config_to_rdf module) using ad hoc vocabulary terms that
+never matched any real SHACL shape target — so it silently never produced a
+meaningful hint. Feeding the real AAS-to-RDF projection is what makes the
+shapes actually able to fire.
 """
 from __future__ import annotations
 
-import re
 from typing import Any
 
-from .config_to_rdf import config_to_rdf
-
-# Maps SHACL result messages → YAML field dot-paths for UI field highlighting.
-# Patterns are tried in order; first match wins.
-_MESSAGE_TO_FIELD: list[tuple[re.Pattern, str]] = [
-    (re.compile(r"DigitalNameplate submodel is mandatory",          re.I), "DigitalNameplate"),
-    (re.compile(r"HierarchicalStructures.*submodel is mandatory",   re.I), "HierarchicalStructures"),
-    (re.compile(r"AID submodel must be present",                    re.I), "AID"),
-    (re.compile(r"SoftwareInterface must be present",               re.I), "AID"),
-    (re.compile(r"ResourceInterface must be mapped",                re.I), "AID.InterfaceMQTT"),
-    (re.compile(r"SkillInterface.*must use.*ResourceInterface",     re.I), "Skills"),
-    (re.compile(r"exactly one SkillInterface",                      re.I), "Skills"),
-    (re.compile(r"Skills submodel.*Capabilities submodel",          re.I), "Capabilities"),
-    (re.compile(r"Capabilities submodel.*Skills submodel",          re.I), "Skills"),
-    (re.compile(r"provides Skills.*must provide.*Capabilit",        re.I), "Capabilities"),
-    (re.compile(r"provides Capabilit.*must provide.*Skill",         re.I), "Skills"),
-    (re.compile(r"Capabilit.*isRealizedBySkill",                    re.I), "Capabilities"),
-    (re.compile(r"serialNumber.*manufacturerName",                  re.I), "DigitalNameplate"),
-    (re.compile(r"HierarchicalStructures.*Name is required",        re.I), "HierarchicalStructures.Name"),
-    (re.compile(r"BoM entity.*globalAssetId",                       re.I), "HierarchicalStructures"),
-    (re.compile(r"Archetype.*no entity entries",                    re.I), "HierarchicalStructures"),
-    (re.compile(r"sourceSemanticId.*capabilit",                     re.I), "Capabilities"),
-    (re.compile(r"sourceSemanticId.*skill",                         re.I), "Skills"),
-    (re.compile(r"yearOfConstruction",                              re.I), "DigitalNameplate.YearOfConstruction"),
-    (re.compile(r"dateOfManufacture",                               re.I), "DigitalNameplate.DateOfManufacture"),
-    (re.compile(r"serialNumber",                                    re.I), "DigitalNameplate.SerialNumber"),
-    (re.compile(r"manufacturerName",                                re.I), "DigitalNameplate.ManufacturerName"),
-]
+from Validation.Validator.validator import map_issue_to_field
 
 
-def _map_message_to_field(message: str) -> str:
-    for pattern, field in _MESSAGE_TO_FIELD:
-        if pattern.search(message):
-            return field
-    return ""
-
-
-def check_config(system_id: str, config: dict) -> list[dict[str, Any]]:
+def check_aas_dict(aas_dict: dict) -> list[dict[str, Any]]:
     """
-    Run SHACL pre-validation on a YAML config dict.
+    Run SHACL pre-validation on a best-effort AAS dict (same shape as the
+    final generated AAS JSON, just possibly incomplete).
 
-    Converts the config to a lightweight RDF graph and validates it using
-    the project's canonical SHACL shapes from Validation.Validator.validator.
+    Projects the dict to RDF with the real AAS-to-RDF converter and validates
+    it using the project's canonical SHACL shapes from
+    Validation.Validator.validator.
 
     Returns a list of hint suggestions (action="hint") derived directly from
     SHACL constraint violations.
 
     Args:
-        system_id: The top-level key from the YAML config (used for URI generation).
-        config:    The system-level config dict (value under system_id key).
+        aas_dict: A dict shaped like the final generated AAS JSON
+            (assetAdministrationShells / submodels), typically built by
+            AASGenerator._build_object_store() + _serialize_to_dict() on the
+            in-progress config, before all fields are necessarily filled in.
 
     Returns:
         List of suggestion dicts: {field, action, description, proposed_value}.
     """
-    data_graph = config_to_rdf(system_id, config)
+    try:
+        from Transformation.AAS_to_RDF.aas_to_rdf import serialize as aas_to_rdf_serialize
+        from Validation.Validator.validator import validate_rdf_graph
+    except ImportError:
+        return []
 
     try:
-        from Validation.Validator.validator import validate_rdf_graph
+        data_graph = aas_to_rdf_serialize(aas_dict)
         _, issues = validate_rdf_graph(data_graph)
-    except ImportError:
+    except Exception:
+        # Guidance is best-effort: an incomplete in-progress config that the
+        # converter can't handle yet should never block editing.
         return []
 
     hints: list[dict[str, Any]] = []
@@ -84,7 +68,9 @@ def check_config(system_id: str, config: dict) -> list[dict[str, Any]]:
         if message in seen_messages:
             continue
         seen_messages.add(message)
-        field = _map_message_to_field(message)
+        field = _map_issue_to_field(
+            message, issue.get("result_path", ""), issue.get("focus_node", "")
+        )
         hints.append({
             "field": field,
             "action": "hint",

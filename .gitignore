@@ -7,6 +7,9 @@ __pycache__/
 build/
 dist/
 
+# Generation config — contains API keys, never commit
+Generation/config.yaml
+
 # Editor / OS
 .vscode/
 .DS_Store

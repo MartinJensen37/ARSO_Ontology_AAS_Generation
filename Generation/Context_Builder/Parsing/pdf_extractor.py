@@ -10,7 +10,7 @@ import re
 import time
 from pathlib import Path
 from typing import Optional
-from .config import Config
+from ...config import Config
 
 
 def load_pdf(cfg: Config) -> tuple[Optional[str], Optional[str]]:
