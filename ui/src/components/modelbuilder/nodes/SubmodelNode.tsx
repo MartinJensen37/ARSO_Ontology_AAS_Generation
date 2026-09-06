@@ -7,6 +7,13 @@ import type { ValidationIssue } from '../../../types/resourceaas';
 
 // Stable empty array — prevents infinite re-render from `?? []` in Zustand selectors
 const EMPTY_ISSUES: ValidationIssue[] = [];
+
+// SubmodelKey values that don't match the backend's issue.field naming —
+// see the comment at fieldPrefix below.
+const SUBMODEL_KEY_TO_FIELD_PREFIX: Partial<Record<SubmodelKey, string>> = {
+  Nameplate: 'DigitalNameplate',
+  Variables: 'OperationalData',
+};
 import type {
   ResourceAASProfile,
   SystemConfig,
@@ -17,7 +24,6 @@ import type {
   Variable,
   Parameter,
   HierarchicalStructures,
-  AIMCMappingConfig,
 } from '../../../types/resourceaas';
 import { SUBMODEL_META } from '../catalogMeta';
 
@@ -31,9 +37,9 @@ export interface SubmodelNodeData {
 // ── Row type ─────────────────────────────────────────────────────────────────
 
 type HandleType =
-  | 'source'  // right handle only  — outgoing reference (HasPart, Skills, Capabilities)
+  | 'source'  // right handle only  — outgoing reference (HasPart, Capabilities, Variables, Parameters)
   | 'target'  // left handle only   — incoming reference (IsPartOf, AID, Nameplate)
-  | 'both';   // left + right       — bidirectional (SameAs)
+  | 'both';   // left + right       — bidirectional (Skills — receives realizedBy, references AID)
 
 interface PropRow {
   id: string;
@@ -116,7 +122,7 @@ function getRows(
       return Object.entries(skills).slice(0, 8).map(([name, skill]) => ({
         id: `sk-${name}`,
         label: name,
-        value: skill?.callType ? `[${skill.callType}]` : '—',
+        value: skill?.interface ? `→ ${skill.interface}` : '—',
         handleType: 'both' as HandleType,
       }));
     }
@@ -135,11 +141,13 @@ function getRows(
     case 'Variables': {
       const vars = cfg.Variables as Record<string, Variable> | undefined;
       if (!vars) return [];
+      // 'source' — a Variable *holds* the InterfaceReference into AID, so the
+      // connector must originate here (mirrors Capabilities → Skills).
       return Object.entries(vars).slice(0, 6).map(([name, v]) => ({
         id: `var-${name}`,
         label: name,
-        value: v?.semanticId?.split('/').pop() ?? '✓',
-        handleType: 'target' as HandleType,
+        value: v?.InterfaceReference ? `→ ${v.InterfaceReference}` : '—',
+        handleType: 'source' as HandleType,
       }));
     }
 
@@ -149,10 +157,8 @@ function getRows(
       return Object.entries(params).slice(0, 6).map(([name, p]) => ({
         id: `par-${name}`,
         label: name,
-        value: p?.ParameterValue
-          ? `${p.ParameterValue}${p.Unit ? ' ' + p.Unit : ''}`
-          : '—',
-        handleType: 'target' as HandleType,
+        value: p?.InterfaceReference ? `→ ${p.InterfaceReference}` : '—',
+        handleType: 'source' as HandleType,
       }));
     }
 
@@ -162,26 +168,15 @@ function getRows(
 
       const hasPart  = Object.keys(hs.HasPart  ?? {}).length;
       const isPartOf = Object.keys(hs.IsPartOf ?? {}).length;
-      const sameAs   = Object.keys(hs.SameAs   ?? {}).length;
 
-      // Always expose all 3 relationship handles so edges can be drawn immediately
+      // Always expose both relationship handles so edges can be drawn immediately.
+      // No SameAs handle here -- that's an automatic reference the builder writes
+      // into every HasPart/IsPartOf node itself, not a relationship a human configures.
       return [
         { id: 'hs-entry',    label: 'EntryNode', value: hs.Name ?? identitySystemId, handleType: 'target' },
         { id: 'hs-haspart',  label: 'HasPart',   value: hasPart  > 0 ? `${hasPart} part${hasPart !== 1 ? 's' : ''}`             : '—', handleType: 'source' },
         { id: 'hs-ispartof', label: 'IsPartOf',  value: isPartOf > 0 ? `${isPartOf} parent${isPartOf !== 1 ? 's' : ''}`         : '—', handleType: 'source' },
-        { id: 'hs-sameas',   label: 'SameAs',    value: sameAs   > 0 ? `${sameAs} equiv.`                                       : '—', handleType: 'both'   },
       ];
-    }
-
-    case 'AIMC': {
-      const aimc = cfg.AIMC as Record<string, AIMCMappingConfig> | undefined;
-      if (!aimc) return [];
-      return Object.entries(aimc).slice(0, 6).map(([name, config]) => ({
-        id: `aimc-${name}`,
-        label: name,
-        value: config?.interfaceName ? `→ ${config.interfaceName}` : '—',
-        handleType: 'target' as HandleType,
-      }));
     }
 
     default:
@@ -211,7 +206,10 @@ export const SubmodelNode = memo(function SubmodelNode({ id, data, selected }: N
   const parsedProfile = ownState?.parsedProfile ?? globalParsedProfile;
   const identitySystemId = ownState?.identitySystemId ?? globalIdentitySystemId;
 
-  const fieldPrefix = submodelKey === 'Nameplate' ? 'DigitalNameplate' : submodelKey;
+  // The backend's issue.field uses ontology/config-style submodel names, which
+  // for these two keys don't match the UI's SubmodelKey literal (see
+  // Validation/Validator/validator.py's map_issue_to_field / _FIELD_KEYWORDS).
+  const fieldPrefix = SUBMODEL_KEY_TO_FIELD_PREFIX[submodelKey] ?? submodelKey;
   const violationCount = nodeIssues.filter(
     (i) => i.severity === 'Violation' && i.field?.startsWith(fieldPrefix)
   ).length;

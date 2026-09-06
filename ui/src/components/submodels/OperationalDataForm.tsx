@@ -31,13 +31,17 @@ export function OperationalDataForm() {
   const metaId = (parsedProfile[systemId] as any)?._meta?.Variables?.id ?? `${baseUrl}/submodels/instances/${identitySystemId}/OperationalData`;
   const metaSemanticId = (parsedProfile[systemId] as any)?._meta?.Variables?.semanticId ?? OPERATIONAL_DATA_SUBMODEL;
 
-  const update = (varName: string, value: string) => {
+  const updateInterfaceReference = (varName: string, value: string) => {
+    updateProfileField([systemId, 'Variables', varName, 'InterfaceReference'], value || undefined);
+  };
+
+  const updateSemanticId = (varName: string, value: string) => {
     updateProfileField([systemId, 'Variables', varName, 'semanticId'], value || undefined);
   };
 
   const addVariable = () => {
     const name = nextCountName('NewVariable', Object.keys(variables));
-    updateProfileField([systemId, 'Variables', name], { semanticId: '' } as Variable);
+    updateProfileField([systemId, 'Variables', name], { InterfaceReference: '' } as Variable);
   };
 
   const removeVariable = (name: string) => {
@@ -89,11 +93,21 @@ export function OperationalDataForm() {
                   onRename={(n) => renameVariable(varName, n)} />
               </div>
             )}
+            <div className="form-row form-row--inline">
+              <label className="form-label">Interface Reference</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder="e.g. State"
+                value={variable?.InterfaceReference ?? ''}
+                onChange={(e) => updateInterfaceReference(varName, e.target.value)}
+              />
+              <span className="form-hint">idShort of the AID property/action this variable reads</span>
+            </div>
             <SemanticIdInput
               label="Semantic ID"
-              required
               value={variable?.semanticId ?? ''}
-              onChange={(v) => update(varName, v)}
+              onChange={(v) => updateSemanticId(varName, v)}
             />
           </div>
         </div>

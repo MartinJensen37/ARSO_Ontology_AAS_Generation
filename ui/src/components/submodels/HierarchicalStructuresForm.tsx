@@ -16,24 +16,24 @@ interface WorkspaceAasOption {
   systemId: string;
 }
 
-type RelKey = 'HasPart' | 'IsPartOf' | 'SameAs';
+type RelKey = 'HasPart' | 'IsPartOf';
 
+// Matches hierarchical_structures_builder.py's archetype dispatch exactly --
+// 'Full' processes both groups, 'OneUp'/'OneDown' process one each.
 const ARCHETYPE_SECTIONS: Record<string, RelKey[]> = {
-  OneDown:         ['HasPart'],
-  OneUp:           ['IsPartOf'],
-  OneUpAndOneDown: ['HasPart', 'IsPartOf'],
+  OneDown: ['HasPart'],
+  OneUp:   ['IsPartOf'],
+  Full:    ['HasPart', 'IsPartOf'],
 };
 
 const SECTION_LABELS: Record<RelKey, string> = {
   HasPart:  'HasPart — parts contained by this asset',
   IsPartOf: 'IsPartOf — assemblies this asset belongs to',
-  SameAs:   'SameAs — equivalent assets',
 };
 
 const HS_HANDLE_ID: Record<RelKey, string> = {
   HasPart:  'hs-haspart',
   IsPartOf: 'hs-ispartof',
-  SameAs:   'hs-sameas',
 };
 
 function EntityCard({
@@ -303,8 +303,7 @@ export function HierarchicalStructuresForm() {
     }
   };
 
-  const archetypeSections: RelKey[] = archetype ? (ARCHETYPE_SECTIONS[archetype] ?? []) : [];
-  const visibleSections: RelKey[]   = [...archetypeSections, 'SameAs'];
+  const visibleSections: RelKey[] = archetype ? (ARCHETYPE_SECTIONS[archetype] ?? []) : [];
 
   return (
     <div className="submodel-form">
@@ -341,7 +340,7 @@ export function HierarchicalStructuresForm() {
             <option value="">— none —</option>
             <option value="OneDown">OneDown — this asset contains sub-assets (HasPart)</option>
             <option value="OneUp">OneUp — this asset is part of a larger assembly (IsPartOf)</option>
-            <option value="OneUpAndOneDown">OneUpAndOneDown — both HasPart and IsPartOf</option>
+            <option value="Full">Full — both HasPart and IsPartOf</option>
           </select>
           <span className="field-hint">
             Controls which hierarchical relationship entries are emitted in the AAS JSON.

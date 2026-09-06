@@ -1,4 +1,5 @@
 import { useAppStore } from '../../store/useAppStore';
+import { SemanticIdInput } from '../shared/SemanticIdInput';
 import { useAdvanced } from '../shared/AdvancedContext';
 import { AdvField } from '../shared/AdvField';
 import { PARAMETERS_SUBMODEL, SEMANTIC_ID_BASE } from '../../aas/semanticIds';
@@ -30,21 +31,29 @@ export function ParametersForm() {
   const metaId = (parsedProfile[systemId] as any)?._meta?.Parameters?.id ?? `${baseUrl}/submodels/instances/${identitySystemId}/Parameters`;
   const metaSemanticId = (parsedProfile[systemId] as any)?._meta?.Parameters?.semanticId ?? PARAMETERS_SUBMODEL;
 
-  const update = (paramName: string, field: keyof Parameter, value: string) => {
-    updateProfileField([systemId, 'Parameters', paramName, field], value);
+  const updateInterfaceReference = (paramName: string, value: string) => {
+    updateProfileField([systemId, 'Parameters', paramName, 'InterfaceReference'], value || undefined);
+  };
+
+  const updateSemanticId = (paramName: string, value: string) => {
+    updateProfileField([systemId, 'Parameters', paramName, 'semanticId'], value || undefined);
   };
 
   const addParam = () => {
     const name = nextCountName('NewParam', Object.keys(parameters));
-    updateProfileField([systemId, 'Parameters', name], {
-      ParameterValue: '',
-      Unit: '',
-    } as Parameter);
+    updateProfileField([systemId, 'Parameters', name], { InterfaceReference: '' } as Parameter);
   };
 
   const removeParam = (name: string) => {
     const clone = { ...parameters };
     delete clone[name];
+    updateProfileField([systemId, 'Parameters'], clone);
+  };
+
+  const renameParam = (oldName: string, newName: string) => {
+    const clone = { ...parameters };
+    clone[newName] = clone[oldName];
+    delete clone[oldName];
     updateProfileField([systemId, 'Parameters'], clone);
   };
 
@@ -69,48 +78,40 @@ export function ParametersForm() {
         <p className="empty-state">No parameters defined.</p>
       )}
 
-      <table className="param-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Value</th>
-            <th>Unit</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(parameters).map(([paramName, param]) => (
-            <tr key={paramName}>
-              <td>
-                <code className="param-name">{paramName}</code>
-              </td>
-              <td>
-                <input
-                  className="field-input field-input--sm"
-                  value={param?.ParameterValue ?? ''}
-                  onChange={(e) => update(paramName, 'ParameterValue', e.target.value)}
-                />
-              </td>
-              <td>
-                <input
-                  className="field-input field-input--sm"
-                  value={param?.Unit ?? ''}
-                  placeholder="unit"
-                  onChange={(e) => update(paramName, 'Unit', e.target.value)}
-                />
-              </td>
-              <td>
-                <button
-                  className="btn btn--xs btn--danger"
-                  onClick={() => removeParam(paramName)}
-                >
-                  ✕
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {Object.entries(parameters).map(([paramName, param]) => (
+        <div key={paramName} className="card card--flat">
+          <div className="card__header">
+            <strong>{paramName}</strong>
+            <button className="btn btn--xs btn--danger" onClick={() => removeParam(paramName)}>
+              ✕
+            </button>
+          </div>
+          <div className="card__body">
+            {advanced && (
+              <div className="adv-block">
+                <AdvField label="idShort" value={paramName}
+                  onRename={(n) => renameParam(paramName, n)} />
+              </div>
+            )}
+            <div className="form-row form-row--inline">
+              <label className="form-label">Interface Reference</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder="e.g. Setpoint"
+                value={param?.InterfaceReference ?? ''}
+                onChange={(e) => updateInterfaceReference(paramName, e.target.value)}
+              />
+              <span className="form-hint">idShort of the AID property/action this parameter writes</span>
+            </div>
+            <SemanticIdInput
+              label="Semantic ID"
+              value={param?.semanticId ?? ''}
+              onChange={(v) => updateSemanticId(paramName, v)}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -10,6 +10,14 @@ export interface SystemConfig {
   idShort: string;
   id: string;
   globalAssetId: string;
+  // Pass-through root-level profile fields (Generation/Context_Builder/Parsing/
+  // profile_structure.py::CORE_PROFILE_KEYS) -- no dedicated form input for
+  // serialNumber/derivedFrom/location yet, but they round-trip through the
+  // profile untouched if a partner tool or the backend populates them.
+  assetType?: string;
+  serialNumber?: string;
+  derivedFrom?: string;
+  location?: string;
   DigitalNameplate?: DigitalNameplate;
   AID?: Record<string, AIDInterface>;
   Variables?: Record<string, Variable>;
@@ -17,12 +25,18 @@ export interface SystemConfig {
   HierarchicalStructures?: HierarchicalStructures;
   Capabilities?: Record<string, Capability>;
   Skills?: Record<string, Skill>;
-  AIMC?: Record<string, AIMCMappingConfig>;
   /** Per-submodel AAS id/semanticId overrides. Key = SubmodelKey (e.g. 'Skills'). */
   _meta?: Record<string, { id?: string; semanticId?: string }>;
 }
 
 // ── Submodel form-state types ─────────────────────────────────────────────────
+
+export interface NameplateAddress {
+  Street?: string;
+  ZipCode?: string;
+  CityTown?: string;
+  NationalCode?: string;
+}
 
 export interface DigitalNameplate {
   URIOfTheProduct?: string;
@@ -30,8 +44,9 @@ export interface DigitalNameplate {
   ManufacturerProductDesignation?: string;
   ManufacturerProductFamily?: string;
   ManufacturerArticleNumber?: string;
+  OrderCodeOfManufacturer?: string;
+  AddressInformation?: NameplateAddress;
   SerialNumber: string;
-  BatchNumber?: string;
   YearOfConstruction?: string;   // YYYY
   DateOfManufacture?: string;    // YYYY-MM-DD
   HardwareVersion?: string;
@@ -121,12 +136,19 @@ export interface AIDFormResponse {
 }
 
 export interface Variable {
-  semanticId: string;
+  // idShort of the AID property/action this variable reads (under
+  // AID/InterfaceMQTT/InteractionMetadata/properties). Field name matches the
+  // Python profile dict key exactly (variables_builder.py) -- no case
+  // translation needed since this object is sent to /api/profile-to-aas as-is.
+  InterfaceReference?: string;
+  semanticId?: string;
 }
 
 export interface Parameter {
-  ParameterValue: string;
-  Unit?: string;
+  // Same InterfaceReference-based shape as Variable -- parameters_builder.py
+  // mirrors variables_builder.py exactly.
+  InterfaceReference?: string;
+  semanticId?: string;
 }
 
 export interface BomEntity {
@@ -136,12 +158,18 @@ export interface BomEntity {
   submodelId?: string;
 }
 
+// 'Full' | 'OneDown' | 'OneUp' is the ontology's own ArcheType enum
+// (hierarchical-structures.ttl owl:oneOf, enforced via SHACL) -- these are
+// the only 3 legal values, not 'OneUpAndOneDown'. There is no SameAs
+// relationship the builder reads from the profile: SameAs is an automatic
+// reference the builder writes into every IsPartOf/HasPart node it creates
+// (pointing back at that node's own submodel entry), not something a human
+// configures directly.
 export interface HierarchicalStructures {
   Name: string;
-  Archetype?: 'OneUp' | 'OneDown' | 'OneUpAndOneDown';
+  Archetype?: 'OneUp' | 'OneDown' | 'Full';
   IsPartOf?: Record<string, BomEntity>;
   HasPart?: Record<string, BomEntity>;
-  SameAs?: Record<string, BomEntity>;
 }
 
 export interface Capability {
@@ -150,37 +178,15 @@ export interface Capability {
   _containerSemanticId?: string;  // override for CAPABILITY_CONTAINER element semanticId
 }
 
-export interface SkillVariable {
-  idShort: string;
-  displayName?: string;
-  description?: string;
-  valueType: string;   // e.g. 'xs:string', 'xs:double', 'xs:boolean'
-}
-
 export interface Skill {
   semantic_id: string;
+  // idShort of the AID action this skill invokes (under AID/InterfaceMQTT/
+  // InteractionMetadata/actions). Required -- skills_builder.py/AAS_builder.py
+  // ::_check_required_fields hard-requires this on every skill; Operation
+  // input/output variables and delegation/sync qualifiers are all derived
+  // server-side from that action's own schema, not authored per-skill here.
+  interface: string;
   description?: string;
-  /** URL for the invocation delegation qualifier (invocationDelegation). */
-  invocationDelegation?: string;
-  /** 'Synchronous' | 'OneWay' — maps to a ConceptQualifier in the Operation. */
-  callType?: 'Synchronous' | 'OneWay';
-  inputVariables?: SkillVariable[];
-  outputVariables?: SkillVariable[];
-  inoutputVariables?: SkillVariable[];
-}
-
-// ── AIMC (AssetInterfacesMappingConfiguration) ────────────────────────────────
-
-export interface AIMCRelation {
-  sourceSubmodel: 'Variables' | 'Skills' | 'Parameters';
-  sourceElement: string;
-  aidAffordanceType: 'properties' | 'actions' | 'events';
-  aidAffordance: string;
-}
-
-export interface AIMCMappingConfig {
-  interfaceName: string;
-  relations: AIMCRelation[];
 }
 
 // ── API response types (mirrors api/models.py) ────────────────────────────────
