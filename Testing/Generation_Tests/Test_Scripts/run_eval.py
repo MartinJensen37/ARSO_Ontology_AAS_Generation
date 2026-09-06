@@ -57,7 +57,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from Generation.config import load_config, Config  
+from Generation.config import load_config, Config
+from Generation.LLM_Client.llm_client import OPENAI_COMPATIBLE_BASE_URLS
 from Generation.Context_Builder.context_loader import load_context  
 from Generation.Context_Builder.RAG.rag_loader import load_rag  
 from Generation.Context_Builder.RAG.prompt_builder import build_system_instruction, build_user_prompt  
@@ -144,9 +145,16 @@ def _experiment_dir_name(equipment_id: str, provider: str, model: str | None,
 def _config_snapshot(cfg: Config) -> dict:
     """Serialize Config for the dossier — strip secrets, stringify Paths."""
     raw = dataclasses.asdict(cfg)
-    for sensitive in ("api_key", "gemini_api_key", "groq_api_key", "claude_api_key"):
-        if sensitive in raw and raw[sensitive]:
-            raw[sensitive] = "<redacted>"
+    if raw.get("api_key"):
+        raw["api_key"] = "<redacted>"
+    # provider_api_keys holds every configured provider's key (not just the
+    # active one) — redact every non-empty value, not just a fixed set of
+    # legacy per-provider field names that no longer exist on Config.
+    if isinstance(raw.get("provider_api_keys"), dict):
+        raw["provider_api_keys"] = {
+            name: ("<redacted>" if value else value)
+            for name, value in raw["provider_api_keys"].items()
+        }
     for key, value in list(raw.items()):
         if isinstance(value, Path):
             raw[key] = str(value)
@@ -575,7 +583,11 @@ def _run_matrix(matrix: dict, run_dir: Path) -> None:
 def main() -> int:
     p = argparse.ArgumentParser(description="Run evaluation experiments and save full dossiers.")
     p.add_argument("--equipment", help="Equipment ID under evaluation/equipment/")
-    p.add_argument("--provider", choices=["gemini", "groq", "claude"], default="claude")
+    p.add_argument(
+        "--provider",
+        choices=["gemini", "claude", *sorted(OPENAI_COMPATIBLE_BASE_URLS)],
+        default="claude",
+    )
     p.add_argument("--model", default=None, help="Specific model id; defaults to config.yaml's first model for the provider.")
     p.add_argument("--mode", choices=["json", "json-description"], default="json-description")
     p.add_argument("--ablation", choices=["full", "no-feedback", "no-templates", "zero-shot"], default="full")
