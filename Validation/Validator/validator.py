@@ -291,12 +291,8 @@ def validate_rdf_graph(data_graph: Graph) -> tuple[bool, list[dict]]:
     if not loaded:
         return True, []
 
-    n = _strip_abstract_class_constraints(shapes)
-    if n:
-        print(f"  Stripped {n} abstract-class sh:class constraints (require inference)")
-    n = _expand_dash_has_value_with_class(shapes)
-    if n:
-        print(f"  Expanded {n} dash:hasValueWithClass -> sh:qualifiedValueShape")
+    _strip_abstract_class_constraints(shapes)
+    _expand_dash_has_value_with_class(shapes)
 
     try:
         conforms, report_graph, _ = pyshacl.validate(
@@ -381,13 +377,8 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
         return False, [{"source": "validation", "severity": "Violation", "message": msg}], \
             [{"source": "validation", "severity": "Violation", "message": msg}], []
 
-    n_stripped = _strip_abstract_class_constraints(shapes)
-    if n_stripped:
-        print(f"  Stripped {n_stripped} abstract-class sh:class constraints (require inference)")
-
-    n_expanded = _expand_dash_has_value_with_class(shapes)
-    if n_expanded:
-        print(f"  Expanded {n_expanded} dash:hasValueWithClass -> sh:qualifiedValueShape")
+    _strip_abstract_class_constraints(shapes)
+    _expand_dash_has_value_with_class(shapes)
 
     try:
         conforms, report_graph, _report_text = pyshacl.validate(

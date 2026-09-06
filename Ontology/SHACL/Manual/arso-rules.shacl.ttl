@@ -79,15 +79,10 @@ arso:RealizedByRefTargetShape
     """ ;
   ] .
 
-# Every Skill must be realized by at least one Capability. Many-to-one is
-# fine (several Skills may share one Capability's realizedBy list, or one
-# Skill may be realizedBy'd by several separate Capabilities) -- this only
-# checks that each Skill is targeted by at least one realizedBy somewhere,
-# existentially over every Capability in the same AAS, not a 1:1 pairing.
-# Deliberately NOT auto-fixed in the builder: a Skill with no Capability is a
-# real gap in what was provided, not something to silently invent a plausible
-# value for -- this violation is meant to surface back to whoever/whatever
-# produced the profile instead.
+# Every Skill must be targeted by at least one Capability's realizedBy
+# (many-to-one is fine; this is not a 1:1 check). Deliberately not
+# auto-fixed in the builder -- a missing link is a real gap that should
+# surface back to whoever/whatever produced the profile, not get patched.
 
 arso:SkillMustBeRealizedByCapabilityShape
   a sh:NodeShape ;
