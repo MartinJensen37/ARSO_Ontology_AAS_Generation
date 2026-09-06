@@ -68,7 +68,7 @@ def check_aas_dict(aas_dict: dict) -> list[dict[str, Any]]:
         if message in seen_messages:
             continue
         seen_messages.add(message)
-        field = _map_issue_to_field(
+        field = map_issue_to_field(
             message, issue.get("result_path", ""), issue.get("focus_node", "")
         )
         hints.append({
