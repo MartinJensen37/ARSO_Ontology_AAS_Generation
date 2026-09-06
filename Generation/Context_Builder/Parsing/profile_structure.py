@@ -129,14 +129,10 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
 
 
 # Field-name aliases the LLM plausibly reaches for instead of the profile
-# schema's actual key, per section. The rest of the AAS JSON convention uses
-# camelCase ("semanticId" is the real AAS metamodel property name everywhere
-# else in the spec), so an LLM slipping into "semanticId" for a Skill's
-# semantic_id here is a predictable, harmless naming mismatch — not a sign
-# the LLM failed to provide a real value. Normalizing it here means
-# AAS_builder.py's _check_required_fields (deliberately strict about the
-# *value* actually being present — see its docstring) isn't tripped by a
-# key-naming variant alone.
+# schema's actual key. "semanticId" (the real AAS metamodel property name
+# everywhere else in the spec) instead of "semantic_id" here is a harmless
+# naming mismatch, not a missing value -- normalize it so
+# AAS_builder.py's _check_required_fields isn't tripped by naming alone.
 _SKILL_CAPABILITY_FIELD_ALIASES: dict[str, str] = {
     "semanticId": "semantic_id",
     "realized_by": "realizedBy",

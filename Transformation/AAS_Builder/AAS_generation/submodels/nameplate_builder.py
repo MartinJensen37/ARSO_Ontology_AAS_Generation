@@ -102,16 +102,11 @@ class DigitalNameplateSubmodelBuilder:
             "CityTown":     self.semantic_factory.NP_ADDRESS_CITY_TOWN,
             "NationalCode": self.semantic_factory.NP_ADDRESS_NATIONAL_CODE,
         }
-        # Each of these 4 is individually mandatory (someValuesFrom, minCount 1)
-        # per IDTA 02006-3-0 / the ontology's AddressInformationSMC restrictions.
-        # Deliberately NOT defaulted to a [VERIFY: ...] placeholder when missing:
-        # unlike a field with no available source, address data is normally
-        # present in the source material (spec sheet / datasheet) and its
-        # absence here means extraction failed upstream, not that it's
-        # legitimately unknown. Silently inserting a placeholder would make
-        # SHACL validation pass and hide that failure; leaving the field(s)
-        # out instead makes the resulting MinCount violation surface the real
-        # problem to a human, who can supply the value directly in the UI.
+        # Each of these 4 is individually mandatory (minCount 1) per IDTA
+        # 02006-3-0. Not defaulted to a placeholder when missing: address
+        # data is normally present in the source material, so its absence
+        # means extraction failed upstream -- the resulting MinCount
+        # violation should surface that to a human, not be papered over.
         contact_inner: list[model.SubmodelElement] = []
         for field, idshort in (
             ("Street", "Street"),

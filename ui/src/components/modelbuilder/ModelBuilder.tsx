@@ -114,13 +114,10 @@ function ModelBuilderCanvas() {
 
   const seededRef = useRef(false);
 
-  // One-time migration on first mount for state persisted by an older version
-  // of the app: ensure aasShell nodes have dragHandle, and that none are
-  // still marked deletable:false (the very first shell used to be permanently
-  // undeletable; the canvas can now start from -- and be reset to -- zero AAS
-  // nodes, so every shell must be deletable). Required-submodel seeding used
-  // to also happen here, hardcoded to that one guaranteed initial shell --
-  // it now happens per-shell at creation time instead, see addAasShell.
+  // One-time migration for state persisted by an older app version: ensure
+  // aasShell nodes have dragHandle and aren't still marked deletable:false
+  // (the first shell used to be permanently undeletable; now every shell
+  // must be deletable). Submodel seeding moved to addAasShell.
   useEffect(() => {
     if (seededRef.current) return;
     seededRef.current = true;

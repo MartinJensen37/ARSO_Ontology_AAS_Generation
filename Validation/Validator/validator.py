@@ -200,19 +200,14 @@ def _extract_issues(report_graph: Graph) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Issue -> UI field label.
 #
-# Maps a keyword found in an ontology class/property *local name* (e.g. the
-# "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel", or "Capabilit" in
-# "arso:CapabilityRealizedByRel") to the top-level submodel/section it
-# concerns, for display in the UI's validation panel. Single shared
-# implementation for both Guidance.ontology_guidance_engine and the
-# /api/validate endpoint (api/routers/validate.py) — this used to be two
-# separately hand-maintained regex tables matching English sentence
-# fragments from an older, now-nonexistent set of shape messages, which had
-# silently stopped matching anything. A small keyword lookup over naming
-# conventions instead needs no update when a submodel is added, as long as
-# its classes/properties keep following the existing "arso:hasXSubmodel" /
-# "arso:XFoo" naming convention — only a genuinely new *keyword* (a
-# first-of-its-kind submodel name) would.
+# Maps a keyword found in an ontology class/property local name (e.g.
+# "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel") to the
+# submodel/section it concerns, for the UI's validation panel. Shared by
+# Guidance.ontology_guidance_engine and /api/validate. Replaces two
+# hand-maintained regex tables that matched English sentence fragments from
+# an older set of shape messages and had silently stopped matching anything;
+# this keyword lookup instead follows the stable "arso:hasXSubmodel" naming
+# convention, so it doesn't need updating when a submodel is added.
 # ---------------------------------------------------------------------------
 
 _FIELD_KEYWORDS: list[tuple[str, str]] = [

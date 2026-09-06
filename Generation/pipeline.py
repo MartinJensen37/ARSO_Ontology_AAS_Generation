@@ -70,16 +70,11 @@ def run_pipeline(
 		gemini_contents = []
 		groq_history = [{"role": "user", "content": user_prompt}]
 
-	# Guards against an infinite loop: `attempt` is only decremented back (see
-	# below) when call_llm returns empty text, so the while condition alone
-	# cannot bound the number of iterations if a model keeps returning empty
-	# output without ever raising (e.g. a max_tokens budget too small for the
-	# prompt, or a provider silently returning no choices) — call_llm has no
-	# error to report in that case, so it can't trigger the model-switch path
-	# either. Track consecutive empty responses from the *same* model
-	# specifically (a genuine model switch still gets its own fresh attempts,
-	# uncounted here) and give up with a clear error well before this could
-	# spin forever.
+	# `attempt` gets decremented back when call_llm returns empty text (no
+	# error to trigger the model-switch path), so a model stuck returning
+	# empty output forever would otherwise loop forever. Give up after a few
+	# consecutive empties from the *same* model (a real model switch still
+	# gets its own fresh attempts).
 	MAX_CONSECUTIVE_EMPTY_SAME_MODEL = 3
 	consecutive_empty_same_model = 0
 	empty_response_model_idx = model_idx

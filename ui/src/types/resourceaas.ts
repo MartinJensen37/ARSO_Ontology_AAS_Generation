@@ -159,12 +159,9 @@ export interface BomEntity {
 }
 
 // 'Full' | 'OneDown' | 'OneUp' is the ontology's own ArcheType enum
-// (hierarchical-structures.ttl owl:oneOf, enforced via SHACL) -- these are
-// the only 3 legal values, not 'OneUpAndOneDown'. There is no SameAs
-// relationship the builder reads from the profile: SameAs is an automatic
-// reference the builder writes into every IsPartOf/HasPart node it creates
-// (pointing back at that node's own submodel entry), not something a human
-// configures directly.
+// (hierarchical-structures.ttl owl:oneOf) -- the only 3 legal values, not
+// 'OneUpAndOneDown'. No SameAs field: the builder writes that reference
+// automatically into every IsPartOf/HasPart node, it's not user-configured.
 export interface HierarchicalStructures {
   Name: string;
   Archetype?: 'OneUp' | 'OneDown' | 'Full';

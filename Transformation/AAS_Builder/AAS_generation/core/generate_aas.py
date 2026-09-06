@@ -429,16 +429,13 @@ class AASGenerator:
             # "[VERIFY: ...]" string instead of an object; treat as absent.
             capabilities_cfg = {}
 
-        # ── Fill in missing semantic_id (and realizedBy when it's unambiguous:
-        # the capability's own name matches an existing skill) on whatever
+        # Fill in missing semantic_id (and realizedBy when unambiguous: the
+        # capability's own name matches an existing skill) on whatever
         # capabilities are already present. Deliberately does NOT invent a
-        # realizedBy target when the name doesn't match a skill, and does NOT
-        # generate new capability entries for skills that have none at all -
-        # "skill X has no capability" is a real gap in what the LLM provided,
-        # not something to silently paper over. It's caught instead as a
-        # SHACL violation (arso:SkillMustBeRealizedByCapabilityShape in
-        # arso-rules.shacl.ttl) that flows back to the LLM through the normal
-        # retry-with-feedback loop, same as any other validation failure.
+        # realizedBy target otherwise, and does NOT generate new capability
+        # entries for uncovered skills -- that gap is caught as a SHACL
+        # violation (arso:SkillMustBeRealizedByCapabilityShape) and flows
+        # back to the LLM via the normal retry-with-feedback loop instead.
         for cap_name, cap_data in list(capabilities_cfg.items()):
             if not isinstance(cap_data, dict):
                 cap_data = {}
