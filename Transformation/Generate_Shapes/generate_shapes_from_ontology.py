@@ -83,7 +83,7 @@ ONTOLOGY_FILES = [
     _ONTOLOGY_DIR / "AAS" / "aas-rdf-ontology.ttl",
     _ONTOLOGY_DIR / "CSS" / "CSS-Ontology.ttl",
 ]
-OWL2SHACL_RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-semi-closed.ttl"
+OWL2SHACL_RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-closed.ttl"
 GENERATED_OUTPUT = _ONTOLOGY_DIR / "SHACL" / "Generated" / "shapes.generated.shacl.ttl"
 MANUAL_SPARQL_INPUT = _ONTOLOGY_DIR / "SHACL" / "Manual" / "arso-rules.shacl.ttl"
 

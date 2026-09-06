@@ -39,6 +39,42 @@
 #################################################################
 #################################################################
 ##
+##  CONVERTER ANNOTATION PROPERTIES
+##
+##  These carry no OWL semantics (no cardinality/existence
+##  implications) — they exist purely so
+##  Transformation/AAS_to_RDF/aas_to_rdf.py can be ontology-driven
+##  instead of hand-maintaining Python lookup tables. Adding a new
+##  submodel/element type that follows this convention needs no
+##  converter code change.
+##
+#################################################################
+#################################################################
+
+arso:semanticId rdf:type owl:AnnotationProperty ;
+  rdfs:label "semanticId" ;
+  rdfs:comment "One or more AAS semanticId values (URI or IRDI) that identify RDF individuals of this class during JSON-to-RDF projection. Multi-valued to cover legacy/variant IDs for the same concept." .
+
+arso:idShort rdf:type owl:AnnotationProperty ;
+  rdfs:label "idShort" ;
+  rdfs:comment "The idShort a structurally-typed instance of this class must carry. Used together with arso:parentClass / arso:transitiveParentClass when the element has no semanticId of its own to identify it by." .
+
+arso:parentClass rdf:type owl:AnnotationProperty ;
+  rdfs:label "parentClass" ;
+  rdfs:comment "Declares this class is found as a direct structural child of the given class, reached via that parent's own AAS containment property (Submodel/submodelElements, SubmodelElementCollection/value, SubmodelElementList/value, or Entity/statements). Combined with arso:idShort when the child needs disambiguating from siblings; when no arso:idShort is given, the class is applied unconditionally to any direct child of that AAS modelType with no other idShort-anchored match." .
+
+arso:transitiveParentClass rdf:type owl:AnnotationProperty ;
+  rdfs:label "transitiveParentClass" ;
+  rdfs:comment "Like arso:parentClass, but the child may be reached through one or more untyped intermediate containers rather than being a direct child. Use only when arso:parentClass cannot express the real containment depth." .
+
+arso:unconditionalAasType rdf:type owl:AnnotationProperty ;
+  rdfs:label "unconditionalAasType" ;
+  rdfs:comment "Explicit opt-in: any RDF node whose base AAS modelType class is the given value is unconditionally also typed as this class, wherever it occurs in the graph -- no parent/idShort scoping at all. Only safe for AAS modelTypes that are inherently specific to one concept (e.g. aas:Capability); NOT a general 'sole ARSO subclass' inference, since a generic modelType like aas:ReferenceElement legitimately has many unrelated ARSO subclasses and must never be auto-applied this way." .
+
+
+#################################################################
+#################################################################
+##
 ##  MODULE 0: CSS RESOURCE ↔ AAS LINK
 ##
 ##  Connects the real-world CSS Resource concept to its AAS

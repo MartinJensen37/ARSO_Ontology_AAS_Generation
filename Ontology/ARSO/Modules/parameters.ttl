@@ -32,6 +32,7 @@
 arso:ParametersSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Parameters Submodel" ;
+  arso:semanticId "https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel" ;
   rdfs:comment "Custom — Static configuration parameters." .
 
 
@@ -41,7 +42,14 @@ arso:ParametersSubmodel rdf:type owl:Class ;
 
 arso:ParameterEntrySMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "A parameter entry within the Parameters submodel." .
+  arso:parentClass arso:ParametersSubmodel ;
+  rdfs:comment "SMC {parameter_name} -- a named parameter entry, as currently produced by the generation pipeline (parameters_builder.py::_create_parameter_collection, which mirrors variables_builder.py exactly). Wraps an optional InterfaceReference plus any schema-derived data fields. Applied unconditionally to every direct SubmodelElementCollection child of Parameters (no idShort -- parameter names are user-defined). Its semanticId, when present, must use the lab's URI namespace (enforced via SHACL sh:pattern)." .
+
+arso:ParameterInterfaceReferenceRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:parentClass arso:ParameterEntrySMC ;
+  arso:idShort "InterfaceReference" ;
+  rdfs:comment "ReferenceElement InterfaceReference -- points to an AID property (.../InteractionMetadata/properties/{key}) in the same AAS (parameters_builder.py hardcodes the properties path segment, never actions/events). Cross-SM target existence enforced via SPARQL SHACL (arso:ParameterInterfaceRefTargetShape)." .
 
 
 #################################################################

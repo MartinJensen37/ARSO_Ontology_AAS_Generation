@@ -45,6 +45,8 @@
 arso:CapabilitiesSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Capability Description Submodel" ;
+  arso:semanticId "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0" ,
+                  "https://admin-shell.io/idta/CapabilityDescription/1/0" ;
   rdfs:comment "IDTA 02020 — Capability Description." .
 
 
@@ -54,15 +56,19 @@ arso:CapabilitiesSubmodel rdf:type owl:Class ;
 
 arso:CapabilitySetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0" ;
   rdfs:comment "SMC CapabilitySet — groups CapabilityContainers for one use case of the asset." .
 
 arso:CapabilityContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0" ;
   rdfs:comment "SMC CapabilityContainer — holds exactly one Capability element plus optional descriptive elements." .
 
 arso:CapabilityElement rdf:type owl:Class ;
   rdfs:subClassOf aas:Capability ;
-  rdfs:comment "Capability element — implementation-independent specification of a function in industrial production. semanticId: https://admin-shell.io/idta/CapabilityDescription/Capability/1/0. Qualified by CapabilityRoleQualifier (Required|Offered|NotAssigned)." .
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/Capability/1/0" ;
+  arso:unconditionalAasType <https://admin-shell.io/aas/3/1/Capability> ;
+  rdfs:comment "Capability element — implementation-independent specification of a function in industrial production. semanticId: https://admin-shell.io/idta/CapabilityDescription/Capability/1/0. Qualified by CapabilityRoleQualifier (Required|Offered|NotAssigned). aas:Capability is a modelType specific to this one concept, so any node of that type anywhere is typed as this class even without a matching semanticId (real fixtures typically use a project-specific Capability URI instead)." .
 
 arso:CapabilityCommentMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
@@ -98,9 +104,15 @@ arso:CapabilityRelationsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
   rdfs:comment "SMC CapabilityRelations — optional container for all relationships of a capability." .
 
+arso:CapabilityRealizedBySML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0" ;
+  rdfs:comment "SML CapabilityRealizedBy — the realizedBy list itself, holding one RelationshipElement per realizing Skill." .
+
 arso:CapabilityRealizedByRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
-  rdfs:comment "RelationshipElement CapabilityRealizedBy — first: Capability in this SM; second: Skill in the Skills Submodel of the same AAS. Cross-SM enforcement via SPARQL SHACL." .
+  arso:parentClass arso:CapabilityRealizedBySML ;
+  rdfs:comment "RelationshipElement CapabilityRealizedBy — first: Capability in this SM; second: Skill in the Skills Submodel of the same AAS. Cross-SM enforcement via SPARQL SHACL. Applied unconditionally to every direct child of a CapabilityRealizedBySML (no idShort — SML entries are unnamed list items)." .
 
 
 #################################################################

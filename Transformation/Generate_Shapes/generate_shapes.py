@@ -1,7 +1,7 @@
 """
 Regenerate Ontology/SHACL/Generated/shapes.generated.shacl.ttl from ARSO_AAS.ttl.
 
-Applies the owl2sh-semi-closed ruleset to the union of ARSO_AAS.ttl and the
+Applies the owl2sh-closed ruleset to the union of ARSO_AAS.ttl and the
 locally vendored AAS v3.1 ontology. The inline catalog mirrors the URL to file
 mapping so rdflib resolves imports without a network call.
 """
@@ -21,7 +21,7 @@ _MODULES_DIR = _ONTOLOGY_DIR / "ARSO" / "Modules"
 _ARSO_AAS_TTL = _ONTOLOGY_DIR / "ARSO" / "ARSO_AAS.ttl"
 _AAS_RDF_TTL = _ONTOLOGY_DIR / "AAS" / "aas-rdf-ontology.ttl"
 _CSS_TTL = _ONTOLOGY_DIR / "CSS" / "CSS-Ontology.ttl"
-_RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-semi-closed.ttl"
+_RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-closed.ttl"
 _OUTPUT = _ONTOLOGY_DIR / "SHACL" / "Generated" / "shapes.generated.shacl.ttl"
 
 

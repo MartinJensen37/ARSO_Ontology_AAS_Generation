@@ -36,6 +36,7 @@
 arso:HierarchicalStructuresSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Hierarchical Structures Submodel" ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel" ;
   rdfs:comment "IDTA 02011-1-1 — Hierarchical Structures enabling Bills of Material." .
 
 
@@ -45,10 +46,12 @@ arso:HierarchicalStructuresSubmodel rdf:type owl:Class ;
 
 arso:EntryNodeEntity rdf:type owl:Class ;
   rdfs:subClassOf aas:Entity ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0" ;
   rdfs:comment "Entity EntryNode — root of the BoM tree. Must be SelfManagedEntity reflecting the asset administered by this AAS. Exactly one per submodel." .
 
 arso:NodeEntity rdf:type owl:Class ;
   rdfs:subClassOf aas:Entity ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0" ;
   rdfs:comment "Entity Node — a BoM node at any level below EntryNode. Can be Co-managed or Self-managed. Recursive: may contain further NodeEntity instances in its statements." .
 
 
@@ -58,6 +61,7 @@ arso:NodeEntity rdf:type owl:Class ;
 
 arso:ArcheTypeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0" ;
   rdfs:comment "Property ArcheType (xs:string) — hierarchy archetype: 'Full', 'OneDown', or 'OneUp'. Value constraint enforced via SPARQL SHACL." .
 
 # OWL constraints to allow owl->shacl conversion for ArcheType and SelfManaged entities
@@ -101,14 +105,17 @@ arso:SelfManagedBomEntity
 
 arso:HasPartRelationship rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0" ;
   rdfs:comment "RelationshipElement HasPart — parent→child logical connection. Mutually exclusive with IsPartOf per entity. Both first and second must reference an EntryNodeEntity or NodeEntity in the same submodel." .
 
 arso:IsPartOfRelationship rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/IsPartOf/1/0" ;
   rdfs:comment "RelationshipElement IsPartOf — child→parent logical connection. Mutually exclusive with HasPart per entity. Both first and second must reference an EntryNodeEntity or NodeEntity in the same submodel." .
 
 arso:SameAsRelationship rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0" ;
   rdfs:comment "RelationshipElement SameAs — links two entities representing the same asset, within or across submodels. Both first and second must reference an EntryNodeEntity or NodeEntity." .
 
 
@@ -118,6 +125,7 @@ arso:SameAsRelationship rdf:type owl:Class ;
 
 arso:BulkCountProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0" ;
   rdfs:comment "Property BulkCount (xs:unsignedLong) — count of identical bulk items represented by this node. Only valid on NodeEntity; presence implies the node represents a type-level asset, not a specific instance." .
 
 

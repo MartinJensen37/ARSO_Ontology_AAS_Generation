@@ -69,6 +69,7 @@
 arso:AIDSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Asset Interfaces Description Submodel" ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel" ;
   rdfs:comment "IDTA 02017 — Asset Interfaces Description." .
 
 
@@ -78,10 +79,13 @@ arso:AIDSubmodel rdf:type owl:Class ;
 
 arso:InterfaceSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface" ;
   rdfs:comment "SMC Interface within AID (one per communication interface). semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface" .
 
 arso:InterfaceTitleProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:InterfaceSMC ;
+  arso:idShort "title" ;
   rdfs:comment "Property title (xs:string) — human-readable name of the Interface." .
 
 arso:InterfaceCreatedProperty rdf:type owl:Class ;
@@ -103,30 +107,42 @@ arso:InterfaceSupportProperty rdf:type owl:Class ;
 
 arso:EndpointMetadataSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata" ;
   rdfs:comment "SMC EndpointMetadata within Interface — transport-layer binding." .
 
 arso:EndpointBaseProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:EndpointMetadataSMC ;
+  arso:idShort "base" ;
   rdfs:comment "Property base (xs:anyURI) — base URI for all forms in this Interface." .
 
 arso:ContentTypeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:EndpointMetadataSMC ;
+  arso:idShort "contentType" ;
   rdfs:comment "Property contentType (xs:string) — default media type (e.g. application/json)." .
 
 arso:SecuritySML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:parentClass arso:EndpointMetadataSMC ;
+  arso:idShort "security" ;
   rdfs:comment "SML security — list of active security scheme names (xs:string) referencing securityDefinitions." .
 
 arso:SecurityDefinitionsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:EndpointMetadataSMC ;
+  arso:idShort "securityDefinitions" ;
   rdfs:comment "SMC securityDefinitions — container for named security scheme SMCs." .
 
 arso:SecuritySchemeSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {scheme_name} — a security scheme definition (nosec_sc, basic_sc, apikey_sc, etc.)." .
+  arso:parentClass arso:SecurityDefinitionsSMC ;
+  rdfs:comment "SMC {scheme_name} — a security scheme definition (nosec_sc, basic_sc, apikey_sc, etc.). Applied unconditionally to every direct child of securityDefinitions (no idShort — the scheme name is user-defined)." .
 
 arso:SchemeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:SecuritySchemeSMC ;
+  arso:idShort "scheme" ;
   rdfs:comment "Property scheme (xs:string) — security scheme type identifier (nosec, basic, apikey, bearer, psk, digest, oauth2, combo, auto)." .
 
 # Modbus EndpointMetadata fields
@@ -145,6 +161,7 @@ arso:ModvMostSignificantWordProperty rdf:type owl:Class ;
 
 arso:InteractionMetadataSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata" ;
   rdfs:comment "SMC InteractionMetadata within Interface — WoT interaction affordances." .
 
 arso:PropertiesSMC rdf:type owl:Class ;
