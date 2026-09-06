@@ -27,6 +27,9 @@ interface ModelState {
   resetAll: () => void;
 }
 
+// Conventional ID for a default/fallback shell reference (e.g. openIdentityModal's
+// optional argument) -- no longer a guaranteed-to-exist node. The canvas starts
+// empty; every shell (including the first) is created via addShellNode below.
 export const SHELL_NODE_ID = 'aas-shell';
 
 /** Generate a unique shell node ID */
@@ -34,21 +37,10 @@ export function createShellNodeId(): string {
   return `aas-shell-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 }
 
-const initialShellNode: Node = {
-  id: SHELL_NODE_ID,
-  type: 'aasShell',
-  position: { x: 60, y: 40 },
-  // Explicit size required for sub-flow parent node and NodeResizer
-  style: { width: 540, height: 360 },
-  data: { label: 'AAS Shell' },
-  dragHandle: '.mb-drag-handle',
-  deletable: false,
-};
-
 export const useModelStore = create<ModelState>()(
   persist(
     (set, get) => ({
-      nodes: [initialShellNode],
+      nodes: [],
       edges: [],
       edgeLineType: 'smoothstep',
       modal: { kind: 'none' },
@@ -96,7 +88,7 @@ export const useModelStore = create<ModelState>()(
         set({ nodes: [...s.nodes, newShell] });
       },
 
-      resetAll: () => set({ nodes: [initialShellNode], edges: [], edgeLineType: 'smoothstep', modal: { kind: 'none' } }),
+      resetAll: () => set({ nodes: [], edges: [], edgeLineType: 'smoothstep', modal: { kind: 'none' } }),
     }),
     {
       name: 'resourceaas-model',

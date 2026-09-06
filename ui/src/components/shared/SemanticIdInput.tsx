@@ -1,6 +1,4 @@
 
-const SEMANTIC_URI_PATTERN = /^https?:\/\/smartproductionlab\.aau\.dk\//;
-
 interface Props {
   value: string;
   onChange: (v: string) => void;
@@ -8,9 +6,10 @@ interface Props {
   required?: boolean;
 }
 
+// Format is enforced backend-side by the arso:*SemanticIdPatternShape SHACL shapes
+// (Ontology/SHACL/Manual/arso-rules.shacl.ttl); violations surface through the
+// live validation panel rather than being duplicated here.
 export function SemanticIdInput({ value, onChange, label = 'Semantic ID', required }: Props) {
-  const isValid = !value || SEMANTIC_URI_PATTERN.test(value);
-
   return (
     <div className="field-group">
       <label className="field-label">
@@ -21,14 +20,9 @@ export function SemanticIdInput({ value, onChange, label = 'Semantic ID', requir
         type="url"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`field-input${!isValid ? ' field-input--error' : ''}`}
+        className="field-input"
         placeholder="https://smartproductionlab.aau.dk/PPR/..."
       />
-      {!isValid && (
-        <span className="field-error">
-          URI must start with https://smartproductionlab.aau.dk/
-        </span>
-      )}
     </div>
   );
 }

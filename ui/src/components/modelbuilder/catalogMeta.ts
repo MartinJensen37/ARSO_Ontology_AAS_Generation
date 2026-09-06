@@ -50,10 +50,4 @@ export const SUBMODEL_META: Record<SubmodelKey, SubmodelMeta> = {
     description: 'Configuration parameters with units',
     color: '#94a3b8',
   },
-  AIMC: {
-    icon: 'SM',
-    label: 'InterfaceMapping',
-    description: 'Maps AID affordances to Variables, Skills, Parameters',
-    color: '#6ee7b7',
-  },
 };

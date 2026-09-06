@@ -8,7 +8,6 @@ import { CapabilitiesForm } from '../../submodels/CapabilitiesForm';
 import { HierarchicalStructuresForm } from '../../submodels/HierarchicalStructuresForm';
 import { OperationalDataForm } from '../../submodels/OperationalDataForm';
 import { ParametersForm } from '../../submodels/ParametersForm';
-import { AIMCForm } from '../../submodels/AIMCForm';
 import { SUBMODEL_META } from '../catalogMeta';
 import { AdvancedContext } from '../../shared/AdvancedContext';
 
@@ -20,7 +19,6 @@ const FORM_MAP: Record<SubmodelKey, React.ComponentType> = {
   HierarchicalStructures: HierarchicalStructuresForm,
   Variables: OperationalDataForm,
   Parameters: ParametersForm,
-  AIMC: AIMCForm,
 };
 
 export function PropertyEditorModal() {

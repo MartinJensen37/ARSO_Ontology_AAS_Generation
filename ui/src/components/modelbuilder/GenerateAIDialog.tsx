@@ -156,13 +156,15 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
 
   // --- Generation options ---
   const [genConfig, setGenConfig] = useState<GenerationConfig | null>(null);
-  const [provider, setProvider] = useState<string>('gemini');
+  // Populated once /api/generation-config loads (see effect below) — the set
+  // of providers is server-configured and open-ended, so there's no safe
+  // hardcoded default to show before that.
+  const [provider, setProvider] = useState<string>('');
   const [model, setModel] = useState<string>('');
   const [generationMode, setGenerationMode] = useState<string>('json-description');
   const [useRag, setUseRag] = useState(false);
   const [useExample, setUseExample] = useState(false);
   const [forceFullOutput, setForceFullOutput] = useState(true);
-  const [maxPdfChars, setMaxPdfChars] = useState<number | null>(8000);
   const [maxAttempts, setMaxAttempts] = useState(2);
   const [showAdvanced, setShowAdvanced] = useState(true);
 
@@ -179,7 +181,6 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
       .then((cfg) => {
         setGenConfig(cfg);
         if (cfg.defaults.provider) setProvider(String(cfg.defaults.provider));
-        if (cfg.defaults.max_pdf_chars !== undefined) setMaxPdfChars(cfg.defaults.max_pdf_chars as number | null);
         if (cfg.defaults.max_attempts !== undefined) setMaxAttempts(Number(cfg.defaults.max_attempts));
         // intentionally NOT applying use_rag / use_example defaults — always start unchecked
       })
@@ -204,7 +205,7 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
 
   if (!isOpen) return null;
 
-  const providerOptions = genConfig?.providers ?? ['gemini', 'groq'];
+  const providerOptions = genConfig?.providers ?? [];
   const availableModels = genConfig?.models[provider] ?? [];
   const modelLabel = model || availableModels[0] || '(default)';
 
@@ -279,7 +280,6 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
       use_rag: useRag,
       use_example: useExample,
       force_full_aas_output: forceFullOutput,
-      max_pdf_chars: maxPdfChars,
       max_attempts: maxAttempts,
     };
     await generate(req);
@@ -398,15 +398,6 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
                       value={maxAttempts}
                       onChange={(e) => setMaxAttempts(Math.max(1, Math.min(5, Number(e.target.value))))} />
                     <span className="form-hint">retries on SHACL failure</span>
-                  </div>
-
-                  {/* Max file chars */}
-                  <div className="form-row form-row--inline">
-                    <label className="form-label">Max file chars</label>
-                    <input className="form-input form-input--narrow" type="number" min={0} step={1000}
-                      value={maxPdfChars ?? ''} placeholder="unlimited"
-                      onChange={(e) => setMaxPdfChars(e.target.value === '' ? null : Number(e.target.value))} />
-                    <span className="form-hint">text extraction cap per file (blank = no limit)</span>
                   </div>
 
                   {/* Toggles */}

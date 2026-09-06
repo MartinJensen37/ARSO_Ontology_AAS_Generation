@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { useAppStore, ALL_SUBMODELS, REQUIRED_SUBMODELS, type SubmodelKey } from '../../store/useAppStore';
-import { useModelStore, createShellNodeId } from '../../store/useModelStore';
+import { ALL_SUBMODELS, REQUIRED_SUBMODELS, type SubmodelKey } from '../../store/useAppStore';
+import { addAasShell } from './addAasShell';
 import { SUBMODEL_META } from './catalogMeta';
 
 const MIN_WIDTH = 160;
@@ -8,9 +8,6 @@ const MAX_WIDTH = 420;
 const DEFAULT_WIDTH = 230;
 
 export function CatalogPanel() {
-  const addAasNode = useAppStore((s) => s.addAasNode);
-  const addShellNode = useModelStore((s) => s.addShellNode);
-
   const [panelWidth, setPanelWidth] = useState(DEFAULT_WIDTH);
   const isDragging = useRef(false);
 
@@ -46,9 +43,7 @@ export function CatalogPanel() {
   };
 
   const handleAddAas = () => {
-    const shellNodeId = createShellNodeId();
-    addAasNode(shellNodeId);
-    addShellNode(shellNodeId);
+    addAasShell();
   };
 
   return (

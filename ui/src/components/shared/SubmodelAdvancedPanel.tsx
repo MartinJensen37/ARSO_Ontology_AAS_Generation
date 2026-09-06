@@ -29,13 +29,15 @@ const SUBMODEL_SEMANTIC_ID: Record<SubmodelKey, string> = {
 };
 
 // Must match what each builder uses as idShort / path segment
+// (variables_builder.py emits idShort "OperationalData" / id path ".../OperationalData"
+// despite the UI's SubmodelKey label being "Variables" — see SUBMODEL_YAML_KEYS in useAppStore.ts).
 const SUBMODEL_IDSHORT: Record<SubmodelKey, string> = {
   Nameplate:               'DigitalNameplate',
   HierarchicalStructures:  'HierarchicalStructures',
   AID:                     'AID',
   Skills:                  'Skills',
   Capabilities:            'Capabilities',
-  Variables:               'Variables',
+  Variables:               'OperationalData',
   Parameters:              'Parameters',
 };
 
