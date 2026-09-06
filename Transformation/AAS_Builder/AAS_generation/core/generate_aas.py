@@ -12,7 +12,7 @@ import yaml
 import os
 import copy
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any
 from basyx.aas import model
 from basyx.aas.adapter.json import json_serialization
 from .aas_builder import AASBuilder

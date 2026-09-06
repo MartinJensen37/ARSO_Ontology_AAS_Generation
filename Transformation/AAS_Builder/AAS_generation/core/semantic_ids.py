@@ -6,7 +6,7 @@ All IDs are aligned with ARSO_AAS.ttl and the imported ontology modules.
 """
 
 from basyx.aas import model
-from typing import List, Optional
+from typing import List
 
 
 class SemanticIdFactory:

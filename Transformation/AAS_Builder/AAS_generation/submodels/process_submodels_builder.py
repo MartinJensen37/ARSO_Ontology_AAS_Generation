@@ -6,7 +6,7 @@ This module provides builders for Process AAS specific submodels:
 - Policy: Behavior tree policy reference
 """
 
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Optional
 from basyx.aas import model
 
 

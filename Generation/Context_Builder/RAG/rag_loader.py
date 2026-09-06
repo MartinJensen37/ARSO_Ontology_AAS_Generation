@@ -7,7 +7,6 @@ Returns provider-specific structures consumed by prompt_builder.
 from __future__ import annotations
 
 import base64
-from pathlib import Path
 
 from ...config import Config
 from ..Parsing.pdf_extractor import extract_pdf_text

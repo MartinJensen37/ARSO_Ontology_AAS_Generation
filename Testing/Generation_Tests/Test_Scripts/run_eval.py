@@ -41,7 +41,6 @@ import argparse
 import base64
 import dataclasses
 import json
-import os
 import shutil
 import sys
 import tempfile

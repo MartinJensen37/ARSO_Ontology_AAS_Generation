@@ -1,6 +1,6 @@
 """Hierarchical Structures Submodel Builder for AAS generation."""
 
-from typing import Dict, List
+from typing import Dict
 from basyx.aas import model
 
 

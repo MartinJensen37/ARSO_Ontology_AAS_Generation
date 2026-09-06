@@ -2,11 +2,10 @@
 
 import re
 from pathlib import Path
-from typing import Any
 from urllib.parse import urlparse
 
 import pyshacl
-from rdflib import Graph, Literal, Namespace, OWL, RDF, URIRef
+from rdflib import Graph, Namespace, OWL, RDF, URIRef
 
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]

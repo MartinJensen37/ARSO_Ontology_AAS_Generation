@@ -5,7 +5,7 @@ Provides helper functions for creating common AAS elements.
 """
 
 from basyx.aas import model
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 
 

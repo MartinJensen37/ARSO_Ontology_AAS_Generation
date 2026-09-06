@@ -1,6 +1,6 @@
 """Asset Interfaces Description Submodel Builder for AAS generation."""
 
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from basyx.aas import model
 
 
