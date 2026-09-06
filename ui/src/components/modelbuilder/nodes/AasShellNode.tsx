@@ -12,6 +12,8 @@ export const AasShellNode = memo(function AasShellNode({ id, selected }: NodePro
   const removeNodeById = useModelStore((s) => s.removeNodeById);
   const removeAasNode = useAppStore((s) => s.removeAasNode);
 
+  const [isExporting, setIsExporting] = useState(false);
+
   // Shift key → lock aspect ratio while resizing
   const [keepAspectRatio, setKeepAspectRatio] = useState(false);
   useEffect(() => {
@@ -34,18 +36,25 @@ export const AasShellNode = memo(function AasShellNode({ id, selected }: NodePro
     openIdentityModal(id);
   }, [id, setActiveAasNode, openIdentityModal]);
 
-  const handleExport = useCallback((e: React.MouseEvent) => {
+  const handleExport = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     setActiveAasNode(id);
-    const json = buildAasJsonForNode(id);
-    if (!json) return;
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${identitySystemId || 'resourceaas'}.aas.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    setIsExporting(true);
+    try {
+      const result = await buildAasJsonForNode(id);
+      if (!result) return;
+      const blob = new Blob([result.aasJson], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${identitySystemId || 'resourceaas'}.aas.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (exc) {
+      window.alert(`Export failed: ${exc instanceof Error ? exc.message : exc}`);
+    } finally {
+      setIsExporting(false);
+    }
   }, [id, identitySystemId, buildAasJsonForNode, setActiveAasNode]);
 
   const handleReset = useCallback((e: React.MouseEvent) => {
@@ -101,10 +110,10 @@ export const AasShellNode = memo(function AasShellNode({ id, selected }: NodePro
               <button
                 className="btn btn--ghost btn--xs"
                 onClick={handleExport}
-                disabled={!isConfigured}
+                disabled={!isConfigured || isExporting}
                 title={isConfigured ? 'Export this AAS as JSON' : 'Set identity first'}
               >
-                🡫 Export
+                {isExporting ? '…' : '🡫 Export'}
               </button>
               <button
                 className="btn btn--ghost btn--xs"
@@ -113,15 +122,13 @@ export const AasShellNode = memo(function AasShellNode({ id, selected }: NodePro
               >
                 ↺ Reset
               </button>
-              {id !== 'aas-shell' && (
-                <button
-                  className="btn btn--ghost btn--xs btn--danger"
-                  onClick={handleDelete}
-                  title="Delete this AAS"
-                >
-                  ✖
-                </button>
-              )}
+              <button
+                className="btn btn--ghost btn--xs btn--danger"
+                onClick={handleDelete}
+                title="Delete this AAS"
+              >
+                ✖
+              </button>
 
               {/* Drag handle — restricted drag zone */}
               <div className="mb-drag-handle" title="Drag to move">

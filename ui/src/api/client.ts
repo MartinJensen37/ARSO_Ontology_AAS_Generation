@@ -2,17 +2,45 @@ import type { ValidateResponse, ValidationIssue } from '../types/resourceaas';
 
 const BASE = '/api';
 
-async function post<T>(path: string, body: Record<string, unknown>): Promise<T> {
+async function post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+    signal,
   });
   if (!res.ok) {
     const detail = await res.text();
     throw new Error(`API ${path} failed (${res.status}): ${detail}`);
   }
   return res.json() as Promise<T>;
+}
+
+// ---------------------------------------------------------------------------
+// Profile <-> AAS JSON (single canonical build/parse path — see
+// Transformation/AAS_Builder/AAS_builder.py and
+// Transformation/AAS_Builder/AAS_to_Profile/aas_to_profile.py)
+// ---------------------------------------------------------------------------
+
+export interface ProfileToAasRequest {
+  asset_name: string;
+  base_url: string;
+  selected_submodels: string[];
+  profile: Record<string, unknown>;
+}
+
+export interface ProfileToAasResponse {
+  aas_json: string;
+  conforms: boolean;
+  issues: ValidationIssue[];
+  report_ttl: string;
+}
+
+export interface AasToProfileResponse {
+  asset_name: string;
+  base_url: string;
+  selected_submodels: string[];
+  profile: Record<string, unknown>;
 }
 
 // ---------------------------------------------------------------------------
@@ -50,7 +78,6 @@ export interface GenerateAasRequest {
   use_rag?: boolean;
   use_example?: boolean;
   force_full_aas_output?: boolean;
-  max_pdf_chars?: number | null;
   max_attempts?: number;
 }
 
@@ -80,6 +107,12 @@ export type SseEvent =
 export const api = {
   validate: (json_text: string) =>
     post<ValidateResponse>('/validate', { json_text }),
+
+  profileToAas: (req: ProfileToAasRequest, signal?: AbortSignal) =>
+    post<ProfileToAasResponse>('/profile-to-aas', req as unknown as Record<string, unknown>, signal),
+
+  aasToProfile: (aas_json_text: string) =>
+    post<AasToProfileResponse>('/aas-to-profile', { aas_json_text }),
 
   getGenerationConfig: async (): Promise<GenerationConfig> => {
     const res = await fetch(`${BASE}/generation-config`);

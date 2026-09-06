@@ -27,6 +27,8 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from Generation.config import Config, load_config
+from Generation.LLM_Client.llm_client import OPENAI_COMPATIBLE_BASE_URLS
+from Generation.Context_Builder.Parsing.pdf_extractor import extract_pdf_text
 from Generation.Context_Builder.context_loader import load_context
 from Generation.Context_Builder.RAG.rag_loader import load_rag
 from Generation.Context_Builder.RAG.prompt_builder import build_system_instruction, build_user_prompt
@@ -58,7 +60,7 @@ class GenerateAasRequest(BaseModel):
     use_rag: bool = False
     use_example: bool = False
     force_full_aas_output: bool = True
-    max_pdf_chars: Optional[int] = 8000
+    max_pdf_chars: Optional[int] = None
     max_attempts: int = 2
 
 
@@ -179,15 +181,20 @@ def _extract_file_context(
         if provider == "gemini":
             return f"[File: {file_name}] PDF attached as binary context for Gemini.", uploaded.content_base64
         try:
-            import pymupdf4llm  # type: ignore
-
+            # Shares the same pdfplumber (falls back to PyMuPDF/fitz on failure)
+            # extraction Generation.pipeline already uses for the CLI's own
+            # --pdf flag — one working implementation instead of two, and it
+            # doesn't depend on pymupdf4llm's ONNX-based layout model, which
+            # can fail with an ONNXRuntimeError on some numpy/onnxruntime
+            # version combinations regardless of the input PDF.
+            tmp_pdf: Path | None = None
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
                 f.write(raw)
                 tmp_pdf = Path(f.name)
-            text = pymupdf4llm.to_markdown(str(tmp_pdf))
-            tmp_pdf.unlink(missing_ok=True)
-            if max_chars:
-                text = text[:max_chars]
+            try:
+                text = extract_pdf_text(tmp_pdf, max_chars)
+            finally:
+                tmp_pdf.unlink(missing_ok=True)
             return f"[File: {file_name}] PDF extracted text:\n{text}", None
         except Exception as exc:
             return f"[File: {file_name}] PDF extraction failed: {exc}", None
@@ -210,26 +217,21 @@ async def get_generation_config() -> GenerationConfigResponse:
     try:
         cfg = load_config()
         return GenerationConfigResponse(
-            providers=["gemini", "groq", "claude"],
-            models={
-                "gemini": cfg.gemini_models,
-                "groq": cfg.groq_models,
-                "claude": cfg.claude_models,
-            },
+            providers=sorted(cfg.provider_models),
+            models=cfg.provider_models,
             defaults={
                 "provider": cfg.provider,
                 "generation_mode": "json-description",
                 "use_rag": cfg.use_rag,
                 "use_example": cfg.use_example,
                 "force_full_aas_output": cfg.force_full_aas_output,
-                "max_pdf_chars": cfg.max_pdf_chars,
                 "max_attempts": cfg.max_attempts,
             },
         )
     except Exception:
         return GenerationConfigResponse(
-            providers=["gemini", "groq", "claude"],
-            models={"gemini": [], "groq": [], "claude": []},
+            providers=["gemini", "claude", *sorted(OPENAI_COMPATIBLE_BASE_URLS)],
+            models={},
             defaults={},
         )
 
@@ -250,17 +252,13 @@ async def _stream_pipeline(req: GenerateAasRequest) -> AsyncGenerator[str, None]
         yield _sse({"type": "error", "message": f"Config load error: {exc}"})
         return
 
-    if req.provider == "gemini":
-        api_key = base_cfg.gemini_api_key
-    elif req.provider == "groq":
-        api_key = base_cfg.groq_api_key
-    elif req.provider == "claude":
-        api_key = base_cfg.claude_api_key
-    else:
+    if req.provider not in base_cfg.provider_models and req.provider not in {"gemini", "claude"}:
         yield _sse({"type": "error", "message": f"Unsupported provider '{req.provider}'"})
         return
 
-    if req.provider in {"gemini", "groq"} and not api_key:
+    api_key = base_cfg.provider_api_keys.get(req.provider, "")
+    requires_key = req.provider == "gemini" or req.provider in OPENAI_COMPATIBLE_BASE_URLS
+    if requires_key and not api_key:
         yield _sse({
             "type": "error",
             "message": (
@@ -270,12 +268,7 @@ async def _stream_pipeline(req: GenerateAasRequest) -> AsyncGenerator[str, None]
         })
         return
 
-    if req.provider == "gemini":
-        base_models = base_cfg.gemini_models
-    elif req.provider == "groq":
-        base_models = base_cfg.groq_models
-    else:
-        base_models = base_cfg.claude_models
+    base_models = base_cfg.provider_models.get(req.provider, [])
 
     if req.model:
         model_list = [req.model, *[m for m in base_models if m != req.model]]
@@ -297,12 +290,8 @@ async def _stream_pipeline(req: GenerateAasRequest) -> AsyncGenerator[str, None]
         max_pdf_chars=req.max_pdf_chars,
         max_attempts=req.max_attempts,
         models=model_list,
-        gemini_models=base_cfg.gemini_models,
-        groq_models=base_cfg.groq_models,
-        claude_models=base_cfg.claude_models,
-        gemini_api_key=base_cfg.gemini_api_key,
-        groq_api_key=base_cfg.groq_api_key,
-        claude_api_key=base_cfg.claude_api_key,
+        provider_models=base_cfg.provider_models,
+        provider_api_keys=base_cfg.provider_api_keys,
         gen_dir=base_cfg.gen_dir,
         root_dir=base_cfg.root_dir,
         context_dir=base_cfg.context_dir,

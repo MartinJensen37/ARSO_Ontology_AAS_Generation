@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -177,11 +178,13 @@ def _classify_issue(report_graph: Graph, validation_result: URIRef) -> dict[str,
     severity_uri = str(report_graph.value(validation_result, SH.resultSeverity) or str(SH.Violation))
     source_shape = report_graph.value(validation_result, SH.sourceShape)
     focus_node = report_graph.value(validation_result, SH.focusNode)
+    result_path = report_graph.value(validation_result, SH.resultPath)
 
     return {
         "source": "metamodel" if _is_aas_shape(report_graph, validation_result) else "ontology",
         "source_shape": str(source_shape) if source_shape is not None else "",
         "focus_node": str(focus_node) if focus_node is not None else "",
+        "result_path": str(result_path) if result_path is not None else "",
         "severity": severity_map.get(severity_uri, "Violation"),
         "message": message,
     }
@@ -192,6 +195,67 @@ def _extract_issues(report_graph: Graph) -> list[dict]:
     for vr in report_graph.subjects(RDF.type, SH.ValidationResult):
         issues.append(_classify_issue(report_graph, vr))
     return issues
+
+
+# ---------------------------------------------------------------------------
+# Issue -> UI field label.
+#
+# Maps a keyword found in an ontology class/property *local name* (e.g. the
+# "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel", or "Capabilit" in
+# "arso:CapabilityRealizedByRel") to the top-level submodel/section it
+# concerns, for display in the UI's validation panel. Single shared
+# implementation for both Guidance.ontology_guidance_engine and the
+# /api/validate endpoint (api/routers/validate.py) — this used to be two
+# separately hand-maintained regex tables matching English sentence
+# fragments from an older, now-nonexistent set of shape messages, which had
+# silently stopped matching anything. A small keyword lookup over naming
+# conventions instead needs no update when a submodel is added, as long as
+# its classes/properties keep following the existing "arso:hasXSubmodel" /
+# "arso:XFoo" naming convention — only a genuinely new *keyword* (a
+# first-of-its-kind submodel name) would.
+# ---------------------------------------------------------------------------
+
+_FIELD_KEYWORDS: list[tuple[str, str]] = [
+    ("DigitalNameplate", "DigitalNameplate"),
+    ("Nameplate", "DigitalNameplate"),
+    ("HierarchicalStructures", "HierarchicalStructures"),
+    ("EntryNode", "HierarchicalStructures"),
+    ("AID", "AID"),
+    ("Interface", "AID"),
+    ("Endpoint", "AID"),
+    ("Skill", "Skills"),
+    ("Capabilit", "Capabilities"),
+    ("OperationalData", "OperationalData"),
+    ("Datapoint", "OperationalData"),
+    ("Variable", "OperationalData"),
+    ("Parameter", "Parameters"),
+    ("Technical", "TechnicalData"),
+]
+
+# Matches the last path segment of any IRI-looking token (after '/' or '#').
+_LOCAL_NAME_RE = re.compile(r"[/#]([A-Za-z][A-Za-z0-9]*)")
+
+
+def _field_from_local_name(name: str) -> str:
+    for keyword, field in _FIELD_KEYWORDS:
+        if keyword in name:
+            return field
+    return ""
+
+
+def map_issue_to_field(message: str, result_path: str = "", focus_node: str = "") -> str:
+    """Best-effort top-level field/section label for one validation issue.
+
+    result_path is the most reliable signal (an actual ontology property/
+    class IRI); message and focus_node are fallbacks since not every
+    violation carries a result_path (e.g. SPARQL-constraint violations).
+    """
+    for text in (result_path, message, focus_node):
+        for local_name in _LOCAL_NAME_RE.findall(text or ""):
+            field = _field_from_local_name(local_name)
+            if field:
+                return field
+    return ""
 
 
 def _load_shapes() -> tuple[Graph, bool]:
@@ -250,6 +314,30 @@ def validate_rdf_graph(data_graph: Graph) -> tuple[bool, list[dict]]:
         return False, [{"source": "validation", "severity": "Violation", "message": msg}]
 
     return bool(conforms), _extract_issues(report_graph)
+
+
+def issues_as_response_dicts(all_issues: list[dict]) -> list[dict]:
+    """Dedupe by message and attach a `field` label to each issue.
+
+    Shared by every HTTP endpoint that turns a run_shacl() issue list into an
+    API response (api/routers/validate.py, api/routers/profile_to_aas.py) so
+    the dedupe/field-mapping logic lives in exactly one place.
+    """
+    issues: list[dict] = []
+    seen: set[str] = set()
+    for issue in all_issues:
+        message = issue.get("message", "No message")
+        if message in seen:
+            continue
+        seen.add(message)
+        issues.append({
+            "severity": issue.get("severity", "Violation"),
+            "message": message,
+            "field": map_issue_to_field(message, issue.get("result_path", ""), issue.get("focus_node", "")),
+            "focus_node": issue.get("focus_node") or None,
+            "result_path": issue.get("result_path") or None,
+        })
+    return issues
 
 
 def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dict], list[dict]]:

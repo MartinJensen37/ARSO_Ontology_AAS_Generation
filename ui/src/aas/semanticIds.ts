@@ -3,15 +3,16 @@
  * Used by the TypeScript AAS builders to set standard semantic IDs.
  */
 
-import type { AasReference } from './types';
-
 // ── IDTA submodel semantic IDs ────────────────────────────────────────────────
+// These must match the arso:semanticId value(s) declared on the corresponding
+// class in Ontology/ARSO/Modules/*.ttl — that's what the backend's
+// Transformation/AAS_to_RDF/aas_to_rdf.py converter actually matches against
+// to type a submodel. A mismatch here means the submodel silently never gets
+// its ARSO type (or the ontology's SHACL validation for it) at all.
 export const DIGITAL_NAMEPLATE_SUBMODEL  = 'https://admin-shell.io/idta/nameplate/3/0/Nameplate';
 export const HIERARCHICAL_STRUCTURES     = 'https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel';
-export const OPERATIONAL_DATA_SUBMODEL   = 'https://admin-shell.io/idta/Variables/1/0/Submodel';
-/** @deprecated Use OPERATIONAL_DATA_SUBMODEL */
-export const VARIABLES_SUBMODEL          = OPERATIONAL_DATA_SUBMODEL;
-export const PARAMETERS_SUBMODEL         = 'https://admin-shell.io/idta/Parameters/1/0/Submodel';
+export const OPERATIONAL_DATA_SUBMODEL   = 'https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel';
+export const PARAMETERS_SUBMODEL         = 'https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel';
 
 // ── IDTA HierarchicalStructures element semantic IDs ─────────────────────────
 export const HIERARCHICAL_ARCHETYPE     = 'https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0';
@@ -39,31 +40,11 @@ export const HTTP_PROTOCOL              = 'https://www.w3.org/2019/wot/http';
 export const MODBUS_PROTOCOL            = 'https://www.w3.org/2019/wot/modbus';
 
 // ── Custom submodel semantic IDs ──────────────────────────────────────────────
-export const SKILLS_SUBMODEL            = 'https://smartfactory.de/aas/submodel/Skills#1/0';
-export const CAPABILITIES_SUBMODEL      = 'https://smartfactory.de/aas/submodel/Capabilities#1/0';
+export const SKILLS_SUBMODEL            = 'https://admin-shell.io/idta/ControlComponentType/1/0';
+export const CAPABILITIES_SUBMODEL      = 'https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0';
 export const CAPABILITY_SET             = 'https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0';
 export const CAPABILITY_CONTAINER       = 'https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0';
-export const CAPABILITY_REALIZED_BY     = 'https://wiki.eclipse.org/BaSyx_/_Documentation_/_Submodels_/_Capability#CapabilityRealizedBy';
-
-// ── IDTA AIMC semantic IDs ────────────────────────────────────────────────────
-export const AIMC_SUBMODEL                      = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/Submodel';
-export const AIMC_MAPPING_CONFIGURATIONS        = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingConfigurations';
-export const AIMC_MAPPING_CONFIGURATION         = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingConfiguration';
-export const AIMC_INTERFACE_REFERENCE           = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/InterfaceReference';
-export const AIMC_MAPPING_SOURCE_SINK_RELATIONS = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingSourceSinkRelations';
-export const AIMC_MAPPING_SOURCE_SINK_RELATION  = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingSourceSinkRelation';
+export const CAPABILITY_REALIZED_BY     = 'https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0';
 
 // ── Base URL for custom semantic IDs ─────────────────────────────────────────
 export const SEMANTIC_ID_BASE           = 'https://smartproductionlab.aau.dk';
-
-// ── Helper ────────────────────────────────────────────────────────────────────
-export function externalRef(uri: string): AasReference {
-  return { type: 'ExternalReference', keys: [{ type: 'GlobalReference', value: uri }] };
-}
-
-export function modelRef(submodelId: string, ...extra: Array<{ type: string; value: string }>): AasReference {
-  return {
-    type: 'ModelReference',
-    keys: [{ type: 'Submodel', value: submodelId }, ...extra],
-  };
-}

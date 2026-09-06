@@ -7,7 +7,7 @@ Run from the repo root:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import generate_aas, validate
+from api.routers import aas_to_profile, generate_aas, profile_to_aas, validate
 
 app = FastAPI(
     title="ResourceAAS API",
@@ -30,6 +30,8 @@ app.add_middleware(
 
 app.include_router(validate.router, prefix="/api", tags=["validate"])
 app.include_router(generate_aas.router, prefix="/api", tags=["generate"])
+app.include_router(profile_to_aas.router, prefix="/api", tags=["profile"])
+app.include_router(aas_to_profile.router, prefix="/api", tags=["profile"])
 
 
 @app.get("/health")
