@@ -11,6 +11,8 @@ from typing import Optional
 
 import yaml
 
+from .LLM_Client.llm_client import OPENAI_COMPATIBLE_BASE_URLS
+
 _GEN_DIR  = Path(__file__).parent
 _ROOT     = _GEN_DIR.parent
 _DEFAULT_SHACL_SHAPES = [
@@ -22,16 +24,31 @@ _DEFAULT_ONTOLOGIES = [
     Path("Ontology/ARSO/ARSO_AAS.ttl"),
 ]
 
+# Providers with a non-OpenAI-compatible transport (their own SDK / CLI).
+# Anything else is assumed to be an OpenAI-compatible provider — see
+# OPENAI_COMPATIBLE_BASE_URLS in llm_client.py — and needs no entry here.
+_KNOWN_NON_OPENAI_PROVIDERS = frozenset({"gemini", "claude"})
+
+# provider name -> the key used under `api_keys:` in config.yaml, for
+# providers whose YAML key doesn't match the provider name for historical/
+# branding reasons. Anything not listed here uses the provider name itself
+# (e.g. "groq" -> api_keys.groq, "openrouter" -> api_keys.openrouter).
+_API_KEY_YAML_KEY: dict[str, str] = {"gemini": "google_ai_studio", "claude": "anthropic"}
+
 # Add project root to sys.path so sibling top-level packages can be imported.
 for _p in [str(_ROOT)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 
+def _api_key_for(provider: str, keys: dict) -> str:
+    return keys.get(_API_KEY_YAML_KEY.get(provider, provider), "")
+
+
 @dataclass
 class Config:
     # Provider
-    provider: str                   # "gemini" | "groq" | "claude"
+    provider: str                   # "gemini" | "claude" | any OpenAI-compatible provider (groq, openrouter, ...)
     api_key: str                    # resolved for the chosen provider
 
     # Asset
@@ -66,15 +83,13 @@ class Config:
     shacl_shapes: list[Path]
     ontology_paths: list[Path]
 
-    # Raw model lists (both providers kept for reference)
-    gemini_models: list[str] = field(default_factory=list)
-    groq_models: list[str]   = field(default_factory=list)
-    claude_models: list[str] = field(default_factory=list)
-
-    # Both API keys kept so CLI provider-override can switch cleanly
-    gemini_api_key: str = ""
-    groq_api_key: str   = ""
-    claude_api_key: str = ""
+    # Every configured provider's model list / API key, keyed by provider
+    # name (matching config.yaml's `models:` section and `provider` field).
+    # Kept for reference so a CLI/API provider override can switch cleanly
+    # without reloading config.yaml. Adding a new provider needs no change
+    # here — just a config.yaml entry (see _api_key_for above).
+    provider_models: dict[str, list[str]] = field(default_factory=dict)
+    provider_api_keys: dict[str, str] = field(default_factory=dict)
 
 
 
@@ -88,41 +103,42 @@ def load_config(yaml_path: Path | None = None) -> Config:
 
     provider = raw.get("provider", "gemini").lower()
     keys     = raw.get("api_keys", {})
+    model_cfg = raw.get("models", {})
 
-    if provider == "gemini":
-        api_key = keys.get("google_ai_studio", "")
-        if not api_key:
-            sys.exit("ERROR: api_keys.google_ai_studio is empty in config.yaml")
-    elif provider == "groq":
-        api_key = keys.get("groq", "")
-        if not api_key:
-            sys.exit("ERROR: api_keys.groq is empty in config.yaml\n"
-                     "  Get a free key at https://console.groq.com")
-    elif provider == "claude":
-        # Claude Code CLI can use its own local auth/session; key is optional here.
-        api_key = keys.get("anthropic", "")
-    else:
-        sys.exit(f"ERROR: Unknown provider '{provider}'. Use 'gemini', 'groq' or 'claude'.")
+    known_providers = _KNOWN_NON_OPENAI_PROVIDERS | set(OPENAI_COMPATIBLE_BASE_URLS)
+    if provider not in known_providers:
+        sys.exit(
+            f"ERROR: Unknown provider '{provider}'. Use 'gemini', 'claude', or one of "
+            f"{sorted(OPENAI_COMPATIBLE_BASE_URLS)}."
+        )
+
+    api_key = _api_key_for(provider, keys)
+    if provider == "gemini" and not api_key:
+        sys.exit("ERROR: api_keys.google_ai_studio is empty in config.yaml")
+    if provider in OPENAI_COMPATIBLE_BASE_URLS and not api_key:
+        sys.exit(
+            f"ERROR: api_keys.{provider} is empty in config.yaml\n"
+            f"  Configured base URL: {OPENAI_COMPATIBLE_BASE_URLS[provider]}"
+        )
+    # claude: Claude Code CLI can use its own local auth/session, so an empty
+    # key here is allowed.
 
     asset    = raw.get("asset", {})
     pdf_raw  = asset.get("pdf_path")
     pdf_path = Path(pdf_raw) if pdf_raw else None
 
-    opts          = raw.get("options", {})
-    model_cfg     = raw.get("models", {})
-    gemini_models = model_cfg.get("gemini", [])
-    groq_models   = model_cfg.get("groq", [])
-    claude_models = model_cfg.get("claude", [])
-    if provider == "gemini":
-        models = gemini_models
-    elif provider == "groq":
-        models = groq_models
-    else:
-        models = claude_models
+    opts = raw.get("options", {})
 
-    gemini_api_key = keys.get("google_ai_studio", "")
-    groq_api_key   = keys.get("groq", "")
-    claude_api_key = keys.get("anthropic", "")
+    # Every provider mentioned anywhere in config.yaml (models: section keys,
+    # plus the known ones even if not yet listed) gets a models/api_key entry.
+    all_provider_names = known_providers | set(model_cfg.keys())
+    provider_models: dict[str, list[str]] = {
+        name: model_cfg.get(name, []) for name in all_provider_names
+    }
+    provider_api_keys: dict[str, str] = {
+        name: _api_key_for(name, keys) for name in all_provider_names
+    }
+    models = provider_models.get(provider, [])
 
     out_cfg = raw.get("output", {})
     paths_cfg = raw.get("paths", {})
@@ -160,12 +176,8 @@ def load_config(yaml_path: Path | None = None) -> Config:
         max_pdf_chars = opts.get("max_pdf_chars"),
         max_attempts  = opts.get("max_attempts", 1),
         models        = models,
-        gemini_models  = gemini_models,
-        groq_models    = groq_models,
-        claude_models  = claude_models,
-        gemini_api_key = gemini_api_key,
-        groq_api_key   = groq_api_key,
-        claude_api_key = claude_api_key,
+        provider_models   = provider_models,
+        provider_api_keys = provider_api_keys,
         gen_dir       = _GEN_DIR,
         root_dir      = _ROOT,
         context_dir   = _GEN_DIR / "Context_Builder" / "context",

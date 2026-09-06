@@ -1,7 +1,10 @@
 """
 LLM client wrapper around:
-- Groq via OpenAI-compatible Python SDK
-- Gemini via Google GenAI Python SDK
+- Any OpenAI-compatible chat-completions endpoint (Groq, OpenRouter, ...) via
+  the OpenAI Python SDK — see OPENAI_COMPATIBLE_BASE_URLS below. Adding a new
+  provider of this kind needs one entry there and a config.yaml section; no
+  other code changes.
+- Gemini via Google GenAI Python SDK (native multimodal PDF input)
 - Claude Code CLI via `claude -p`
 
 Keeps the same interface for the generation pipeline, including model-cycling
@@ -24,12 +27,46 @@ from typing import Any
 from typing import Optional
 
 
-REQUEST_TIMEOUT_SECONDS = 300
-GROQ_TPM_SAFETY_BUDGET = 7000
-GROQ_MIN_OUTPUT_TOKENS = 256
-GROQ_MAX_OUTPUT_TOKENS = 2048
-CLAUDE_DEFAULT_MAX_OUTPUT_TOKENS = 4096
+REQUEST_TIMEOUT_SECONDS = 600
+OPENAI_COMPATIBLE_MIN_OUTPUT_TOKENS = 256
+OPENAI_COMPATIBLE_MAX_OUTPUT_TOKENS = 2048
 DEBUG_IO_ENV = "GEN_DEBUG_IO"
+
+# Providers with a genuinely tight per-minute *token* budget (not just
+# requests-per-minute) that requires proactively shrinking max_tokens based
+# on estimated input size, or the provider's own 429 can arrive after the
+# request is already committed. Currently just Groq's free tier (~7000
+# TPM) -- this is an external hard rate limit, not a self-imposed cap, so it
+# stays even though other providers no longer get a max_tokens value at all
+# (see call_llm below). Do not add a provider here without a concrete, known
+# TPM figure: an overly small budget silently starves the response to empty
+# content instead of erroring, which pipeline.py cannot distinguish from
+# "provider is momentarily returning nothing" and will retry forever within
+# a single attempt.
+_OPENAI_COMPATIBLE_TPM_SAFETY_BUDGET: dict[str, int] = {
+    "groq": 7000,
+}
+
+# Every OpenAI-compatible chat-completions provider the generation pipeline
+# can use, keyed by the `provider` name used in config.yaml / the API. All of
+# these share one implementation below (same request/response shape, same
+# OpenAI SDK) — to add a new one (e.g. Together, Fireworks, DeepInfra, a raw
+# OpenAI key), add its base_url here and a matching api_keys/models section
+# in config.yaml. No other code changes needed.
+OPENAI_COMPATIBLE_BASE_URLS: dict[str, str] = {
+    "groq":       "https://api.groq.com/openai/v1",
+    "openrouter": "https://openrouter.ai/api/v1",
+    "deepseek":   "https://api.deepseek.com",
+}
+
+# Optional extra headers per OpenAI-compatible provider (e.g. OpenRouter uses
+# these for attribution / its model-ranking leaderboard; harmless to omit).
+_OPENAI_COMPATIBLE_EXTRA_HEADERS: dict[str, dict[str, str]] = {
+    "openrouter": {
+        "HTTP-Referer": "https://smartproductionlab.aau.dk",
+        "X-Title": "ARSO AAS Generator",
+    },
+}
 
 try:
     from google import genai  # type: ignore[import-not-found]
@@ -154,16 +191,29 @@ def _estimate_text_tokens(text: str) -> int:
     return max(1, len(text) // 4)
 
 
-def _resolve_groq_max_tokens(system_instruction: str, groq_history: Optional[list[dict]]) -> int:
+def _resolve_openai_compatible_max_tokens(
+    provider: str, system_instruction: str, history: Optional[list[dict]]
+) -> Optional[int]:
+    """Return a max_tokens value to send, or None to send no cap at all.
+
+    Only providers in _OPENAI_COMPATIBLE_TPM_SAFETY_BUDGET (an external,
+    hard per-minute rate limit) get a computed cap here. Everyone else gets
+    None -- no self-imposed ceiling -- so a reasoning model's chain-of-thought
+    always has room to finish before the answer, however long that takes.
+    """
+    budget = _OPENAI_COMPATIBLE_TPM_SAFETY_BUDGET.get(provider)
+    if budget is None:
+        return None
+
     payload_text = system_instruction
-    for msg in groq_history or []:
+    for msg in history or []:
         content = msg.get("content") if isinstance(msg, dict) else ""
         if isinstance(content, str):
             payload_text += "\n" + content
 
     estimated_input = _estimate_text_tokens(payload_text)
-    available = GROQ_TPM_SAFETY_BUDGET - estimated_input
-    bounded = min(GROQ_MAX_OUTPUT_TOKENS, max(GROQ_MIN_OUTPUT_TOKENS, available))
+    available = budget - estimated_input
+    bounded = min(OPENAI_COMPATIBLE_MAX_OUTPUT_TOKENS, max(OPENAI_COMPATIBLE_MIN_OUTPUT_TOKENS, available))
     return bounded
 
 
@@ -231,7 +281,7 @@ def _run_claude_cli(
     model_name: str,
     system_instruction: str,
     conversation_text: str,
-    max_output_tokens: int,
+    max_output_tokens: Optional[int] = None,
 ) -> tuple[str, bool]:
     """Invoke the Claude Code CLI in print mode.
 
@@ -269,12 +319,12 @@ def _run_claude_cli(
             ])
             if include_system_file:
                 cmd.extend(["--append-system-prompt-file", str(system_file)])
-            if include_max_tokens:
+            if include_max_tokens and max_output_tokens is not None:
                 cmd.extend(["--max-output-tokens", str(max_output_tokens)])
             return cmd
 
         include_bare = True
-        include_max_tokens = True
+        include_max_tokens = max_output_tokens is not None
         include_system_file = True
         proc = None
 
@@ -346,35 +396,39 @@ def call_llm(
     debug_paths: dict[str, Path] | None = _prepare_debug_paths(provider, model_name) if _debug_enabled() else None
 
     if provider == "gemini":
-        output_tokens = 32768
+        output_tokens = None
         body_preview = {
             "system_instruction": system_instruction,
             "contents": gemini_contents,
-            "generationConfig": {"maxOutputTokens": output_tokens, "temperature": 0.1},
+            "generationConfig": {"temperature": 0.1},
         }
-    elif provider == "groq":
-        output_tokens = _resolve_groq_max_tokens(system_instruction, groq_history)
+    elif provider in OPENAI_COMPATIBLE_BASE_URLS:
+        output_tokens = _resolve_openai_compatible_max_tokens(provider, system_instruction, groq_history)
         body_preview = {
             "model": model_name,
             "messages": [{"role": "system", "content": system_instruction}] + (groq_history or []),
-            "max_tokens": output_tokens,
             "temperature": 0.1,
         }
+        if output_tokens is not None:
+            body_preview["max_tokens"] = output_tokens
     elif provider == "claude":
-        output_tokens = CLAUDE_DEFAULT_MAX_OUTPUT_TOKENS
+        output_tokens = None
         body_preview = {
             "model": model_name,
             "conversation_messages": len(groq_history or []),
-            "max_output_tokens": output_tokens,
             "transport": "claude-cli",
             "generation_mode": generation_mode,
         }
     else:
-        raise ValueError(f"Unsupported provider: {provider}")
+        raise ValueError(
+            f"Unsupported provider: {provider!r}. Expected 'gemini', 'claude', or one of "
+            f"{sorted(OPENAI_COMPATIBLE_BASE_URLS)}."
+        )
 
     body_kb = len(json.dumps(body_preview, ensure_ascii=False).encode("utf-8")) // 1024
     token_label = "max_output_tokens" if provider in {"gemini", "claude"} else "max_tokens"
-    print(f"  Model: {model_name}  |  Body: {body_kb} KB  |  {token_label}={output_tokens}")
+    token_display = output_tokens if output_tokens is not None else "unlimited"
+    print(f"  Model: {model_name}  |  Body: {body_kb} KB  |  {token_label}={token_display}")
 
     if debug_paths is not None:
         try:
@@ -415,28 +469,48 @@ def call_llm(
                     contents=gemini_contents or [],
                     config={
                         "system_instruction": system_instruction,
-                        "max_output_tokens": 32768,
                         "temperature": 0.1,
                     },
                 )
                 return _extract_gemini_text(response)
 
             raw_text = _invoke_with_timeout(_gemini_call, REQUEST_TIMEOUT_SECONDS)
-        elif provider == "groq":
+        elif provider in OPENAI_COMPATIBLE_BASE_URLS:
             if OpenAI is None:
                 sys.exit("\n[STOP] Missing dependency: openai. Install requirements and retry.")
 
-            def _groq_call() -> str:
-                client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+            def _openai_compatible_call() -> str:
+                client = OpenAI(
+                    api_key=api_key,
+                    base_url=OPENAI_COMPATIBLE_BASE_URLS[provider],
+                    default_headers=_OPENAI_COMPATIBLE_EXTRA_HEADERS.get(provider),
+                )
+                extra_kwargs: dict = {}
+                if output_tokens is not None:
+                    extra_kwargs["max_tokens"] = output_tokens
                 response = client.chat.completions.create(
                     model=model_name,
                     messages=[{"role": "system", "content": system_instruction}] + (groq_history or []),
-                    max_tokens=output_tokens,
                     temperature=0.1,
+                    **extra_kwargs,
                 )
-                return response.choices[0].message.content if response.choices else ""
+                if not response.choices:
+                    return ""
+                choice = response.choices[0]
+                content = choice.message.content or ""
+                if not content and choice.finish_reason == "length":
+                    # Only reachable for providers that still get a computed
+                    # max_tokens (currently just Groq's TPM-limited budget) --
+                    # everyone else sends no cap at all, so the model's own
+                    # absolute ceiling would have to be hit for this to fire.
+                    print(
+                        f"\n  Note: hit max_tokens={output_tokens} before any content was "
+                        "emitted (finish_reason=length) -- likely a reasoning model that "
+                        "spent the whole budget on internal reasoning."
+                    )
+                return content
 
-            raw_text = _invoke_with_timeout(_groq_call, REQUEST_TIMEOUT_SECONDS)
+            raw_text = _invoke_with_timeout(_openai_compatible_call, REQUEST_TIMEOUT_SECONDS)
         else:
             history = groq_history or []
             conversation_text = "\n\n".join(
@@ -453,9 +527,7 @@ def call_llm(
                     max_output_tokens=output_tokens,
                 )
 
-            raw_text, max_tokens_applied = _invoke_with_timeout(_claude_call, REQUEST_TIMEOUT_SECONDS)
-            if not max_tokens_applied:
-                print("  Note: this Claude CLI version does not support --max-output-tokens; output limit is provider-default.")
+            raw_text, _max_tokens_applied = _invoke_with_timeout(_claude_call, REQUEST_TIMEOUT_SECONDS)
 
         elapsed = time.time() - t0
         print(f"done in {elapsed:.1f}s")
