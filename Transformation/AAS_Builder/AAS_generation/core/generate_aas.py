@@ -506,49 +506,67 @@ class AASGenerator:
             # "[VERIFY: ...]" string instead of an object; treat as absent.
             capabilities_cfg = {}
 
-        # ── Auto-fix: Skills must be realized by Capabilities ────────────────
-        if not capabilities_cfg and skills_cfg:
-            generated_caps: Dict[str, Dict[str, Any]] = {}
-            for skill_name in skills_cfg:
-                generated_caps[skill_name] = {
+        # ── Auto-fix: every Skill must be realized by at least one Capability ─
+        # Fill in missing semantic_id/realizedBy on whatever capabilities are
+        # already present first, so "which skills are still uncovered" below
+        # is computed after any LLM-authored capability's realizedBy is known.
+        for cap_name, cap_data in list(capabilities_cfg.items()):
+            if not isinstance(cap_data, dict):
+                cap_data = {}
+                capabilities_cfg[cap_name] = cap_data
+            if 'semantic_id' not in cap_data:
+                val = f"{base}/Capability/{cap_name}"
+                cap_data['semantic_id'] = val
+                _suggest(
+                    f"Capabilities.{cap_name}.semantic_id", "fill",
+                    f"Capability '{cap_name}' missing semantic_id; applied default URI "
+                    f"(the Capability's semanticId must use the lab's URI namespace).",
+                    val,
+                )
+            if 'realizedBy' not in cap_data:
+                target = cap_name if cap_name in skills_cfg else (
+                    next(iter(skills_cfg)) if skills_cfg else None
+                )
+                if target:
+                    cap_data['realizedBy'] = target
+                    _suggest(
+                        f"Capabilities.{cap_name}.realizedBy", "fill",
+                        f"Capability '{cap_name}' missing realizedBy; linked to '{target}' "
+                        f"(the ARSO ontology requires each Capability's realizedBy to "
+                        f"reference an existing Skill).",
+                        target,
+                    )
+
+        # A profile can legitimately define capabilities for only SOME of its
+        # skills (an LLM providing one thoughtful capability is not "wrong"),
+        # but every skill still needs at least one - generate one for any
+        # skill no existing capability's realizedBy already targets, instead
+        # of only doing this when Capabilities was completely absent.
+        realized_skills = {
+            cap_data.get('realizedBy')
+            for cap_data in capabilities_cfg.values()
+            if isinstance(cap_data, dict) and cap_data.get('realizedBy')
+        }
+        missing_skills = [s for s in skills_cfg if s not in realized_skills]
+        if missing_skills:
+            generated_caps = {}
+            for skill_name in missing_skills:
+                # A capability keyed by this skill name may already exist but
+                # legitimately realize a *different* skill - don't clobber it.
+                cap_name = skill_name if skill_name not in capabilities_cfg else f"{skill_name}Capability"
+                generated_caps[cap_name] = {
                     'realizedBy': skill_name,
                     'semantic_id': f"{base}/Capability/{skill_name}",
                 }
-            config['Capabilities'] = generated_caps
-            capabilities_cfg = generated_caps
+            capabilities_cfg.update(generated_caps)
+            config['Capabilities'] = capabilities_cfg
             _suggest(
                 "Capabilities", "auto-create",
-                "Generated Capabilities from Skills (the ARSO ontology requires that any AAS "
-                "providing Skills also provides Capabilities).",
+                f"Generated Capabilities for skill(s) with none: {', '.join(missing_skills)} "
+                "(the ARSO ontology requires that any AAS providing Skills also provides "
+                "Capabilities for them).",
                 generated_caps,
             )
-        elif capabilities_cfg:
-            for cap_name, cap_data in list(capabilities_cfg.items()):
-                if not isinstance(cap_data, dict):
-                    cap_data = {}
-                    capabilities_cfg[cap_name] = cap_data
-                if 'semantic_id' not in cap_data:
-                    val = f"{base}/Capability/{cap_name}"
-                    cap_data['semantic_id'] = val
-                    _suggest(
-                        f"Capabilities.{cap_name}.semantic_id", "fill",
-                        f"Capability '{cap_name}' missing semantic_id; applied default URI "
-                        f"(the Capability's semanticId must use the lab's URI namespace).",
-                        val,
-                    )
-                if 'realizedBy' not in cap_data:
-                    target = cap_name if cap_name in skills_cfg else (
-                        next(iter(skills_cfg)) if skills_cfg else None
-                    )
-                    if target:
-                        cap_data['realizedBy'] = target
-                        _suggest(
-                            f"Capabilities.{cap_name}.realizedBy", "fill",
-                            f"Capability '{cap_name}' missing realizedBy; linked to '{target}' "
-                            f"(the ARSO ontology requires each Capability's realizedBy to "
-                            f"reference an existing Skill).",
-                            target,
-                        )
 
         # ── Ontology-driven hints: run SHACL on the post-fix config ───────────
         # All hint-type suggestions come from the actual SHACL shapes, evaluated

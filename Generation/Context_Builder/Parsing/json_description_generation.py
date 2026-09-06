@@ -297,8 +297,12 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "Each entry is keyed by a PascalCase capability name, e.g. \"Dispense\": {...}",
                 "Each entry MUST have a 'semantic_id' field (exact key: semantic_id, snake_case, NOT semanticId) - a URI string starting with https://smartproductionlab.aau.dk/",
                 "Each entry MUST have a 'realizedBy' field - the name of the matching Skill entry that implements this capability",
+                "Every Skill you define (see the Skills section below) needs at least one Capability whose 'realizedBy' names it - if you define 4 skills, provide 4 capabilities (or more, if a skill offers more than one distinct capability), not just one. A skill left without any matching capability is missing information, not a skill that doesn't need one.",
             ],
-            "example": {"Dispense": {"semantic_id": "https://smartproductionlab.aau.dk/Capability/Dispense", "realizedBy": "Dispense"}},
+            "example": {
+                "Dispense": {"semantic_id": "https://smartproductionlab.aau.dk/Capability/Dispense", "realizedBy": "Dispense"},
+                "Stop": {"semantic_id": "https://smartproductionlab.aau.dk/Capability/Stop", "realizedBy": "Stop"},
+            },
         }
 
     if "skills" in selected:
