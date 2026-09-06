@@ -506,10 +506,16 @@ class AASGenerator:
             # "[VERIFY: ...]" string instead of an object; treat as absent.
             capabilities_cfg = {}
 
-        # ── Auto-fix: every Skill must be realized by at least one Capability ─
-        # Fill in missing semantic_id/realizedBy on whatever capabilities are
-        # already present first, so "which skills are still uncovered" below
-        # is computed after any LLM-authored capability's realizedBy is known.
+        # ── Fill in missing semantic_id (and realizedBy when it's unambiguous:
+        # the capability's own name matches an existing skill) on whatever
+        # capabilities are already present. Deliberately does NOT invent a
+        # realizedBy target when the name doesn't match a skill, and does NOT
+        # generate new capability entries for skills that have none at all -
+        # "skill X has no capability" is a real gap in what the LLM provided,
+        # not something to silently paper over. It's caught instead as a
+        # SHACL violation (arso:SkillMustBeRealizedByCapabilityShape in
+        # arso-rules.shacl.ttl) that flows back to the LLM through the normal
+        # retry-with-feedback loop, same as any other validation failure.
         for cap_name, cap_data in list(capabilities_cfg.items()):
             if not isinstance(cap_data, dict):
                 cap_data = {}
@@ -523,50 +529,15 @@ class AASGenerator:
                     f"(the Capability's semanticId must use the lab's URI namespace).",
                     val,
                 )
-            if 'realizedBy' not in cap_data:
-                target = cap_name if cap_name in skills_cfg else (
-                    next(iter(skills_cfg)) if skills_cfg else None
+            if 'realizedBy' not in cap_data and cap_name in skills_cfg:
+                cap_data['realizedBy'] = cap_name
+                _suggest(
+                    f"Capabilities.{cap_name}.realizedBy", "fill",
+                    f"Capability '{cap_name}' missing realizedBy; linked to the Skill of the "
+                    f"same name (the ARSO ontology requires each Capability's realizedBy to "
+                    f"reference an existing Skill).",
+                    cap_name,
                 )
-                if target:
-                    cap_data['realizedBy'] = target
-                    _suggest(
-                        f"Capabilities.{cap_name}.realizedBy", "fill",
-                        f"Capability '{cap_name}' missing realizedBy; linked to '{target}' "
-                        f"(the ARSO ontology requires each Capability's realizedBy to "
-                        f"reference an existing Skill).",
-                        target,
-                    )
-
-        # A profile can legitimately define capabilities for only SOME of its
-        # skills (an LLM providing one thoughtful capability is not "wrong"),
-        # but every skill still needs at least one - generate one for any
-        # skill no existing capability's realizedBy already targets, instead
-        # of only doing this when Capabilities was completely absent.
-        realized_skills = {
-            cap_data.get('realizedBy')
-            for cap_data in capabilities_cfg.values()
-            if isinstance(cap_data, dict) and cap_data.get('realizedBy')
-        }
-        missing_skills = [s for s in skills_cfg if s not in realized_skills]
-        if missing_skills:
-            generated_caps = {}
-            for skill_name in missing_skills:
-                # A capability keyed by this skill name may already exist but
-                # legitimately realize a *different* skill - don't clobber it.
-                cap_name = skill_name if skill_name not in capabilities_cfg else f"{skill_name}Capability"
-                generated_caps[cap_name] = {
-                    'realizedBy': skill_name,
-                    'semantic_id': f"{base}/Capability/{skill_name}",
-                }
-            capabilities_cfg.update(generated_caps)
-            config['Capabilities'] = capabilities_cfg
-            _suggest(
-                "Capabilities", "auto-create",
-                f"Generated Capabilities for skill(s) with none: {', '.join(missing_skills)} "
-                "(the ARSO ontology requires that any AAS providing Skills also provides "
-                "Capabilities for them).",
-                generated_caps,
-            )
 
         # ── Ontology-driven hints: run SHACL on the post-fix config ───────────
         # All hint-type suggestions come from the actual SHACL shapes, evaluated
