@@ -134,6 +134,25 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "constraints": ["string"],
                 "source_priority": ["datasheet title/model code"],
             },
+            "OrderCodeOfManufacturer": {
+                "purpose": "Manufacturer's order code / article number for this exact product variant.",
+                "constraints": [
+                    "string",
+                    "OMIT entirely if truly unknown — the builder inserts a [VERIFY: ...] placeholder, do NOT invent a value",
+                ],
+                "source_priority": ["datasheet order code / article number"],
+                "optional": True,
+            },
+            "AddressInformation": {
+                "purpose": "Manufacturer contact address (IDTA 02006 ContactInformation) — mandatory sub-object per the ontology, even though every individual field inside it is independently optional to you.",
+                "constraints": [
+                    "object with keys Street, ZipCode, CityTown, NationalCode",
+                    "OMIT individual keys you don't know — the builder inserts a [VERIFY: ...] placeholder for each missing one, do NOT invent values",
+                ],
+                "source_priority": ["datasheet manufacturer address", "vendor website"],
+                "example": {"Street": "Musterstrasse 1", "ZipCode": "70173", "CityTown": "Stuttgart", "NationalCode": "DE"},
+                "optional": True,
+            },
             "DateOfManufacture": {
                 "purpose": "Manufacturing date (optional).",
                 "constraints": [
@@ -150,46 +169,147 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
             "Name": {
                 "purpose": "BoM hierarchy collection name.",
                 "constraints": ["string"],
+                "example": "BillOfMaterials",
             },
             "Archetype": {
-                "purpose": "Hierarchy archetype according to IDTA template.",
-                "constraints": ["OneUp/other valid archetype token"],
+                "purpose": "Hierarchy archetype — which direction(s) of relations this resource declares.",
+                "constraints": [
+                    "MUST be exactly one of these three strings: \"OneUp\", \"OneDown\", \"Full\" — no other value is valid.",
+                    "\"OneUp\" = this resource declares its parent only (use the IsPartOf field below).",
+                    "\"OneDown\" = this resource declares its children only (use the HasPart field below).",
+                    "\"Full\" = this resource declares both parent AND children (provide both IsPartOf and HasPart).",
+                ],
+                "example": "OneUp",
             },
             "IsPartOf": {
-                "purpose": "Parent relation for this resource in hierarchy.",
-                "constraints": ["mapping of parent node -> globalAssetId"],
+                "purpose": "Parent relation(s) — only meaningful when Archetype is \"OneUp\" or \"Full\".",
+                "constraints": [
+                    "An OBJECT keyed by a PascalCase name you choose for the parent, mapping to an object with the parent's globalAssetId — NEVER a JSON array/list.",
+                    "OMIT this field entirely if Archetype is \"OneDown\" or if there is no known parent.",
+                ],
+                "example": {"ParentSystem": {"globalAssetId": "https://smartproductionlab.aau.dk/aas/ParentSystem"}},
+            },
+            "HasPart": {
+                "purpose": "Child relation(s) — only meaningful when Archetype is \"OneDown\" or \"Full\".",
+                "constraints": [
+                    "Same shape as IsPartOf but for children: an OBJECT keyed by a PascalCase name per child, mapping to an object with that child's globalAssetId — NEVER a JSON array/list.",
+                    "OMIT this field entirely if Archetype is \"OneUp\" or if there are no known children.",
+                ],
+                "example": {"SubComponent01": {"globalAssetId": "https://smartproductionlab.aau.dk/aas/SubComponent01"}},
+                "optional": True,
             },
         }
 
     if "aid" in selected or "assetinterfacesdescription" in selected:
         body["AssetInterfacesDescription"] = {
-            "purpose": "Operational interface endpoints/actions/properties for the asset.",
-            "constraints": ["InterfaceMQTT structure", "action/property schemas as URIs"],
+            "purpose": "Operational interface endpoints/actions/properties/events for the asset (IDTA 02017 AID / W3C WoT Thing Description).",
+            "constraints": [
+                "Map of interface name -> interface object. One entry per communication interface the asset exposes (an asset MAY have more than one, e.g. an MQTT interface for commands plus a Modbus interface for register reads).",
+                "Interface names are free-form (pick a descriptive PascalCase name, e.g. \"MqttInterface\" or \"ModbusRegisters\") — they are NOT required to be literally \"InterfaceMQTT\".",
+                "Each interface object MUST have a 'protocol' field (exact key, lowercase) with one of these exact values: \"MQTT\", \"OPCUA\", \"HTTP\", \"MODBUS\" — this determines which EndpointMetadata fields apply and how downstream Skills/Variables/Parameters resolve their reference.",
+                "InteractionMetadata.actions / .properties / .events are each an OBJECT keyed by name (e.g. {\"StartProcess\": {...}, \"StopProcess\": {...}}) — NEVER a JSON array/list of items. If you were about to write a list, convert it: each item's own name/key becomes the object's key instead. This is the single most common mistake — check it before returning your answer.",
+                "actions: invokable operations (WoT ActionAffordance). properties: readable/observable data points (WoT PropertyAffordance). events: subscribable notifications (WoT EventAffordance). All three are optional — a read-only sensor interface may have properties only and no actions at all; that is valid, do not invent actions to fill the section.",
+                "If this asset also has an OperationalData/Variables section (see that section's guide) and one of its variables needs to read a value published here, that value MUST be listed under 'properties', never 'events' — an OperationalData variable's InterfaceReference can only resolve to a property, even for a value that is semantically a one-shot notification (e.g. a cycle-completion reading). Only put something under 'events' if no OperationalData variable will reference it.",
+                "Each action/property/event entry may have: 'key' (short code), 'title' (human label), 'forms' (protocol binding, see example — at minimum 'href': the topic/path/address on this interface). Actions may also have 'synchronous' (\"true\"/\"false\") and optionally 'input'/'output' (a URI to a JSON Schema document describing the payload — OMIT input/output entirely if you don't have a real schema URL, do not invent one).",
+                "'forms' field names are protocol-specific: MQTT commonly uses 'href' (topic) + 'contentType'; HTTP adds 'htv_methodName' (GET/POST/PUT/DELETE/PATCH); Modbus adds 'modv_function' (e.g. readHoldingRegisters/writeSingleRegister) and 'modv_entity' (e.g. HoldingRegister/InputRegister). Only include the fields you actually know from the source material.",
+                "If a command has SEPARATE topics for invoking it and for its asynchronous response/acknowledgement (a common MQTT request/response pattern: a CMD topic to publish to, a DATA topic to subscribe to for the result), put the invoke topic on 'forms.href' and nest the response topic under 'forms.response.href' — NOT as two separate actions and NOT as extra top-level keys. See the StartProcess example below.",
+            ],
+            "example": {
+                "MqttInterface": {
+                    "protocol": "MQTT",
+                    "Title": "MQTT interface",
+                    "EndpointMetadata": {"base": "mqtt://broker:1883", "contentType": "application/json"},
+                    "InteractionMetadata": {
+                        "actions": {
+                            "StartProcess": {
+                                "key": "start",
+                                "title": "Start the process",
+                                "synchronous": "true",
+                                "forms": {
+                                    "href": "CMD/StartProcess",
+                                    "contentType": "application/json",
+                                    "response": {"href": "DATA/StartProcess", "contentType": "application/json"},
+                                },
+                            }
+                        },
+                        "properties": {
+                            "Temperature": {
+                                "key": "temperature",
+                                "title": "Current temperature reading",
+                                "forms": {"href": "state/temperature", "contentType": "application/json"},
+                            }
+                        },
+                        "events": {
+                            "OverTemperature": {
+                                "key": "overTemp",
+                                "title": "Over-temperature alarm",
+                                "forms": {"href": "alarms/overtemp", "contentType": "application/json"},
+                            }
+                        },
+                    },
+                },
+                "ModbusRegisters": {
+                    "protocol": "MODBUS",
+                    "Title": "Modbus register interface",
+                    "EndpointMetadata": {"base": "modbus+tcp://192.168.0.1:502", "contentType": "application/json"},
+                    "InteractionMetadata": {
+                        "properties": {
+                            "HoldingReg0": {
+                                "key": "holdingReg0",
+                                "title": "Holding register 0",
+                                "forms": {"href": "0", "modv_function": "readHoldingRegisters", "modv_entity": "HoldingRegister"},
+                            }
+                        }
+                    },
+                },
+            },
             "source_priority": ["integration docs", "datasheet", "existing UNS specs"],
         }
 
     if "operationaldata" in selected or "variables" in selected:
         body["OperationalData"] = {
-            "purpose": "Runtime variable mapping to interface properties.",
-            "constraints": ["variable entries link to interface references"],
+            "purpose": "Map of variable name to variable object. One entry per runtime operational variable.",
+            "constraints": [
+                "Each entry is a JSON OBJECT, never a plain string or dotted path.",
+                "Each entry is keyed by a PascalCase variable name, e.g. \"State\": {...}",
+                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property under InteractionMetadata.properties (or action under .actions) that this variable reads, e.g. \"State\" - REQUIRED",
+                "'semanticId' field (exact key: semanticId, camelCase) - optional URI string, only if this variable needs its own distinct semantic identifier beyond the referenced interface property",
+            ],
+            "example": {"State": {"InterfaceReference": "State"}, "CycleTime": {"InterfaceReference": "CycleTime"}},
         }
 
     if "parameters" in selected:
         body["Parameters"] = {
-            "purpose": "Configurable/static parameters relevant for operation.",
-            "constraints": ["parameters should map to writable interface semantics where possible"],
+            "purpose": "Map of parameter name to parameter object. One entry per configurable/static parameter.",
+            "constraints": [
+                "Each entry is a JSON OBJECT, never a plain string or dotted path.",
+                "Each entry is keyed by a PascalCase parameter name, e.g. \"Setpoint\": {...}",
+                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property/action this parameter writes to - REQUIRED",
+                "'semanticId' field (exact key: semanticId, camelCase) - optional URI string, only if this parameter needs its own distinct semantic identifier",
+            ],
+            "example": {"Setpoint": {"InterfaceReference": "Setpoint"}},
         }
 
     if "capabilities" in selected:
         body["Capabilities"] = {
-            "purpose": "Resource capabilities with semantic identifiers.",
-            "constraints": ["capability should map to at least one skill via realizedBy"],
+            "purpose": "Map of capability name to capability object. One entry per resource capability.",
+            "constraints": [
+                "Each entry is keyed by a PascalCase capability name, e.g. \"Dispense\": {...}",
+                "Each entry MUST have a 'semantic_id' field (exact key: semantic_id, snake_case, NOT semanticId) - a URI string starting with https://smartproductionlab.aau.dk/",
+                "Each entry MUST have a 'realizedBy' field - the name of the matching Skill entry that implements this capability",
+            ],
+            "example": {"Dispense": {"semantic_id": "https://smartproductionlab.aau.dk/Capability/Dispense", "realizedBy": "Dispense"}},
         }
 
     if "skills" in selected:
         body["Skills"] = {
-            "purpose": "Executable skills and their interface bindings.",
-            "constraints": ["skills should reference defined AID action/interface"],
+            "purpose": "Map of skill name to skill object. One entry per executable skill.",
+            "constraints": [
+                "Each entry is keyed by a PascalCase skill name matching an AID action, e.g. \"Dispense\": {...}",
+                "Each entry MUST have a 'semantic_id' field (exact key: semantic_id, snake_case, NOT semanticId) - a URI string starting with https://smartproductionlab.aau.dk/",
+                "Each entry MUST have an 'interface' field (exact key, NOT 'action') - the idShort of the matching action under InteractionMetadata.actions on WHICHEVER AID interface defines it (the builder searches every configured interface for it), e.g. \"Dispense\" - this is the action's own name, not the containing interface's name",
+            ],
+            "example": {"Dispense": {"semantic_id": "https://smartproductionlab.aau.dk/skills/Dispense", "interface": "Dispense"}},
         }
 
     return guide
