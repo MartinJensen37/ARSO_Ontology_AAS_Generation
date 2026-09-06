@@ -38,6 +38,10 @@ Value quality:
 - idshort_format_violations (int) idShorts failing ^[A-Za-z0-9_]+$
 - value_format_violations (int) bad xs:date, malformed xsd:int values, etc.
 
+Negative checks:
+- must_not_contain_violations (int) forbidden substrings found anywhere in the generated AAS
+- must_not_contain_hits (list[str]) which ones
+
 Cross-reference correctness:
 - skill_links_to_aid_action (float 0-1) Skills with a valid AID action target
 - capability_realizedby_skill (float 0-1) Capabilities pointing at a real Skill
@@ -154,49 +158,86 @@ def _safe_div(numerator: float, denominator: float, default: float = 1.0) -> flo
 # --------------------------------------------------------------------- coverage / accuracy
 
 
-def coverage_metrics(aas_doc: dict, ground_truth: dict) -> dict[str, Any]:
-    submodels_index = _index_submodels_by_idshort(aas_doc)
-    expected_submodels = ground_truth.get("expected_submodels") or {}
+def coverage_metrics(
+    aas_doc: dict, reference_doc: dict, required_paths: Iterable[str] = (),
+) -> dict[str, Any]:
+    """Coverage/accuracy metrics, computed by diffing the generated AAS
+    against a reference AAS.
 
-    sm_total = len(expected_submodels)
-    sm_present = sum(1 for name in expected_submodels if name in submodels_index)
+    `reference_doc` is a full AAS JSON dict -- built by the caller from the
+    ground truth's `profile` field via the exact same
+    profile_document_to_aas_json pipeline real generation uses, so ground
+    truth can never structurally drift from what the pipeline actually
+    produces (this module stays free of any dependency on the generation
+    pipeline; building reference_doc is run_eval.py's job).
+
+    `required_paths` are "SubmodelIdShort/idShort/idShort/..." strings naming
+    the fields that are hard requirements for this equipment; every other
+    field present in reference_doc is scored as optional (contributes to
+    value_substring_match, not to mandatory_sme_coverage). This inverts the
+    old ground-truth YAML's per-field `required: true/false` annotation
+    (there, most fields defaulted to required=True and a few were marked
+    optional; here, most fields default to optional and the few load-bearing
+    ones are listed explicitly) -- a profile has nowhere to hang a
+    required/optional flag on each field, so the flag moved to this
+    separate, much shorter list instead.
+    """
+    ref_submodels = _index_submodels_by_idshort(reference_doc)
+    actual_submodels = _index_submodels_by_idshort(aas_doc)
+    required_path_set = {tuple(p.split("/")) for p in required_paths}
+
+    sm_total = len(ref_submodels)
+    sm_present = sum(1 for name in ref_submodels if name in actual_submodels)
 
     mand_total = mand_present = 0
     value_match = 0
     value_total_with_check = 0
 
-    for sm_name, sm_truth in expected_submodels.items():
-        actual_sm = submodels_index.get(sm_name)
+    for sm_name, ref_sm in ref_submodels.items():
+        actual_sm = actual_submodels.get(sm_name)
         actual_index = _index_smes_by_path(actual_sm) if isinstance(actual_sm, dict) else {}
 
-        for expected in (sm_truth or {}).get("submodelElements", []) or []:
-            if not isinstance(expected, dict):
-                continue
-            if not expected.get("idShort"):
-                continue
-            required = expected.get("required", True)
-            path = tuple(expected.get("path") or [expected["idShort"]])
-            expected_value = expected.get("expected_value_contains")
+        for path, ref_elem in _walk_smes(ref_sm):
+            full_path = (sm_name, *path)
 
-            if required:
+            if full_path in required_path_set:
                 mand_total += 1
+                if tuple(path) in actual_index:
+                    mand_present += 1
 
-            actual = actual_index.get(path)
+            # Value-substring check runs over every element in the reference
+            # profile that carries a real value (required or optional) --
+            # richer than the old sparse expected_value_contains annotations,
+            # since the reference AAS always has a real value for every field
+            # its profile defines.
+            expected_value = _extract_value_text(ref_elem)
+            if not expected_value:
+                continue
+            actual = actual_index.get(tuple(path))
             if actual is None:
                 continue
-
-            if required:
-                mand_present += 1
-
-            if expected_value:
-                value_total_with_check += 1
-                if expected_value.lower() in _extract_value_text(actual).lower():
-                    value_match += 1
+            value_total_with_check += 1
+            if expected_value.lower() in _extract_value_text(actual).lower():
+                value_match += 1
 
     return {
         "submodel_coverage":      _safe_div(sm_present, sm_total, 1.0),
         "mandatory_sme_coverage": _safe_div(mand_present, mand_total, 1.0),
         "value_substring_match":  _safe_div(value_match, value_total_with_check, 1.0),
+    }
+
+
+def must_not_contain_metrics(aas_doc: dict, forbidden: Iterable[str]) -> dict[str, Any]:
+    """Negative-check: none of `forbidden` substrings (case-insensitive)
+    should appear anywhere in the generated AAS -- catches cross-contamination
+    from another equipment's vocabulary (e.g. OPC-UA NodeIds leaking into an
+    MQTT device's output)."""
+    import json as _json
+    text = _json.dumps(aas_doc).lower()
+    hits = [f for f in forbidden if f.lower() in text]
+    return {
+        "must_not_contain_violations": len(hits),
+        "must_not_contain_hits": hits,
     }
 
 
@@ -337,8 +378,10 @@ def efficiency_metrics(
 
 def all_metrics(
     aas_doc: dict,
-    ground_truth: dict,
+    reference_doc: dict,
     *,
+    required_paths: Iterable[str] = (),
+    must_not_contain: Iterable[str] = (),
     conforms: bool,
     metamodel_issues: list,
     ontology_issues: list,
@@ -350,9 +393,15 @@ def all_metrics(
     provider: str = "",
     model: str = "",
 ) -> dict[str, Any]:
-    """Compute every metric and return a single flat dict ready for JSONL."""
+    """Compute every metric and return a single flat dict ready for JSONL.
+
+    `reference_doc` is the AAS built from the ground truth's profile (see
+    coverage_metrics' docstring); `required_paths` and `must_not_contain` are
+    the ground truth's scoring-hints fields, unrelated to the profile itself.
+    """
     out: dict[str, Any] = {}
-    out.update(coverage_metrics(aas_doc, ground_truth))
+    out.update(coverage_metrics(aas_doc, reference_doc, required_paths))
+    out.update(must_not_contain_metrics(aas_doc, must_not_contain))
     out.update(verify_rate(aas_doc))
     out.update(cross_reference_metrics(aas_doc))
     out.update(conformance_metrics(conforms, metamodel_issues, ontology_issues))

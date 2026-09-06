@@ -62,8 +62,9 @@ from Generation.Context_Builder.context_loader import load_context
 from Generation.Context_Builder.RAG.rag_loader import load_rag  
 from Generation.Context_Builder.RAG.prompt_builder import build_system_instruction, build_user_prompt  
 from Generation.Context_Builder.Parsing.pdf_extractor import extract_pdf_text  
-from Generation.pipeline import run_pipeline  
-from Validation.Validator.validator import run_shacl  
+from Generation.pipeline import run_pipeline
+from Transformation.AAS_Builder.AAS_builder import profile_document_to_aas_json
+from Validation.Validator.validator import run_shacl
 
 from Testing.Generation_Tests.Test_Scripts import metrics as M  
 
@@ -79,6 +80,26 @@ _RESULTS_DIR = _EVAL_DIR / "results"
 
 def _read_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def _build_reference_aas(ground_truth: dict, cfg: Config) -> dict:
+    """Build the ground truth's `profile` into a real AAS via the exact same
+    pipeline real generation uses, so coverage scoring always compares
+    against something the pipeline could actually produce -- eliminating the
+    class of bug where a ground-truth YAML's hand-described expectations
+    silently drift from what the builders actually emit.
+
+    Uses the same cfg as the real experiment (base_url/asset_name stay
+    consistent between the reference and the generated AAS being scored).
+    """
+    profile = ground_truth.get("profile")
+    if not isinstance(profile, dict) or not profile:
+        raise ValueError(
+            "ground truth is missing a 'profile' section -- coverage scoring "
+            "needs a real profile to build into a reference AAS"
+        )
+    aas_json = profile_document_to_aas_json(profile, cfg)
+    return json.loads(aas_json)
 
 
 def _read_text(path: Path | None) -> str:
@@ -280,6 +301,14 @@ def _run_one(
     )
     cfg = _apply_ablation(cfg, ablation)
 
+    # ------ ground-truth reference AAS ------
+    # Built once per experiment, from the same cfg used for the real run, so
+    # coverage scoring diffs the generated AAS against something the pipeline
+    # could actually produce rather than a hand-maintained rubric.
+    reference_doc = _build_reference_aas(ground_truth, cfg)
+    required_paths = list(ground_truth.get("required_paths") or [])
+    must_not_contain = list(ground_truth.get("must_not_contain") or [])
+
     # ------ assemble inputs ------
     pdf_b64 = _read_pdf_base64(pdf_full) if cfg.provider == "gemini" else None
     pdf_text = ""
@@ -317,6 +346,7 @@ def _run_one(
     (exp_dir / "config_snapshot.json").write_text(json.dumps(_config_snapshot(cfg), indent=2, ensure_ascii=False), encoding="utf-8")
     (exp_dir / "equipment_snapshot.yaml").write_text(equipment_yaml.read_text(encoding="utf-8"), encoding="utf-8")
     (exp_dir / "ground_truth_snapshot.yaml").write_text(ground_truth_yaml.read_text(encoding="utf-8"), encoding="utf-8")
+    (exp_dir / "reference_aas.json").write_text(json.dumps(reference_doc, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # ------ run pipeline ------
     log_lines: list[str] = []
@@ -381,7 +411,7 @@ def _run_one(
         if snap_aas_json:
             try:
                 snap_doc = json.loads(snap_aas_json)
-                cov = M.coverage_metrics(snap_doc, ground_truth)
+                cov = M.coverage_metrics(snap_doc, reference_doc, required_paths)
                 snap["mandatory_sme_coverage"] = cov["mandatory_sme_coverage"]
                 snap["value_substring_match"]  = cov["value_substring_match"]
             except Exception:
@@ -398,7 +428,9 @@ def _run_one(
 
     # ------ metrics ------
     metric_row = M.all_metrics(
-        aas_doc, ground_truth,
+        aas_doc, reference_doc,
+        required_paths=required_paths,
+        must_not_contain=must_not_contain,
         conforms=conforms,
         metamodel_issues=metamodel,
         ontology_issues=ontology,

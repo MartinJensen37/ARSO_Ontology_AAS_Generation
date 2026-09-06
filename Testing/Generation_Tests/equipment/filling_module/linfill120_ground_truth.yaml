@@ -1,293 +1,45 @@
 asset_name: "LinFill120"
 description: |
   Ground truth for the LinFill-120 Vertical Syringe Filling Station (Elara Automation GmbH).
-  Derived from EA-LC-LF120-EN Rev. 1.1 (lifecycle) and EA-MI-LF120-EN Rev. 1.0 (MQTT interface).
+  Derived from EA-LC-LF120-EN Rev. 1.1 (lifecycle), EA-LN-SPL01-EN (BOM), and
+  EA-MI-LF120-EN Rev. 2.0 (MQTT interface: per-action CMD/DATA topic pairs,
+  Uuid-correlated JSON payloads, QoS 2).
   Covers all six selected submodels: Nameplate, HierarchicalStructures, AID,
   Skills, Capabilities, OperationalData.
-  Communication protocol: MQTT 3.1.1 over IEEE 802.11 b/g/n WiFi (2.4 GHz).
 
-# required: true  -> must be present and correct; penalise if missing
-# required: false -> value is available in documents; score if found, do not penalise absence
+  Unlike the old rubric-style ground truth, `profile` below is a real profile
+  document -- the exact same shape profile_document_to_aas_json consumes. The
+  evaluation harness builds it into a genuine reference AAS via that same
+  pipeline and diffs the generated AAS against it, so this ground truth can
+  never structurally drift from what the pipeline actually produces (the bug
+  class that motivated this rewrite: the old YAML described an AID/Skills
+  shape the real builders had already stopped matching).
 
-expected_submodels:
+# ── Scoring hints ────────────────────────────────────────────────────────────
+# required_paths: "SubmodelIdShort/idShort/idShort/..." -- hard requirements;
+# penalised if missing from the generated AAS. Everything else present in
+# `profile` below is still scored (via value_substring_match) but not
+# penalised if the model omits it -- mirrors the old ground truth's
+# "required: false" fields, just inverted (list the few required ones instead
+# of the many optional ones, since a profile has nowhere to hang a per-field
+# required/optional flag the way the old rubric format did).
+required_paths:
+  - "DigitalNameplate/ManufacturerName"
+  - "DigitalNameplate/ManufacturerProductDesignation"
+  - "DigitalNameplate/ContactInformation"
+  - "DigitalNameplate/OrderCodeOfManufacturer"
+  - "DigitalNameplate/SerialNumber"
+  - "HierarchicalStructures/ArcheType"
+  - "HierarchicalStructures/EntryNode"
+  - "AID/InterfaceMQTT"
+  - "AID/InterfaceMQTT/EndpointMetadata"
+  - "AID/InterfaceMQTT/InteractionMetadata"
+  - "Skills/Skills/Start"
+  - "Skills/Skills/Stop"
+  - "Skills/Skills/Home"
+  - "Capabilities/CapabilitySet/SyringeFillingContainer"
+  - "OperationalData/State"
 
-  # ── DigitalNameplate ────────────────────────────────────────────────────────
-  DigitalNameplate:
-    submodelElements:
-
-      - idShort: ManufacturerName
-        semanticId: "0112/2///61987#ABA565#009"
-        expected_value_contains: "Elara Automation"
-        required: true
-
-      - idShort: ManufacturerProductDesignation
-        semanticId: "0112/2///61987#ABA567#009"
-        expected_value_contains: "LinFill-120"
-        required: true
-
-      - idShort: ContactInformation
-        semanticId: "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
-        required: true
-
-      - idShort: OrderCodeOfManufacturer
-        semanticId: "0112/2///61987#ABA950#008"
-        expected_value_contains: "EA-LF120-230V-EU"
-        required: true
-
-      - idShort: SerialNumber
-        expected_value_contains: "EA-LF-2024-00472"
-        required: true
-
-      - idShort: YearOfConstruction
-        expected_value_contains: "2024"
-        required: false
-
-      - idShort: DateOfManufacture
-        expected_value_contains: "2024-03-15"
-        required: false
-
-      - idShort: CountryOfOrigin
-        expected_value_contains: "DE"
-        required: false
-
-      - idShort: HardwareVersion
-        expected_value_contains: "2.1"
-        required: false
-
-      - idShort: FirmwareVersion
-        expected_value_contains: "1.4.2"
-        required: false
-
-      - idShort: URIOfTheProduct
-        expected_value_contains: "linfill-120"
-        required: false
-
-      - idShort: ManufacturerProductFamily
-        expected_value_contains: "LinFill"
-        required: false
-
-      - idShort: ManufacturerAddress
-        expected_value_contains: "Stuttgart"
-        required: false
-
-  # ── HierarchicalStructures ──────────────────────────────────────────────────
-  HierarchicalStructures:
-    submodelElements:
-
-      - idShort: ArcheType
-        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"
-        expected_value_contains: "OneDown"
-        required: true
-
-      - idShort: EntryNode
-        semanticId: "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
-        required: true
-
-    children:
-      - idShort: ESP32ControllerModule
-        required: true
-
-      - idShort: L298NMotorControllerBoard
-        required: true
-
-      - idShort: LiftMotor
-        required: true
-
-      - idShort: LeadScrewAssembly
-        required: true
-
-      - idShort: HomingLimitSwitch
-        required: false
-
-      - idShort: TopLimitSwitch
-        required: false
-
-      - idShort: RemovableNeedleTopAssembly
-        required: false
-
-  # ── AID (Asset Interfaces Description) — MQTT ───────────────────────────────
-  AID:
-    interface_type: "MQTT"
-    submodelElements:
-
-      - idShort: InterfaceMQTT
-        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
-        required: true
-
-      - idShort: EndpointMetadata
-        path: [InterfaceMQTT, EndpointMetadata]
-        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
-        required: true
-        expected_properties:
-          protocol: "MQTT"
-          version: "3.1.1"
-          port_plain: "1883"
-          port_tls: "8883"
-          client_id_pattern: "linfill120-{serialNumber}"
-          keepalive_s: "60"
-          clean_session: "false"
-          qos: "1"
-
-      - idShort: InteractionMetadata
-        path: [InterfaceMQTT, InteractionMetadata]
-        semanticId: "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
-        required: true
-
-    affordances:
-
-      - idShort: FillingState
-        affordance_type: "property"
-        topic: "{base}/filling/state"
-        payload_type: "string"
-        qos: 1
-        retained: true
-        valid_values: ["IDLE", "RUNNING", "ERROR", "HOMING"]
-        required: true
-
-      - idShort: CycleTime
-        affordance_type: "event"
-        topic: "{base}/filling/cycletime"
-        payload_type: "float"
-        unit: "seconds"
-        qos: 1
-        retained: false
-        required: false
-
-      - idShort: SyringeWeight
-        affordance_type: "event"
-        topic: "{base}/filling/syringeweight"
-        payload_type: "float"
-        unit: "grams"
-        qos: 1
-        retained: false
-        required: false
-
-      - idShort: Command
-        affordance_type: "action"
-        topic: "{base}/filling/cmd"
-        payload_type: "string"
-        valid_values: ["START", "STOP", "HOME", "RESET"]
-        qos: 1
-        retained: false
-        required: true
-
-    lwt:
-      topic: "{base}/filling/state"
-      payload: "ERROR"
-      qos: 1
-      retain: true
-      required: true
-
-  # ── Skills ──────────────────────────────────────────────────────────────────
-  Skills:
-    submodelElements:
-
-      - idShort: Start
-        required: true
-        precondition: "State == IDLE"
-        result_state: "RUNNING -> IDLE"
-        side_effects:
-          - "CycleTime published on completion"
-          - "SyringeWeight published on completion if balance connected"
-
-      - idShort: Stop
-        required: true
-        precondition: "State == RUNNING"
-        result_state: "IDLE"
-        side_effects:
-          - "CycleTime NOT published (partial cycle)"
-
-      - idShort: Home
-        required: true
-        precondition: "Any state"
-        result_state: "HOMING -> IDLE"
-        side_effects:
-          - "Position reference set at lower limit switch"
-          - "Must be called once after power-on before first Start"
-
-      - idShort: Reset
-        required: false
-        precondition: "State == ERROR"
-        result_state: "IDLE"
-        side_effects:
-          - "Fault flag cleared; no re-homing"
-
-  # ── Capabilities ────────────────────────────────────────────────────────────
-  Capabilities:
-    submodelElements:
-
-      - idShort: CapabilitySet
-        required: true
-
-    capabilities:
-
-      - idShort: SyringeFilling
-        description: "Vertical needle actuation into a pre-positioned syringe for controlled fill."
-        required: true
-
-      - idShort: WeightMeasurement
-        description: "Post-fill syringe weight via external balance; averaged over 3 readings (fw >= 1.4.2)."
-        required: false
-
-      - idShort: LiftPositioning
-        description: "150 mm vertical travel, +/-0.5 mm repeatability after homing."
-        required: false
-
-      - idShort: MQTTConnectivity
-        description: "MQTT 3.1.1 client; QoS 1; TLS 1.2; LWT on state topic; keepalive 60 s."
-        required: false
-
-  # ── OperationalData ─────────────────────────────────────────────────────────
-  OperationalData:
-    submodelElements:
-
-      - idShort: FillingState
-        required: true
-        data_type: "string"
-        source_topic: "{base}/filling/state"
-        valid_values: ["IDLE", "RUNNING", "ERROR", "HOMING"]
-        update_trigger: "on state change"
-        retained: true
-
-      - idShort: CycleTime
-        required: false
-        data_type: "float"
-        unit: "seconds"
-        source_topic: "{base}/filling/cycletime"
-        update_trigger: "on cycle completion (RUNNING -> IDLE)"
-        retained: false
-
-      - idShort: SyringeWeight
-        required: false
-        data_type: "float"
-        unit: "grams"
-        source_topic: "{base}/filling/syringeweight"
-        update_trigger: "on cycle completion"
-        retained: false
-        averaging: "3 readings (firmware >= 1.4.2)"
-
-# ── Cross-submodel consistency checks ───────────────────────────────────────
-expected_cross_references:
-  - skill: Start
-    references_aid_affordance: Command
-    expected_payload: "START"
-  - skill: Stop
-    references_aid_affordance: Command
-    expected_payload: "STOP"
-  - skill: Home
-    references_aid_affordance: Command
-    expected_payload: "HOME"
-  - skill: Reset
-    references_aid_affordance: Command
-    expected_payload: "RESET"
-  - operational_data: FillingState
-    references_aid_affordance: FillingState
-  - operational_data: CycleTime
-    references_aid_affordance: CycleTime
-  - operational_data: SyringeWeight
-    references_aid_affordance: SyringeWeight
-
-# ── Negative checks ──────────────────────────────────────────────────────────
 must_not_contain:
   - "opc.tcp"
   - "OPC UA"
@@ -295,3 +47,157 @@ must_not_contain:
   - "BrowseName"
   - "ns=1"
   - "PlungerSet"
+
+# ── Reference profile ────────────────────────────────────────────────────────
+# Fed straight into profile_document_to_aas_json -- must stay buildable.
+profile:
+  LinFill120AAS:
+    idShort: "LinFill120AAS"
+    id: "/aas/LinFill120AAS"
+    globalAssetId: "/assets/LinFill120"
+    assetType: "/Resource/filling-station/syringe"
+    serialNumber: "EA-LF-2024-00472"
+    location: "AAU SmartProduction Laboratory, SPL-01 Pilot Aseptic Syringe Filling Line, Station 1"
+
+    DigitalNameplate:
+      ManufacturerName: "Elara Automation GmbH"
+      SerialNumber: "EA-LF-2024-00472"
+      ManufacturerProductDesignation: "LinFill-120 Vertical Syringe Filling Station"
+      OrderCodeOfManufacturer: "EA-LF120-230V-EU"
+      AddressInformation:
+        Street: "Brückenstraße 14"
+        ZipCode: "70173"
+        CityTown: "Stuttgart"
+        NationalCode: "DE"
+      YearOfConstruction: "2024"
+      DateOfManufacture: "2024-03-15"
+      CountryOfOrigin: "DE"
+      HardwareVersion: "2.1"
+      SoftwareVersion: "1.5.0"
+      ManufacturerProductFamily: "LinFill Series"
+      URIOfTheProduct: "https://smartproductionlab.aau.dk/assets/linfill-120"
+
+    HierarchicalStructures:
+      Name: "BillOfMaterials"
+      Archetype: "OneDown"
+      HasPart:
+        ESP32ControllerModule:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/ESP32ControllerModule"
+        L298NMotorControllerBoard:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/L298NMotorControllerBoard"
+        LiftMotor:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/LiftMotor"
+        LeadScrewAssembly:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/LeadScrewAssembly"
+        HomingLimitSwitch:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/HomingLimitSwitch"
+        TopLimitSwitch:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/TopLimitSwitch"
+        RemovableNeedleTopAssembly:
+          globalAssetId: "https://smartproductionlab.aau.dk/assets/RemovableNeedleTopAssembly"
+
+    # Per-action CMD (invoke) / DATA (response) topic pairs, Uuid-correlated
+    # JSON payloads, QoS 2 -- matches the real InnoLab MQTT_classes pattern.
+    # forms.response nests the DATA topic under the action's CMD-topic forms
+    # (see json_description_generation.py's AID guide for this convention).
+    AID:
+      InterfaceMQTT:
+        protocol: "MQTT"
+        Title: "LinFill-120 MQTT Interface"
+        EndpointMetadata:
+          base: "mqtt://broker:1883"
+          contentType: "application/json"
+        InteractionMetadata:
+          actions:
+            Start:
+              key: "start"
+              title: "Start fill cycle"
+              synchronous: "true"
+              forms:
+                href: "CMD/Start"
+                contentType: "application/json"
+                response: {href: "DATA/Start", contentType: "application/json"}
+            Stop:
+              key: "stop"
+              title: "Stop active fill cycle"
+              synchronous: "true"
+              forms:
+                href: "CMD/Stop"
+                contentType: "application/json"
+                response: {href: "DATA/Stop", contentType: "application/json"}
+            Home:
+              key: "home"
+              title: "Home the lift"
+              synchronous: "true"
+              forms:
+                href: "CMD/Home"
+                contentType: "application/json"
+                response: {href: "DATA/Home", contentType: "application/json"}
+            Reset:
+              key: "reset"
+              title: "Reset fault state"
+              synchronous: "true"
+              forms:
+                href: "CMD/Reset"
+                contentType: "application/json"
+                response: {href: "DATA/Reset", contentType: "application/json"}
+          properties:
+            State:
+              key: "state"
+              title: "Operational state (IDLE/RUNNING/ERROR/HOMING)"
+              forms: {href: "DATA/State", contentType: "application/json"}
+            Weight:
+              key: "weight"
+              title: "Streamed syringe weight reading"
+              forms: {href: "DATA/Weight", contentType: "application/json"}
+            # CycleTime is semantically a one-shot notification (WoT
+            # EventAffordance would be the "proper" fit), but it must live
+            # under 'properties' here: variables_builder.py's
+            # _create_interface_reference hardcodes its ModelReference chain
+            # to always end at .../InteractionMetadata/properties/{name}, so
+            # an OperationalData variable can only ever reference an AID
+            # property, never an action or event. Modelling it as an event
+            # would make this ground truth unbuildable/SHACL-invalid.
+            CycleTime:
+              key: "cycletime"
+              title: "Cycle duration, published once per completed cycle"
+              forms: {href: "DATA/CycleTime", contentType: "application/json"}
+
+    Skills:
+      Start:
+        interface: "Start"
+        semantic_id: "https://smartproductionlab.aau.dk/skills/Start"
+      Stop:
+        interface: "Stop"
+        semantic_id: "https://smartproductionlab.aau.dk/skills/Stop"
+      Home:
+        interface: "Home"
+        semantic_id: "https://smartproductionlab.aau.dk/skills/Home"
+      Reset:
+        interface: "Reset"
+        semantic_id: "https://smartproductionlab.aau.dk/skills/Reset"
+
+    Capabilities:
+      SyringeFilling:
+        realizedBy: "Start"
+        semantic_id: "https://smartproductionlab.aau.dk/Capability/SyringeFilling"
+      CycleStopping:
+        realizedBy: "Stop"
+        semantic_id: "https://smartproductionlab.aau.dk/Capability/CycleStopping"
+      LiftHoming:
+        realizedBy: "Home"
+        semantic_id: "https://smartproductionlab.aau.dk/Capability/LiftHoming"
+      FaultResetting:
+        realizedBy: "Reset"
+        semantic_id: "https://smartproductionlab.aau.dk/Capability/FaultResetting"
+
+    Variables:
+      State:
+        InterfaceReference: "State"
+        semanticId: "https://smartproductionlab.aau.dk/variables/State"
+      CycleTime:
+        InterfaceReference: "CycleTime"
+        semanticId: "https://smartproductionlab.aau.dk/variables/CycleTime"
+      Weight:
+        InterfaceReference: "Weight"
+        semanticId: "https://smartproductionlab.aau.dk/variables/Weight"
