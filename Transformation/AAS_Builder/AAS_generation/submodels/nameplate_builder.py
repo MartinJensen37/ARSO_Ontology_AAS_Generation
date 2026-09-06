@@ -28,6 +28,13 @@ class DigitalNameplateSubmodelBuilder:
         nameplate_config = (
             config.get("DigitalNameplate", {}) or config.get("Nameplate", {}) or {}
         )
+        if not isinstance(nameplate_config, dict):
+            # An LLM occasionally emits a whole section as a bare "[VERIFY: ...]"
+            # string instead of an object when it has nothing to report. Treat
+            # that the same as the section being absent -- the individual
+            # mandatory-field SHACL shapes below still correctly surface the
+            # gap to a human; we just must not crash trying to read from it.
+            nameplate_config = {}
         elements = []
 
         uri_of_product = nameplate_config.get(
@@ -42,31 +49,37 @@ class DigitalNameplateSubmodelBuilder:
             )
         )
 
-        # ManufacturerName — IDTA-aligned semanticId (mandatory per IDTA 02006)
-        manufacturer_name = nameplate_config.get(
-            "ManufacturerName",
-            config.get("manufacturerName", "Unknown Manufacturer"),
-        )
-        elements.append(
-            self.element_factory.create_multi_language_property(
-                id_short="ManufacturerName",
-                text=manufacturer_name,
-                semantic_id=self.semantic_factory.NP_MANUFACTURER_NAME,
+        # ManufacturerName — IDTA-aligned semanticId (mandatory per IDTA 02006).
+        # No fallback: a fabricated "Unknown Manufacturer" would satisfy SHACL
+        # (structural cardinality only, it doesn't check content) while hiding
+        # that the real value was never supplied. Omitting the element when
+        # missing lets the existing ManufacturerNameMLP MinCount1 shape surface
+        # that to a human instead.
+        manufacturer_name = nameplate_config.get("ManufacturerName") or config.get("manufacturerName")
+        if manufacturer_name:
+            elements.append(
+                self.element_factory.create_multi_language_property(
+                    id_short="ManufacturerName",
+                    text=manufacturer_name,
+                    semantic_id=self.semantic_factory.NP_MANUFACTURER_NAME,
+                )
             )
-        )
 
-        # ManufacturerProductDesignation — IDTA-aligned (mandatory)
-        product_designation = nameplate_config.get(
-            "ManufacturerProductDesignation",
-            config.get("manufacturerProductDesignation", config.get("idShort", system_id)),
+        # ManufacturerProductDesignation — IDTA-aligned (mandatory). Same
+        # no-silent-fallback reasoning as ManufacturerName above -- defaulting
+        # to the system/idShort is a fabricated value, not the real designation.
+        product_designation = (
+            nameplate_config.get("ManufacturerProductDesignation")
+            or config.get("manufacturerProductDesignation")
         )
-        elements.append(
-            self.element_factory.create_multi_language_property(
-                id_short="ManufacturerProductDesignation",
-                text=str(product_designation),
-                semantic_id=self.semantic_factory.NP_MANUFACTURER_PRODUCT_DESIGNATION,
+        if product_designation:
+            elements.append(
+                self.element_factory.create_multi_language_property(
+                    id_short="ManufacturerProductDesignation",
+                    text=str(product_designation),
+                    semantic_id=self.semantic_factory.NP_MANUFACTURER_PRODUCT_DESIGNATION,
+                )
             )
-        )
 
         # ContactInformation — IDTA-aligned (mandatory). IDTA 02006 expects an SMC
         # holding an IDTA 02002 ContactInformation; we emit a minimal-yet-typed SMC
@@ -78,12 +91,27 @@ class DigitalNameplateSubmodelBuilder:
             or nameplate_config.get("ContactInformation")
             or {}
         )
+        if not isinstance(contact_config, dict):
+            # Same "[VERIFY: ...]" placeholder-string case as nameplate_config
+            # above -- treat as absent rather than crash; the 4 mandatory
+            # AddressXxxMLP shapes below still surface the missing address.
+            contact_config = {}
         _address_sids = {
             "Street":       self.semantic_factory.NP_ADDRESS_STREET,
             "ZipCode":      self.semantic_factory.NP_ADDRESS_ZIPCODE,
             "CityTown":     self.semantic_factory.NP_ADDRESS_CITY_TOWN,
             "NationalCode": self.semantic_factory.NP_ADDRESS_NATIONAL_CODE,
         }
+        # Each of these 4 is individually mandatory (someValuesFrom, minCount 1)
+        # per IDTA 02006-3-0 / the ontology's AddressInformationSMC restrictions.
+        # Deliberately NOT defaulted to a [VERIFY: ...] placeholder when missing:
+        # unlike a field with no available source, address data is normally
+        # present in the source material (spec sheet / datasheet) and its
+        # absence here means extraction failed upstream, not that it's
+        # legitimately unknown. Silently inserting a placeholder would make
+        # SHACL validation pass and hide that failure; leaving the field(s)
+        # out instead makes the resulting MinCount violation surface the real
+        # problem to a human, who can supply the value directly in the UI.
         contact_inner: list[model.SubmodelElement] = []
         for field, idshort in (
             ("Street", "Street"),
@@ -108,21 +136,24 @@ class DigitalNameplateSubmodelBuilder:
             )
         )
 
-        # OrderCodeOfManufacturer — IDTA-aligned (mandatory)
+        # OrderCodeOfManufacturer — IDTA-aligned (mandatory). Same no-silent-
+        # fallback reasoning: "[VERIFY: order code]" used to satisfy SHACL
+        # unconditionally, hiding a genuinely missing value behind text that
+        # only a human reading the raw AAS JSON would ever notice.
         order_code = (
             nameplate_config.get("OrderCodeOfManufacturer")
             or nameplate_config.get("ManufacturerArticleNumber")
             or config.get("manufacturerArticleNumber")
-            or "[VERIFY: order code]"
         )
-        elements.append(
-            self.element_factory.create_property(
-                id_short="OrderCodeOfManufacturer",
-                value=str(order_code),
-                value_type=model.datatypes.String,
-                semantic_id=self.semantic_factory.NP_ORDER_CODE_OF_MANUFACTURER,
+        if order_code:
+            elements.append(
+                self.element_factory.create_property(
+                    id_short="OrderCodeOfManufacturer",
+                    value=str(order_code),
+                    value_type=model.datatypes.String,
+                    semantic_id=self.semantic_factory.NP_ORDER_CODE_OF_MANUFACTURER,
+                )
             )
-        )
 
         # Optional string fields (no IDTA-mandatory semanticId in our ontology)
         optional_string_fields = {

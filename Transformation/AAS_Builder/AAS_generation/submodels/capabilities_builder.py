@@ -39,6 +39,10 @@ class CapabilitiesSubmodelBuilder:
         capabilities = config.get('Capabilities', {}) or {}
         if isinstance(capabilities, list):
             capabilities = {item['name']: item for item in capabilities if isinstance(item, dict) and 'name' in item}
+        elif not isinstance(capabilities, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            capabilities = {}
         capability_containers = []
 
         # Handle dict format: Capabilities: { CapName: {...}, ... }

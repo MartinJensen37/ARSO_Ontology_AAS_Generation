@@ -22,17 +22,21 @@ def _check_required_fields(normalized: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     root = next(iter(normalized.values()), {}) if normalized else {}
 
-    for name, data in (root.get("Skills") or {}).items():
-        if isinstance(data, dict) and "semantic_id" not in data:
-            errors.append(f"Skills.{name}: missing required 'semantic_id'")
-        if isinstance(data, dict) and "interface" not in data:
-            errors.append(f"Skills.{name}: missing required 'interface' (AID affordance name this skill invokes)")
+    skills = root.get("Skills") or {}
+    if isinstance(skills, dict):
+        for name, data in skills.items():
+            if isinstance(data, dict) and "semantic_id" not in data:
+                errors.append(f"Skills.{name}: missing required 'semantic_id'")
+            if isinstance(data, dict) and "interface" not in data:
+                errors.append(f"Skills.{name}: missing required 'interface' (AID affordance name this skill invokes)")
 
-    for name, data in (root.get("Capabilities") or {}).items():
-        if isinstance(data, dict) and "semantic_id" not in data:
-            errors.append(f"Capabilities.{name}: missing required 'semantic_id'")
-        if isinstance(data, dict) and "realizedBy" not in data:
-            errors.append(f"Capabilities.{name}: missing required 'realizedBy'")
+    capabilities = root.get("Capabilities") or {}
+    if isinstance(capabilities, dict):
+        for name, data in capabilities.items():
+            if isinstance(data, dict) and "semantic_id" not in data:
+                errors.append(f"Capabilities.{name}: missing required 'semantic_id'")
+            if isinstance(data, dict) and "realizedBy" not in data:
+                errors.append(f"Capabilities.{name}: missing required 'realizedBy'")
 
     return errors
 

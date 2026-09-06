@@ -49,6 +49,10 @@ class HierarchicalStructuresSubmodelBuilder:
             HierarchicalStructures submodel instance
         """
         hs_config = config.get('HierarchicalStructures', {}) or {}
+        if not isinstance(hs_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            hs_config = {}
         archetype = hs_config.get('Archetype', 'OneUp')
         global_asset_id = config.get('globalAssetId', f"{self.base_url}/assets/{system_id}")
         
@@ -96,55 +100,54 @@ class HierarchicalStructuresSubmodelBuilder:
         # Handle both IsPartOf and HasPart (now as dicts)
         is_part_of = hs_config.get('IsPartOf', {})
         has_part = hs_config.get('HasPart', {})
-        
-        # Determine which statements to process based on archetype
-        statements_to_process = {}
-        relationship_prefix = ""
-        
-        if archetype == 'OneUp':
-            statements_to_process = is_part_of if isinstance(is_part_of, dict) else {}
-            relationship_prefix = "IsPartOf"
-        elif archetype == 'OneDown':
-            statements_to_process = has_part if isinstance(has_part, dict) else {}
-            relationship_prefix = "HasPart"
-        
+
+        # Determine which (dict, relationship_prefix) groups to process based on
+        # archetype. Valid archetype values are 'OneUp', 'OneDown', 'Full' --
+        # exactly the ontology's ArcheType owl:oneOf enum (hierarchical-structures.ttl).
+        groups: list[tuple[Dict, str]] = []
+        if archetype in ('OneUp', 'Full'):
+            groups.append((is_part_of if isinstance(is_part_of, dict) else {}, "IsPartOf"))
+        if archetype in ('OneDown', 'Full'):
+            groups.append((has_part if isinstance(has_part, dict) else {}, "HasPart"))
+
         # Process each entity in the hierarchy (dict format)
-        for entity_name, entity_config in statements_to_process.items():
-            # entity_config should be a dict with globalAssetId, systemId, aasId, etc.
-            if not isinstance(entity_config, dict):
-                entity_config = {}
-            
-            # Auto-derive missing IDs
-            # Convention: systemId should include 'AAS' suffix for submodel path consistency
-            entity_system_id = entity_config.get('systemId', entity_name)
-            # Ensure AAS suffix is present for submodel ID consistency
-            if not entity_system_id.endswith('AAS'):
-                entity_system_id_for_submodel = entity_system_id + 'AAS'
-            else:
-                entity_system_id_for_submodel = entity_system_id
-                
-            entity_aas_id = entity_config.get(
-                'aasId',
-                f"{self.base_url}/aas/{entity_system_id}"
-            )
-            entity_submodel_id = entity_config.get(
-                'submodelId',
-                f"{self.base_url}/submodels/instances/{entity_system_id_for_submodel}/HierarchicalStructures"
-            )
-            entity_global_asset_id = entity_config.get('globalAssetId', '')
-            
-            # Create Node entity with SameAs reference (includes target AAS ID for jump button)
-            node_entity = self._create_node_entity(
-                entity_name, entity_global_asset_id, entity_submodel_id, entity_aas_id
-            )
-            node_entities.append(node_entity)
-            
-            # Create relationship element (uses current submodel, not target)
-            relationship = self._create_relationship(
-                system_id, entity_name, relationship_prefix, aas_id
-            )
-            entry_node_statements.append(relationship)
-        
+        for statements_to_process, relationship_prefix in groups:
+            for entity_name, entity_config in statements_to_process.items():
+                # entity_config should be a dict with globalAssetId, systemId, aasId, etc.
+                if not isinstance(entity_config, dict):
+                    entity_config = {}
+
+                # Auto-derive missing IDs
+                # Convention: systemId should include 'AAS' suffix for submodel path consistency
+                entity_system_id = entity_config.get('systemId', entity_name)
+                # Ensure AAS suffix is present for submodel ID consistency
+                if not entity_system_id.endswith('AAS'):
+                    entity_system_id_for_submodel = entity_system_id + 'AAS'
+                else:
+                    entity_system_id_for_submodel = entity_system_id
+
+                entity_aas_id = entity_config.get(
+                    'aasId',
+                    f"{self.base_url}/aas/{entity_system_id}"
+                )
+                entity_submodel_id = entity_config.get(
+                    'submodelId',
+                    f"{self.base_url}/submodels/instances/{entity_system_id_for_submodel}/HierarchicalStructures"
+                )
+                entity_global_asset_id = entity_config.get('globalAssetId', '')
+
+                # Create Node entity with SameAs reference (includes target AAS ID for jump button)
+                node_entity = self._create_node_entity(
+                    entity_name, entity_global_asset_id, entity_submodel_id, entity_aas_id
+                )
+                node_entities.append(node_entity)
+
+                # Create relationship element (uses current submodel, not target)
+                relationship = self._create_relationship(
+                    system_id, entity_name, relationship_prefix, aas_id
+                )
+                entry_node_statements.append(relationship)
+
         # Add all Node entities to EntryNode statements
         entry_node_statements.extend(node_entities)
         
