@@ -25,31 +25,101 @@ class AssetInterfacesBuilder:
         self.semantic_factory = semantic_factory
         self.element_factory = element_factory
 
-    # Maps profile key → (AAS idShort, protocol semantic ID property name)
-    _INTERFACE_TYPES = {
-        'InterfaceMQTT':   ('InterfaceMQTT',   'MQTT_PROTOCOL'),
-        'InterfaceOPCUA':  ('InterfaceOPCUA',  'OPCUA_PROTOCOL'),
-        'InterfaceHTTP':   ('InterfaceHTTP',   'HTTP_PROTOCOL'),
+    # Legacy fixed key names -> protocol, for profiles/LLM output that don't
+    # set an explicit 'protocol' field on the interface (see _infer_protocol).
+    _LEGACY_KEY_PROTOCOL = {
+        'InterfaceMQTT':  'MQTT',
+        'InterfaceOPCUA': 'OPCUA',
+        'InterfaceHTTP':  'HTTP',
+        'InterfaceMODBUS': 'MODBUS',
     }
+
+    # protocol -> semantic_factory property name for its WoT binding supplementalSemanticId
+    _PROTOCOL_SEMANTIC_PROP = {
+        'MQTT':   'MQTT_PROTOCOL',
+        'OPCUA':  'OPCUA_PROTOCOL',
+        'HTTP':   'HTTP_PROTOCOL',
+        'MODBUS': 'MODBUS_PROTOCOL',
+    }
+
+    @staticmethod
+    def _as_named_dict(value) -> Dict:
+        """Coerce InteractionMetadata / actions / properties / events into the
+        {name: {...}} shape these builders expect.
+
+        An LLM will sometimes emit a list of entries instead (a plausible
+        alternate encoding, each item carrying its own name), or occasionally
+        a bare "[VERIFY: ...]" placeholder string for a whole section. Rather
+        than crash on the first .get()/.items() call downstream, reinterpret
+        a list using each item's own 'name' or 'key' field as the dict key
+        (dropping only entries with neither), and treat anything else
+        unrecognized as absent.
+        """
+        if isinstance(value, dict):
+            return value
+        if isinstance(value, list):
+            result: Dict = {}
+            for idx, item in enumerate(value):
+                if not isinstance(item, dict):
+                    continue
+                name = item.get('name') or item.get('key') or f"Item{idx + 1}"
+                result[name] = item
+            return result
+        return {}
 
     def build(self, system_id: str, config: Dict) -> model.Submodel:
         """
         Create the AssetInterfacesDescription submodel.
 
-        Detects the interface type (MQTT, OPC UA, HTTP) from the profile config
-        and builds the appropriate interface SMC.
+        arso:InterfaceSMC (aid.ttl) is identified by semanticId, not a fixed
+        idShort -- "one per communication interface" is explicitly anticipated,
+        and idShort is user-defined. So every entry under AID in the profile
+        becomes its own Interface SMC here (not just the first one matched
+        against a hardcoded key), keyed by whatever name the caller gave it.
         """
         interface_config = config.get('AID', {}) or config.get(
             'AssetInterfacesDescription', {}) or {}
+        if not isinstance(interface_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            interface_config = {}
 
-        # Detect which interface type is present; fall back to MQTT if none found.
-        iface_key = next(
-            (k for k in self._INTERFACE_TYPES if k in interface_config),
-            'InterfaceMQTT'
+        entries = {
+            k: v for k, v in interface_config.items() if isinstance(v, dict)
+        }
+        if not entries:
+            # Preserve the old scaffold behavior: an AID submodel with one
+            # empty default interface rather than no interfaces at all.
+            entries = {'InterfaceMQTT': {}}
+
+        interface_smcs = [
+            self._build_one_interface(iface_key, iface_config, system_id)
+            for iface_key, iface_config in entries.items()
+        ]
+
+        submodel = model.Submodel(
+            id_=f"{self.base_url}/submodels/instances/{system_id}/AID",
+            id_short="AID",
+            kind=model.ModellingKind.INSTANCE,
+            semantic_id=self.semantic_factory.ASSET_INTERFACES_DESCRIPTION,
+            administration=model.AdministrativeInformation(
+                version="1", revision="0"),
+            submodel_element=interface_smcs
         )
-        iface_id_short, protocol_sem_prop = self._INTERFACE_TYPES[iface_key]
-        iface_config = interface_config.get(iface_key, {}) or {}
 
+        return submodel
+
+    def _infer_protocol(self, iface_key: str, iface_config: Dict) -> str:
+        """Prefer an explicit 'protocol' field (set by the canvas UI); fall
+        back to sniffing legacy fixed key names (set by LLM-generated
+        profiles that predate the per-interface 'protocol' field)."""
+        explicit = iface_config.get('protocol')
+        if explicit in self._PROTOCOL_SEMANTIC_PROP:
+            return explicit
+        return self._LEGACY_KEY_PROTOCOL.get(iface_key, 'MQTT')
+
+    def _build_one_interface(self, iface_key: str, iface_config: Dict, system_id: str) -> model.SubmodelElementCollection:
+        protocol = self._infer_protocol(iface_key, iface_config)
         interface_elements = []
 
         # title property
@@ -62,8 +132,8 @@ class AssetInterfacesBuilder:
             )
         )
 
-        # EndpointMetadata — OPC-UA has different fields than MQTT/HTTP
-        if iface_key == 'InterfaceOPCUA':
+        # EndpointMetadata — OPC-UA has a different field set than MQTT/HTTP/MODBUS
+        if protocol == 'OPCUA':
             endpoint_metadata = self._create_opcua_endpoint_metadata(iface_config)
         else:
             endpoint_metadata = self._create_mqtt_endpoint_metadata(iface_config)
@@ -71,20 +141,26 @@ class AssetInterfacesBuilder:
             interface_elements.append(endpoint_metadata)
 
         # InteractionMetadata (shared structure for all protocols)
-        interaction_metadata = iface_config.get('InteractionMetadata', {})
+        interaction_metadata = self._as_named_dict(iface_config.get('InteractionMetadata', {}))
         interaction_elements = []
 
-        actions = interaction_metadata.get('actions', [])
+        actions = self._as_named_dict(interaction_metadata.get('actions', {}))
         if actions:
             actions_collection = self._create_actions_from_interaction_metadata(actions)
             if actions_collection:
                 interaction_elements.append(actions_collection)
 
-        properties = interaction_metadata.get('properties', [])
+        properties = self._as_named_dict(interaction_metadata.get('properties', {}))
         if properties:
             properties_collection = self._create_properties_from_interaction_metadata(properties)
             if properties_collection:
                 interaction_elements.append(properties_collection)
+
+        events = self._as_named_dict(interaction_metadata.get('events', {}))
+        if events:
+            events_collection = self._create_events_from_interaction_metadata(events)
+            if events_collection:
+                interaction_elements.append(events_collection)
 
         if interaction_elements:
             interface_elements.append(self.element_factory.create_collection(
@@ -94,9 +170,10 @@ class AssetInterfacesBuilder:
                 supplemental_semantic_ids=[self.semantic_factory.WOT_INTERACTION_AFFORDANCE]
             ))
 
+        protocol_sem_prop = self._PROTOCOL_SEMANTIC_PROP[protocol]
         protocol_sem_id = getattr(self.semantic_factory, protocol_sem_prop)
-        interface_smc = self.element_factory.create_collection(
-            id_short=iface_id_short,
+        return self.element_factory.create_collection(
+            id_short=iface_key,
             elements=interface_elements,
             semantic_id=self.semantic_factory.INTERFACE,
             supplemental_semantic_ids=[
@@ -105,30 +182,18 @@ class AssetInterfacesBuilder:
             ]
         )
 
-        submodel = model.Submodel(
-            id_=f"{self.base_url}/submodels/instances/{system_id}/AID",
-            id_short="AID",
-            kind=model.ModellingKind.INSTANCE,
-            semantic_id=self.semantic_factory.ASSET_INTERFACES_DESCRIPTION,
-            administration=model.AdministrativeInformation(
-                version="1", revision="0"),
-            submodel_element=[interface_smc]
-        )
-
-        return submodel
-
     def _create_mqtt_endpoint_metadata(self, mqtt_config: Dict) -> Optional[model.SubmodelElementCollection]:
         """
-        Create the EndpointMetadata collection for MQTT topics.
+        Create the EndpointMetadata collection for MQTT/HTTP/MODBUS interfaces.
 
         Args:
-            mqtt_config: MQTT configuration dictionary
+            mqtt_config: interface configuration dictionary
 
         Returns:
             EndpointMetadata SubmodelElementCollection or None
         """
         endpoint_config = mqtt_config.get('EndpointMetadata', {})
-        if not endpoint_config:
+        if not isinstance(endpoint_config, dict) or not endpoint_config:
             return None
 
         endpoint_elements = []
@@ -152,6 +217,18 @@ class AssetInterfacesBuilder:
                     value_type=model.datatypes.String
                 )
             )
+
+        # MODBUS byte/word order — set once per interface (not per-form,
+        # since it describes the device's register layout, not one operation).
+        for field in ('modv_mostSignificantByte', 'modv_mostSignificantWord'):
+            if field in endpoint_config:
+                endpoint_elements.append(
+                    self.element_factory.create_property(
+                        id_short=field,
+                        value=str(endpoint_config[field]),
+                        value_type=model.datatypes.String
+                    )
+                )
 
         # WoT TD requires security definitions and a security reference.
         # Add a minimal nosec scheme so the AID is structurally valid.
@@ -195,7 +272,7 @@ class AssetInterfacesBuilder:
     def _create_opcua_endpoint_metadata(self, opcua_config: Dict) -> Optional[model.SubmodelElementCollection]:
         """Create EndpointMetadata for an OPC UA interface (IDTA 02017-1-1 §6.3)."""
         endpoint_config = opcua_config.get('EndpointMetadata', {})
-        if not endpoint_config:
+        if not isinstance(endpoint_config, dict) or not endpoint_config:
             return None
 
         endpoint_elements = []
@@ -261,6 +338,7 @@ class AssetInterfacesBuilder:
         Returns:
             Actions SubmodelElementCollection or None
         """
+        actions = self._as_named_dict(actions)
         if not actions:
             return None
 
@@ -268,6 +346,8 @@ class AssetInterfacesBuilder:
 
         # Actions is a dict with action names as keys
         for action_name, action_config in actions.items():
+            if not isinstance(action_config, dict):
+                action_config = {}
 
             action_props = []
 
@@ -320,7 +400,7 @@ class AssetInterfacesBuilder:
                 )
 
             # Forms
-            if 'forms' in action_config:
+            if isinstance(action_config.get('forms'), dict):
                 forms_config = action_config['forms']
                 form_elements = []
 
@@ -384,6 +464,7 @@ class AssetInterfacesBuilder:
         Returns:
             Properties SubmodelElementCollection or None
         """
+        properties = self._as_named_dict(properties)
         if not properties:
             return None
 
@@ -391,6 +472,8 @@ class AssetInterfacesBuilder:
 
         # Properties is a dict with property names as keys
         for prop_name, prop_config in properties.items():
+            if not isinstance(prop_config, dict):
+                prop_config = {}
 
             prop_elements = []
 
@@ -424,7 +507,7 @@ class AssetInterfacesBuilder:
                 )
 
             # Forms
-            if 'forms' in prop_config:
+            if isinstance(prop_config.get('forms'), dict):
                 forms_config = prop_config['forms']
                 form_elements = []
 
@@ -458,4 +541,79 @@ class AssetInterfacesBuilder:
             id_short="properties",
             elements=property_elements,
             semantic_id=self.semantic_factory.WOT_PROPERTY_AFFORDANCE
+        )
+
+    def _create_events_from_interaction_metadata(self, events: Dict) -> Optional[model.SubmodelElementCollection]:
+        """
+        Create Events collection from interaction metadata (arso:EventsSMC,
+        WoT EventAffordances — subscribable notifications; key/title/forms
+        only, no input/output schema like actions/properties have).
+
+        Args:
+            events: Dictionary of event name -> event config
+
+        Returns:
+            Events SubmodelElementCollection or None
+        """
+        events = self._as_named_dict(events)
+        if not events:
+            return None
+
+        event_elements = []
+
+        for event_name, event_config in events.items():
+            if not isinstance(event_config, dict):
+                event_config = {}
+            elements = []
+
+            if 'key' in event_config:
+                elements.append(
+                    self.element_factory.create_property(
+                        id_short="Key",
+                        value=event_config['key'],
+                        value_type=model.datatypes.String
+                    )
+                )
+
+            if 'title' in event_config:
+                elements.append(
+                    self.element_factory.create_property(
+                        id_short="Title",
+                        value=event_config['title'],
+                        value_type=model.datatypes.String
+                    )
+                )
+
+            if isinstance(event_config.get('forms'), dict):
+                forms_config = event_config['forms']
+                form_elements = [
+                    self.element_factory.create_property(
+                        id_short=key,
+                        value=str(value),
+                        value_type=model.datatypes.String
+                    )
+                    for key, value in forms_config.items()
+                ]
+                if form_elements:
+                    elements.append(
+                        self.element_factory.create_collection(
+                            id_short="Forms",
+                            elements=form_elements
+                        )
+                    )
+
+            event_elements.append(
+                self.element_factory.create_collection(
+                    id_short=event_name,
+                    elements=elements
+                )
+            )
+
+        if not event_elements:
+            return None
+
+        return self.element_factory.create_collection(
+            id_short="events",
+            elements=event_elements,
+            semantic_id=self.semantic_factory.WOT_EVENT_AFFORDANCE
         )

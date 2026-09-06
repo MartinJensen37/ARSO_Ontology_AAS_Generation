@@ -182,10 +182,20 @@ class AASBuilder:
         """
         interface_config = config.get('AID', {}) or config.get(
             'AssetInterfacesDescription', {}) or {}
-        mqtt_config = interface_config.get('InterfaceMQTT', {}) or {}
-        interaction_metadata = mqtt_config.get('InteractionMetadata', {}) or {}
-        actions = interaction_metadata.get('actions', [])
-        return bool(actions)
+        if not isinstance(interface_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            interface_config = {}
+        # Scan every configured interface, not just one hardcoded name --
+        # actions can be defined on any of them.
+        for iface_cfg in interface_config.values():
+            if not isinstance(iface_cfg, dict):
+                continue
+            interaction_metadata = iface_cfg.get('InteractionMetadata', {})
+            actions = interaction_metadata.get('actions', []) if isinstance(interaction_metadata, dict) else []
+            if actions:
+                return True
+        return False
 
     def _create_submodel_references(
         self,

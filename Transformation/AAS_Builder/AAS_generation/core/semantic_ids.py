@@ -57,11 +57,13 @@ class SemanticIdFactory:
     _WOT_TD          = "https://www.w3.org/2019/wot/td"
     _WOT_ACTION      = "https://www.w3.org/2019/wot/td#ActionAffordance"
     _WOT_PROPERTY    = "https://www.w3.org/2019/wot/td#PropertyAffordance"
+    _WOT_EVENT       = "https://www.w3.org/2019/wot/td#EventAffordance"
     _WOT_INTERACTION = "https://www.w3.org/2019/wot/td#InteractionAffordance"
 
-    _MQTT_PROTOCOL  = "https://www.w3.org/2019/wot/td/v1/binding/mqtt"
-    _OPCUA_PROTOCOL = "http://opcfoundation.org/UA/WoT-Binding/"
-    _HTTP_PROTOCOL  = "https://www.w3.org/2019/wot/td/v1/binding/http"
+    _MQTT_PROTOCOL   = "https://www.w3.org/2019/wot/td/v1/binding/mqtt"
+    _OPCUA_PROTOCOL  = "http://opcfoundation.org/UA/WoT-Binding/"
+    _HTTP_PROTOCOL   = "https://www.w3.org/2019/wot/td/v1/binding/http"
+    _MODBUS_PROTOCOL = "https://www.w3.org/2019/wot/td/v1/binding/modbus"
 
     # Specific Asset IDs
     _SERIAL_NUMBER = "https://admin-shell.io/aas/3/0/SpecificAssetId/SerialNumber"
@@ -166,6 +168,10 @@ class SemanticIdFactory:
         return self.create_external_reference(self._WOT_PROPERTY)
 
     @property
+    def WOT_EVENT_AFFORDANCE(self) -> model.ExternalReference:
+        return self.create_external_reference(self._WOT_EVENT)
+
+    @property
     def WOT_INTERACTION_AFFORDANCE(self) -> model.ExternalReference:
         return self.create_external_reference(self._WOT_INTERACTION)
 
@@ -180,6 +186,10 @@ class SemanticIdFactory:
     @property
     def HTTP_PROTOCOL(self) -> model.ExternalReference:
         return self.create_external_reference(self._HTTP_PROTOCOL)
+
+    @property
+    def MODBUS_PROTOCOL(self) -> model.ExternalReference:
+        return self.create_external_reference(self._MODBUS_PROTOCOL)
 
     @property
     def SKILLS_SUBMODEL(self) -> model.ExternalReference:

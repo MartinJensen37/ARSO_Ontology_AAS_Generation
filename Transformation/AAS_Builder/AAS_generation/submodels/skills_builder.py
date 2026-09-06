@@ -51,25 +51,48 @@ class SkillsSubmodelBuilder:
         skills_config = config.get('Skills', {}) or {}
         if isinstance(skills_config, list):
             skills_config = {item['name']: item for item in skills_config if isinstance(item, dict) and 'name' in item}
+        elif not isinstance(skills_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            skills_config = {}
         skill_elements = []
 
-        # Get action interfaces from AID — detect interface type automatically
+        # Get action interfaces from AID — scan every configured interface
+        # (not just the first match) so actions can come from any of them.
         interface_config = config.get('AID', {}) or config.get(
             'AssetInterfacesDescription', {}) or {}
-        _iface_keys = ('InterfaceMQTT', 'InterfaceOPCUA', 'InterfaceHTTP')
-        iface_id_short = next((k for k in _iface_keys if k in interface_config), 'InterfaceMQTT')
-        iface_config = interface_config.get(iface_id_short, {}) or {}
-        interaction_metadata = iface_config.get('InteractionMetadata', {}) or {}
-        actions = interaction_metadata.get('actions', {}) or {}
-
-        # Actions is already a dict with action names as keys
-        action_map = actions
+        if not isinstance(interface_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            interface_config = {}
+        action_map: Dict[str, Dict] = {}
+        action_iface: Dict[str, str] = {}
+        for iface_key, iface_cfg in interface_config.items():
+            if not isinstance(iface_cfg, dict):
+                continue
+            interaction_metadata = iface_cfg.get('InteractionMetadata', {})
+            iface_actions = interaction_metadata.get('actions', {}) if isinstance(interaction_metadata, dict) else {}
+            if isinstance(iface_actions, list):
+                iface_actions = {
+                    (item.get('name') or item.get('key') or f"Item{idx + 1}"): item
+                    for idx, item in enumerate(iface_actions) if isinstance(item, dict)
+                }
+            elif not isinstance(iface_actions, dict):
+                iface_actions = {}
+            for action_name, action_config in iface_actions.items():
+                action_map[action_name] = action_config
+                action_iface[action_name] = iface_key
 
         # If explicit Skills are configured, use them
         if skills_config:
             for skill_name, skill_data in skills_config.items():
                 if not isinstance(skill_data, dict):
                     skill_data = {"description": str(skill_data)}
+                interface_name = skill_data.get('interface', skill_name)
+                iface_id_short = (
+                    skill_data.get('interfaceKey')
+                    or action_iface.get(interface_name, 'InterfaceMQTT')
+                )
                 skill_collection = self._create_skill_collection(
                     skill_name, skill_data, action_map, system_id, iface_id_short
                 )

@@ -49,6 +49,10 @@ class VariablesSubmodelBuilder:
         """
         self.current_system_id = system_id
         variables_config = config.get('OperationalData') or config.get('Variables') or {}
+        if not isinstance(variables_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            variables_config = {}
         variable_elements = []
 
         # Build property lookup for schema-driven field extraction
@@ -58,7 +62,8 @@ class VariablesSubmodelBuilder:
 
         # Handle dict format (no dashes): { VarName: {...}, ... }
         for var_name, var_config in variables_config.items():
-            var_collection = self._create_variable_collection(var_name, var_config or {})
+            var_config = self._normalize_variable_config(var_config)
+            var_collection = self._create_variable_collection(var_name, var_config)
             if var_collection:
                 variable_elements.append(var_collection)
 
@@ -73,6 +78,27 @@ class VariablesSubmodelBuilder:
         )
 
         return submodel
+
+    @staticmethod
+    def _normalize_variable_config(var_config) -> Dict:
+        """Coerce whatever shape the LLM produced for one variable entry into
+        the dict this builder expects, instead of crashing.
+
+        The documented/expected shape is a dict, e.g.
+        {"InterfaceReference": "State", "semanticId": "..."}. An LLM will
+        sometimes shorthand this as a plain dotted-path string instead, e.g.
+        "InterfaceMQTT.properties.State" — a reasonable guess at a reference
+        syntax, just not the one this builder reads. Take the last path
+        segment (the actual property/action idShort) as the InterfaceReference
+        rather than dropping the value or raising an AttributeError on the
+        first var_config.get(...) call.
+        """
+        if isinstance(var_config, dict):
+            return var_config
+        if isinstance(var_config, str) and var_config.strip():
+            last_segment = var_config.strip().split(".")[-1].split("/")[-1]
+            return {"InterfaceReference": last_segment}
+        return {}
 
     def _create_variable_collection(self, var_name: str,
                                     var_config: Dict) -> Optional[model.SubmodelElementCollection]:
@@ -164,7 +190,9 @@ class VariablesSubmodelBuilder:
 
         # Add InterfaceReference as ReferenceElement if present
         if interface_ref:
-            ref_element = self._create_interface_reference(interface_ref)
+            prop = self._properties_cache.get(interface_ref) if self._properties_cache else None
+            iface_key = prop.get('interface') if prop else None
+            ref_element = self._create_interface_reference(interface_ref, iface_key)
             if ref_element:
                 elements.append(ref_element)
 
@@ -183,12 +211,17 @@ class VariablesSubmodelBuilder:
             semantic_id=collection_semantic_id
         )
 
-    def _create_interface_reference(self, interface_ref_name: str) -> Optional[model.ReferenceElement]:
+    def _create_interface_reference(self, interface_ref_name: str,
+                                     interface_key: Optional[str] = None) -> Optional[model.ReferenceElement]:
         """
         Create an interface reference element.
 
         Args:
             interface_ref_name: Name of the interface property to reference
+            interface_key: idShort of the owning Interface SMC in the AID
+                submodel (from the property lookup built in build()). Falls
+                back to the legacy fixed name when unknown (e.g. no schema
+                lookup matched, such as a config-only property).
 
         Returns:
             ReferenceElement pointing to the interface property
@@ -202,7 +235,7 @@ class VariablesSubmodelBuilder:
                 ),
                     model.Key(
                     type_=model.KeyTypes.SUBMODEL_ELEMENT_COLLECTION,
-                    value="InterfaceMQTT"
+                    value=interface_key or "InterfaceMQTT"
                 ),
                     model.Key(
                     type_=model.KeyTypes.SUBMODEL_ELEMENT_COLLECTION,

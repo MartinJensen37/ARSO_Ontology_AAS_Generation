@@ -49,6 +49,10 @@ class ParametersSubmodelBuilder:
         """
         self.current_system_id = system_id
         parameters_config = config.get('Parameters', {}) or {}
+        if not isinstance(parameters_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            parameters_config = {}
         parameter_elements = []
 
         # Build property lookup for schema-driven field extraction
@@ -59,7 +63,7 @@ class ParametersSubmodelBuilder:
         # Handle dict format: Parameters: { ParamName: {...}, ... }
         for param_name, param_config in parameters_config.items():
             param_collection = self._create_parameter_collection(
-                param_name, param_config or {})
+                param_name, self._normalize_parameter_config(param_config))
             if param_collection:
                 parameter_elements.append(param_collection)
 
@@ -74,6 +78,20 @@ class ParametersSubmodelBuilder:
         )
 
         return submodel
+
+    @staticmethod
+    def _normalize_parameter_config(param_config) -> Dict:
+        """Coerce whatever shape the LLM produced for one parameter entry into
+        the dict this builder expects, instead of crashing — see
+        VariablesSubmodelBuilder._normalize_variable_config for the same
+        pattern and its rationale (a dotted-path string shorthand like
+        "InterfaceMQTT.properties.Setpoint" instead of a dict)."""
+        if isinstance(param_config, dict):
+            return param_config
+        if isinstance(param_config, str) and param_config.strip():
+            last_segment = param_config.strip().split(".")[-1].split("/")[-1]
+            return {"InterfaceReference": last_segment}
+        return {}
 
     def _create_parameter_collection(self, param_name: str,
                                      param_config: Dict) -> Optional[model.SubmodelElementCollection]:
@@ -164,7 +182,9 @@ class ParametersSubmodelBuilder:
 
         # Add InterfaceReference as ReferenceElement if present
         if interface_ref:
-            ref_element = self._create_interface_reference(interface_ref)
+            prop = self._properties_cache.get(interface_ref) if self._properties_cache else None
+            iface_key = prop.get('interface') if prop else None
+            ref_element = self._create_interface_reference(interface_ref, iface_key)
             if ref_element:
                 elements.append(ref_element)
 
@@ -183,12 +203,16 @@ class ParametersSubmodelBuilder:
             semantic_id=collection_semantic_id
         )
 
-    def _create_interface_reference(self, interface_ref_name: str) -> Optional[model.ReferenceElement]:
+    def _create_interface_reference(self, interface_ref_name: str,
+                                     interface_key: Optional[str] = None) -> Optional[model.ReferenceElement]:
         """
         Create an interface reference element.
 
         Args:
             interface_ref_name: Name of the interface property to reference
+            interface_key: idShort of the owning Interface SMC in the AID
+                submodel (from the property lookup built in build()). Falls
+                back to the legacy fixed name when unknown.
 
         Returns:
             ReferenceElement pointing to the interface property
@@ -205,7 +229,7 @@ class ParametersSubmodelBuilder:
                 ),
                     model.Key(
                     type_=model.KeyTypes.SUBMODEL_ELEMENT_COLLECTION,
-                    value="InterfaceMQTT"
+                    value=interface_key or "InterfaceMQTT"
                 ),
                     model.Key(
                     type_=model.KeyTypes.SUBMODEL_ELEMENT_COLLECTION,

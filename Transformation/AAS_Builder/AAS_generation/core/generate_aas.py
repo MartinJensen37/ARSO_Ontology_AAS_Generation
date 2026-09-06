@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 AAS Generator
 
@@ -51,6 +51,26 @@ except Exception:
     class AASValidator:
         def validate(self, obj_store):
             return _NoOpValidationResult()
+
+
+def _as_named_dict(value: Any) -> Dict:
+    """Coerce a profile section that should be {name: {...}} but may have
+    arrived as a list (each item carrying its own name) or a bare
+    "[VERIFY: ...]" placeholder string into the expected dict shape, instead
+    of letting a downstream .get()/.items() call crash. Mirrors
+    AssetInterfacesBuilder._as_named_dict (kept local here to avoid a
+    cross-module dependency for a few lines of logic)."""
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, list):
+        result: Dict = {}
+        for idx, item in enumerate(value):
+            if not isinstance(item, dict):
+                continue
+            name = item.get('name') or item.get('key') or f"Item{idx + 1}"
+            result[name] = item
+        return result
+    return {}
 
 
 class AASGenerator:
@@ -371,8 +391,9 @@ class AASGenerator:
         repairs that can be applied with a single click.
 
         Hint suggestions are derived directly from the project SHACL shapes via
-        Guidance.ontology_guidance_engine — no constraint logic is
-        duplicated in Python.  When the SHACL files change, hints update automatically.
+        Guidance.ontology_guidance_engine, which validates a real (best-effort)
+        AAS RDF projection of this config — no constraint logic is duplicated in
+        Python.  When the SHACL files change, hints update automatically.
         """
         suggestions: List[Dict[str, Any]] = []
         base = self.base_url.rstrip("/")
@@ -394,6 +415,14 @@ class AASGenerator:
         skills_cfg = config.get('Skills') or {}
         variables_cfg = config.get('Variables') or {}
         parameters_cfg = config.get('Parameters') or {}
+        # An LLM occasionally emits a whole section as a bare "[VERIFY: ...]"
+        # string instead of an object; treat each as absent rather than crash.
+        if not isinstance(skills_cfg, dict):
+            skills_cfg = {}
+        if not isinstance(variables_cfg, dict):
+            variables_cfg = {}
+        if not isinstance(parameters_cfg, dict):
+            parameters_cfg = {}
 
         # ── Auto-fix: Skills / Variables / Parameters require an AID interface ─
         if not config.get('AID') and (skills_cfg or variables_cfg or parameters_cfg):
@@ -407,24 +436,42 @@ class AASGenerator:
             _suggest(
                 "AID", "auto-create",
                 "Created minimal 'AID' scaffold because Skills/Variables/Parameters are present "
-                "(required by resourceaas-dependencies SHACL shape).",
+                "(the ARSO ontology requires an AID submodel whenever any of these are present).",
                 scaffold,
             )
 
-        interaction = ((config.get('AID') or {})
-                       .get('InterfaceMQTT', {})
-                       .get('InteractionMetadata', {}))
-        actions = interaction.get('actions', {}) if isinstance(
-            interaction.get('actions', {}), dict) else {}
+        # Actions across ALL configured interfaces, not just a hardcoded one —
+        # an asset can expose actions on several interfaces at once.
+        aid_cfg = config.get('AID') or {}
+        if not isinstance(aid_cfg, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            aid_cfg = {}
+        actions_by_interface: Dict[str, Dict[str, Any]] = {}
+        for iface_key, iface_cfg in aid_cfg.items():
+            if not isinstance(iface_cfg, dict):
+                continue
+            iface_interaction = iface_cfg.get('InteractionMetadata', {})
+            iface_actions = iface_interaction.get('actions', {}) if isinstance(iface_interaction, dict) else {}
+            if isinstance(iface_actions, dict):
+                for action_name in iface_actions:
+                    actions_by_interface[action_name] = iface_key
+            elif isinstance(iface_actions, list):
+                for action_item in iface_actions:
+                    if isinstance(action_item, dict):
+                        name = action_item.get('name') or action_item.get('key')
+                        if name:
+                            actions_by_interface[name] = iface_key
 
         # ── Auto-fix: derive Skills from AID actions when absent ─────────────
-        if not skills_cfg and actions:
+        if not skills_cfg and actions_by_interface:
             generated_skills: Dict[str, Dict[str, Any]] = {}
-            for action_name in actions:
+            for action_name, iface_key in actions_by_interface.items():
                 generated_skills[action_name] = {
                     'description': f"Auto-generated skill for action {action_name}",
                     'semantic_id': f"{base}/skills/{action_name}",
                     'interface': action_name,
+                    'interfaceKey': iface_key,
                 }
             config['Skills'] = generated_skills
             skills_cfg = generated_skills
@@ -449,11 +496,15 @@ class AASGenerator:
                     _suggest(
                         f"Skills.{skill_name}.semantic_id", "fill",
                         f"Skill '{skill_name}' missing semantic_id; applied default URI "
-                        f"(required by resourceaas-semantics SHACL shape).",
+                        f"(the Skill's semanticId must use the lab's URI namespace).",
                         val,
                     )
 
         capabilities_cfg = config.get('Capabilities') or {}
+        if not isinstance(capabilities_cfg, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            capabilities_cfg = {}
 
         # ── Auto-fix: Skills must be realized by Capabilities ────────────────
         if not capabilities_cfg and skills_cfg:
@@ -467,8 +518,8 @@ class AASGenerator:
             capabilities_cfg = generated_caps
             _suggest(
                 "Capabilities", "auto-create",
-                "Generated Capabilities from Skills (required by resourceaas-dependencies "
-                "SHACL shape: each Resource providing Skills must also provide Capabilities).",
+                "Generated Capabilities from Skills (the ARSO ontology requires that any AAS "
+                "providing Skills also provides Capabilities).",
                 generated_caps,
             )
         elif capabilities_cfg:
@@ -482,7 +533,7 @@ class AASGenerator:
                     _suggest(
                         f"Capabilities.{cap_name}.semantic_id", "fill",
                         f"Capability '{cap_name}' missing semantic_id; applied default URI "
-                        f"(required by resourceaas-semantics SHACL shape).",
+                        f"(the Capability's semanticId must use the lab's URI namespace).",
                         val,
                     )
                 if 'realizedBy' not in cap_data:
@@ -494,19 +545,27 @@ class AASGenerator:
                         _suggest(
                             f"Capabilities.{cap_name}.realizedBy", "fill",
                             f"Capability '{cap_name}' missing realizedBy; linked to '{target}' "
-                            f"(required by resourceaas-dependencies SHACL shape).",
+                            f"(the ARSO ontology requires each Capability's realizedBy to "
+                            f"reference an existing Skill).",
                             target,
                         )
 
         # ── Ontology-driven hints: run SHACL on the post-fix config ───────────
-        # All hint-type suggestions come from the actual SHACL shapes.
-        # No constraint logic is duplicated here.
+        # All hint-type suggestions come from the actual SHACL shapes, evaluated
+        # against a real (best-effort) AAS RDF projection of this config -- the
+        # same projection final validation uses -- so hints can never disagree
+        # with what generation will ultimately enforce. No constraint logic is
+        # duplicated here.
         try:
-            from Guidance.ontology_guidance_engine import check_config
-            shacl_hints = check_config(self.system_id, config)
+            from Guidance.ontology_guidance_engine import check_aas_dict
+            preview_store = self._build_object_store()
+            preview_dict = self._serialize_to_dict(preview_store)
+            shacl_hints = check_aas_dict(preview_dict)
             suggestions.extend(shacl_hints)
         except ImportError:
             pass  # rdflib/pyshacl not installed — hints unavailable
+        except Exception:
+            pass  # config too incomplete to build a preview yet — no hints this round
 
         return suggestions
 
@@ -515,24 +574,35 @@ class AASGenerator:
         Extract interface properties with output schema URLs from config.
 
         These are used for schema-driven field extraction in Variables submodel.
+        Scans every configured interface (not just one hardcoded interface) so
+        an asset can expose properties across several interfaces at once; each
+        property dict is tagged with the interface it came from so downstream
+        InterfaceReference elements can point at the right one.
 
         Returns:
-            List of property dicts with name and schema URL (from output field)
+            List of property dicts with name, schema URL (from output field),
+            and the owning interface key
         """
         interface_config = self.system_config.get('AID', {}) or self.system_config.get(
             'AssetInterfacesDescription', {}) or {}
-        mqtt_config = interface_config.get('InterfaceMQTT', {}) or {}
-        interaction_config = mqtt_config.get('InteractionMetadata', {}) or {}
-        properties_dict = interaction_config.get('properties', {}) or {}
+        if not isinstance(interface_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            interface_config = {}
 
         properties = []
-        # Handle dict format: { PropName: {...}, ... }
-        for prop_name, prop_config in properties_dict.items():
-            if isinstance(prop_config, dict):
-                properties.append({
-                    'name': prop_name,
-                    'schema': prop_config.get('output')
-                })
+        for iface_key, iface_cfg in interface_config.items():
+            if not isinstance(iface_cfg, dict):
+                continue
+            interaction_config = _as_named_dict(iface_cfg.get('InteractionMetadata', {}))
+            properties_dict = _as_named_dict(interaction_config.get('properties', {}))
+            for prop_name, prop_config in properties_dict.items():
+                if isinstance(prop_config, dict):
+                    properties.append({
+                        'name': prop_name,
+                        'schema': prop_config.get('output'),
+                        'interface': iface_key,
+                    })
 
         return properties
 
@@ -541,25 +611,34 @@ class AASGenerator:
         Extract interface properties with input schema URLs from config.
 
         These are used for schema-driven field extraction in Parameters submodel.
-        Parameters use 'input' schemas (for writable values).
+        Parameters use 'input' schemas (for writable values). Scans every
+        configured interface, tagging each property with its owning interface
+        key (see _extract_interface_properties).
 
         Returns:
-            List of property dicts with name and schema URL (from input field)
+            List of property dicts with name, schema URL (from input field),
+            and the owning interface key
         """
         interface_config = self.system_config.get('AID', {}) or self.system_config.get(
             'AssetInterfacesDescription', {}) or {}
-        mqtt_config = interface_config.get('InterfaceMQTT', {}) or {}
-        interaction_config = mqtt_config.get('InteractionMetadata', {}) or {}
-        properties_dict = interaction_config.get('properties', {}) or {}
+        if not isinstance(interface_config, dict):
+            # An LLM occasionally emits the whole section as a bare
+            # "[VERIFY: ...]" string instead of an object; treat as absent.
+            interface_config = {}
 
         properties = []
-        # Handle dict format: { PropName: {...}, ... }
-        for prop_name, prop_config in properties_dict.items():
-            if isinstance(prop_config, dict):
-                properties.append({
-                    'name': prop_name,
-                    'schema': prop_config.get('input')
-                })
+        for iface_key, iface_cfg in interface_config.items():
+            if not isinstance(iface_cfg, dict):
+                continue
+            interaction_config = _as_named_dict(iface_cfg.get('InteractionMetadata', {}))
+            properties_dict = _as_named_dict(interaction_config.get('properties', {}))
+            for prop_name, prop_config in properties_dict.items():
+                if isinstance(prop_config, dict):
+                    properties.append({
+                        'name': prop_name,
+                        'schema': prop_config.get('input'),
+                        'interface': iface_key,
+                    })
 
         return properties
 
