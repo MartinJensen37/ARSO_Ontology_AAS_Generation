@@ -9,6 +9,7 @@ canvas (via this endpoint), so both stay on exactly the same builder code.
 """
 from __future__ import annotations
 
+import dataclasses
 import sys
 import tempfile
 from pathlib import Path
@@ -47,8 +48,8 @@ def _throwaway_config(base_cfg: Config, req: ProfileToAasRequest) -> Config:
     """A Config carrying only what profile_document_to_aas_json/run_shacl need
     (paths, selected submodels, base_url) -- no LLM call happens on this path,
     so provider/api_key/models are unused placeholders."""
-    return Config(
-        provider=base_cfg.provider,
+    return dataclasses.replace(
+        base_cfg,
         api_key="",
         asset_name=req.asset_name,
         base_url=req.base_url,
@@ -62,16 +63,6 @@ def _throwaway_config(base_cfg: Config, req: ProfileToAasRequest) -> Config:
         max_pdf_chars=None,
         max_attempts=1,
         models=[],
-        provider_models=base_cfg.provider_models,
-        provider_api_keys=base_cfg.provider_api_keys,
-        gen_dir=base_cfg.gen_dir,
-        root_dir=base_cfg.root_dir,
-        context_dir=base_cfg.context_dir,
-        rag_dir=base_cfg.rag_dir,
-        output_json=base_cfg.output_json,
-        output_issues=base_cfg.output_issues,
-        shacl_shapes=base_cfg.shacl_shapes,
-        ontology_paths=base_cfg.ontology_paths,
     )
 
 

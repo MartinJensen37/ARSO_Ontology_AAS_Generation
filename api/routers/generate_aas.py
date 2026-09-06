@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import concurrent.futures
+import dataclasses
 import json
 import re
 import sys
@@ -26,7 +27,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from Generation.config import Config, load_config
+from Generation.config import load_config
 from Generation.LLM_Client.llm_client import OPENAI_COMPATIBLE_BASE_URLS
 from Generation.Context_Builder.Parsing.pdf_extractor import extract_pdf_text
 from Generation.Context_Builder.context_loader import load_context
@@ -275,7 +276,8 @@ async def _stream_pipeline(req: GenerateAasRequest) -> AsyncGenerator[str, None]
     else:
         model_list = base_models
 
-    cfg = Config(
+    cfg = dataclasses.replace(
+        base_cfg,
         provider=req.provider,
         api_key=api_key,
         asset_name=req.asset_name,
@@ -283,23 +285,12 @@ async def _stream_pipeline(req: GenerateAasRequest) -> AsyncGenerator[str, None]
         pdf_path=None,
         submodels=req.selected_submodels,
         generation_mode=req.generation_mode,
-        profile_example_path=base_cfg.profile_example_path,
         use_rag=req.use_rag,
         use_example=req.use_example,
         force_full_aas_output=req.force_full_aas_output,
         max_pdf_chars=req.max_pdf_chars,
         max_attempts=req.max_attempts,
         models=model_list,
-        provider_models=base_cfg.provider_models,
-        provider_api_keys=base_cfg.provider_api_keys,
-        gen_dir=base_cfg.gen_dir,
-        root_dir=base_cfg.root_dir,
-        context_dir=base_cfg.context_dir,
-        rag_dir=base_cfg.rag_dir,
-        output_json=base_cfg.output_json,
-        output_issues=base_cfg.output_issues,
-        shacl_shapes=base_cfg.shacl_shapes,
-        ontology_paths=base_cfg.ontology_paths,
     )
 
     yield _sse({
