@@ -1,3 +1,3 @@
-from .core.generate_aas import AASGenerator, main
+from .core.generate_aas import AASGenerator
 
-__all__ = ["AASGenerator", "main"]
+__all__ = ["AASGenerator"]

@@ -9,7 +9,6 @@ Called by the API pipeline via Transformation.AAS_Builder.AAS_builder.
 
 import json
 import yaml
-import argparse
 import os
 import copy
 from pathlib import Path
@@ -33,25 +32,6 @@ from ..submodels import (
     RequiredCapabilitiesSubmodelBuilder,
     PolicySubmodelBuilder,
 )
-
-try:
-    from ..aas_validator import AASValidator
-except Exception:
-    class _NoOpValidationResult:
-        warnings: list[str] = []
-
-        @staticmethod
-        def is_valid() -> bool:
-            return True
-
-        @staticmethod
-        def summary() -> str:
-            return "Validation not available"
-
-    class AASValidator:
-        def validate(self, obj_store):
-            return _NoOpValidationResult()
-
 
 def _as_named_dict(value: Any) -> Dict:
     """Coerce a profile section that should be {name: {...}} but may have
@@ -284,48 +264,12 @@ class AASGenerator:
 
     # ==================== Main Generation Methods ====================
 
-    def generate_all(self, output_dir: str, validate: bool = True) -> bool:
-        """
-        Generate and save AAS file from the configuration.
-
-        Args:
-            output_dir: Directory to save the generated JSON file
-            validate: If True, validate the generated AAS
-
-        Returns:
-            True if generation succeeded, False otherwise
-        """
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-
-        print(f"Generating AAS for {self.system_id}...")
-
-        self._ensure_ontology_guidance()
-
-        # Generate AAS
-        obj_store = self._build_object_store()
-
-        # Validate if requested
-        if validate and not self._validate_object_store(obj_store):
-            print(f"\n❌ Validation failed for {self.system_id}")
-            return False
-
-        # Serialize and save
-        aas_dict = self._serialize_to_dict(obj_store)
-        output_file = output_path / f"{self.system_id}.json"
-
-        with open(output_file, 'w') as f:
-            json.dump(aas_dict, f, indent=2)
-
-        print(f"Saved to {output_file}")
-        return True
-
     def generate_system(self, system_id: str, config: Dict, return_store: bool = False):
         """
-        Legacy compatibility method for generating AAS.
-
-        Note: This method exists for backward compatibility with existing code.
-        New code should use generate_all() instead.
+        Generate a full AAS from the loaded config. Called by
+        Transformation.AAS_Builder.AAS_builder.profile_document_to_aas_json,
+        the single entry point every caller (API, pipeline, evaluation
+        harness) goes through.
 
         Args:
             system_id: Unique identifier for the system (ignored, uses config system_id)
@@ -343,22 +287,6 @@ class AASGenerator:
             return obj_store, aas_dict
         return aas_dict
 
-    def validate_generated_aas(self, obj_store: model.DictObjectStore, context: str = "") -> bool:
-        """
-        Legacy compatibility method for validation.
-
-        Note: This method exists for backward compatibility with existing code.
-        New code should use _validate_object_store() or generate_all(validate=True).
-
-        Args:
-            obj_store: The DictObjectStore containing generated AAS objects
-            context: Context string for error messages (e.g., system name)
-
-        Returns:
-            True if validation passed (no errors), False otherwise
-        """
-        return self._validate_object_store(obj_store)
-
     # ==================== Core Building Methods ====================
 
     def _ensure_ontology_guidance(self) -> None:
@@ -366,12 +294,7 @@ class AASGenerator:
         if self._guidance_applied:
             return
 
-        suggestions = self._apply_ontology_guidance(self.system_config)
-        actionable = [s for s in suggestions if s["action"] != "hint"]
-        if actionable:
-            print("Ontology guidance:")
-            for s in actionable:
-                print(f"  • {s['description']}")
+        self._apply_ontology_guidance(self.system_config)
 
         self._guidance_applied = True
 
@@ -726,90 +649,3 @@ class AASGenerator:
         aas_dict = json.loads(json_data)
         return self._normalize_submodel_references(aas_dict)
 
-    # ==================== Validation Methods ====================
-
-    def _validate_object_store(self, obj_store: model.DictObjectStore) -> bool:
-        """
-        Validate the generated AAS object store.
-
-        Args:
-            obj_store: The DictObjectStore containing generated AAS objects
-
-        Returns:
-            True if validation passed (no errors), False otherwise
-        """
-        print(f"Validating {self.system_id}...")
-
-        validator = AASValidator()
-        result = validator.validate(obj_store)
-
-        if not result.is_valid():
-            print(f"\n⚠️  Validation errors found:")
-            print(result.summary())
-            return False
-
-        if result.warnings:
-            print(
-                f"\n✓ Validation passed (with {len(result.warnings)} warning(s))")
-            print("Warnings:")
-            for warning in result.warnings:
-                print(f"  • {warning}")
-        else:
-            print(f"✓ Validation passed")
-
-        return True
-
-
-def main():
-    """Main entry point for the script."""
-
-    parser = argparse.ArgumentParser(
-        description='Generate AAS descriptions from configuration file'
-    )
-    parser.add_argument(
-        '--config',
-        type=str,
-        default='output_test/resource_config.yaml',
-        help='Path to the JSON/YAML configuration file (default: output_test/resource_config.yaml)'
-    )
-    parser.add_argument(
-        '--output',
-        type=str,
-        default='Resource/',
-        help='Output directory for generated JSON file (default: output_test/Resource/)'
-    )
-    parser.add_argument(
-        '--validate',
-        action='store_true',
-        default=True,
-        help='Validate generated AAS (default: enabled)'
-    )
-    parser.add_argument(
-        '--no-validate',
-        dest='validate',
-        action='store_false',
-        help='Disable AAS validation'
-    )
-    parser.add_argument(
-        '--delegation-url',
-        type=str,
-        default=None,
-        help='Base URL for Operation Delegation Service (e.g., http://registration-service:8087). '
-             'If not specified, uses DELEGATION_SERVICE_URL env var or default.'
-    )
-
-    args = parser.parse_args()
-
-    # Create generator
-    generator = AASGenerator(
-        args.config, delegation_base_url=args.delegation_url)
-
-    # Generate the system
-    success = generator.generate_all(args.output, validate=args.validate)
-
-    print("\nGeneration complete!")
-    return 0 if success else 1
-
-
-if __name__ == '__main__':
-    exit(main())
