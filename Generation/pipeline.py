@@ -70,6 +70,20 @@ def run_pipeline(
 		gemini_contents = []
 		groq_history = [{"role": "user", "content": user_prompt}]
 
+	# Guards against an infinite loop: `attempt` is only decremented back (see
+	# below) when call_llm returns empty text, so the while condition alone
+	# cannot bound the number of iterations if a model keeps returning empty
+	# output without ever raising (e.g. a max_tokens budget too small for the
+	# prompt, or a provider silently returning no choices) — call_llm has no
+	# error to report in that case, so it can't trigger the model-switch path
+	# either. Track consecutive empty responses from the *same* model
+	# specifically (a genuine model switch still gets its own fresh attempts,
+	# uncounted here) and give up with a clear error well before this could
+	# spin forever.
+	MAX_CONSECUTIVE_EMPTY_SAME_MODEL = 3
+	consecutive_empty_same_model = 0
+	empty_response_model_idx = model_idx
+
 	with tempfile.TemporaryDirectory() as _tmp:
 		tmp_dir = Path(_tmp)
 
@@ -89,8 +103,42 @@ def run_pipeline(
 			)
 
 			if not raw_text:
+				if model_idx == empty_response_model_idx:
+					consecutive_empty_same_model += 1
+				else:
+					empty_response_model_idx = model_idx
+					consecutive_empty_same_model = 1
+
+				if consecutive_empty_same_model >= MAX_CONSECUTIVE_EMPTY_SAME_MODEL:
+					model_name = cfg.models[model_idx] if model_idx < len(cfg.models) else "?"
+					_log(
+						f"  [STOP] Model '{model_name}' returned empty output "
+						f"{consecutive_empty_same_model} times in a row with no error — "
+						"likely max_tokens too small for this prompt, or the provider is "
+						"returning no content. Aborting instead of retrying forever."
+					)
+					issues = [{
+						"severity": "Violation",
+						"message": (
+							f"Provider '{cfg.provider}' model '{model_name}' repeatedly returned "
+							"empty output for this prompt. Check the model's context/output limits."
+						),
+					}]
+					metamodel_issues = issues
+					ontology_issues = []
+					conforms = False
+					attempt_snapshots.append({
+						"attempt": attempt, "conforms": False, "violations": len(issues),
+						"metamodel": len(metamodel_issues), "ontology": 0,
+						"verify_count": 0, "aas_json": "", "profile_text": None,
+					})
+					break
+
 				attempt -= 1
 				continue
+
+			consecutive_empty_same_model = 0
+			empty_response_model_idx = model_idx
 
 			if cfg.provider == "gemini":
 				gemini_contents.append({"role": "model", "parts": [{"text": raw_text}]})
