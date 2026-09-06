@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Bind-mount the whole repo so uvicorn --reload picks up code, ontology,
+      # and SHACL changes without a rebuild. Generation/config.yaml (gitignored,
+      # holds API keys) is never baked into the image -- it only ever exists via
+      # this mount, read straight from your local checkout.
+      - .:/app
+    working_dir: /app
+
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./ui:/app
+      # Anonymous volume: shields the image's own (Linux-native) node_modules
+      # from being shadowed by the bind mount above, which would otherwise
+      # overwrite it with your host's node_modules (or nothing at all).
+      - /app/node_modules
+    environment:
+      # Inside the container "localhost" is the container itself -- reach the
+      # backend by its service name instead. Vite reads this in vite.config.ts.
+      VITE_API_PROXY_TARGET: http://backend:8000
+      # Uncomment if you use the n8n webhook proxy and n8n runs on your host:
+      # VITE_N8N_PROXY_TARGET: http://host.docker.internal:5678
+    depends_on:
+      - backend

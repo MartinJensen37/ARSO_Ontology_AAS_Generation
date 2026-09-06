@@ -1,0 +1,26 @@
+# Backend dependencies for the FastAPI app (api/) and the Generation/Validation/
+# Transformation pipelines it wraps. Versions pinned from the working dev
+# environment (`pip freeze`) -- there was no requirements.txt before this.
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.3
+PyYAML==6.0.2
+
+# Ontology / RDF / SHACL validation
+rdflib==7.6.0
+pyshacl==0.31.0
+
+# AAS metamodel SDK
+basyx-python-sdk==2.0.1
+
+# LLM providers (Gemini native SDK; DeepSeek/Groq/OpenRouter/etc. via the
+# OpenAI-compatible client)
+google-genai==1.73.1
+openai==3.8.0
+
+# PDF spec-sheet extraction (pdf_extractor.py: pdfplumber primary, fitz fallback)
+pdfplumber==0.11.9
+PyMuPDF==1.27.2.3
+
+# FastAPI file-upload support (supplemental_files / spec-sheet uploads)
+python-multipart==0.0.32

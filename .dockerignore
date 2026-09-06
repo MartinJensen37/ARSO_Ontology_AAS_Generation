@@ -1,0 +1,19 @@
+# Never bake the API-key-bearing config into an image layer -- it reaches the
+# container only via the bind mount in docker-compose.yml.
+Generation/config.yaml
+
+.git/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+
+ui/node_modules/
+ui/dist/
+
+.vscode/
+.DS_Store
+Thumbs.db
