@@ -1,0 +1,1285 @@
+{
+  "assetAdministrationShells": [
+    {
+      "idShort": "LinFill120_AAS",
+      "modelType": "AssetAdministrationShell",
+      "id": "https://smartproductionlab.aau.dk/aas/LinFill120_AAS",
+      "assetInformation": {
+        "assetKind": "Instance",
+        "globalAssetId": "https://smartproductionlab.aau.dk/assets/LinFill120",
+        "specificAssetIds": [
+          {
+            "name": "serialNumber",
+            "value": "EA-LF-2024-00472",
+            "externalSubjectId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/aas/3/0/SpecificAssetId/SerialNumber"
+                }
+              ]
+            }
+          },
+          {
+            "name": "location",
+            "value": "AAU SmartProduction Laboratory, SPL-01 Pilot Aseptic Syringe Filling Line, Station 1",
+            "externalSubjectId": {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://admin-shell.io/aas/3/0/SpecificAssetId/Location"
+                }
+              ]
+            }
+          }
+        ],
+        "assetType": "https://smartproductionlab.aau.dk/Resource/SyringeFillingStation"
+      },
+      "submodels": [
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Nameplate"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/AID"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/OperationalData"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/HierarchicalStructures"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities"
+            }
+          ]
+        },
+        {
+          "type": "ModelReference",
+          "keys": [
+            {
+              "type": "Submodel",
+              "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "submodels": [
+    {
+      "idShort": "DigitalNameplate",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Nameplate",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/nameplate/3/0/Nameplate"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "URIOfTheProduct",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABN590#002"
+              }
+            ]
+          },
+          "value": "https://smartproductionlab.aau.dk/assets/LinFill120_AAS",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerName",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA565#009"
+              }
+            ]
+          },
+          "value": [
+            {
+              "language": "en",
+              "text": "Elara Automation GmbH"
+            }
+          ]
+        },
+        {
+          "idShort": "ManufacturerProductDesignation",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA567#009"
+              }
+            ]
+          },
+          "value": [
+            {
+              "language": "en",
+              "text": "LinFill-120 Vertical Syringe Filling Station"
+            }
+          ]
+        },
+        {
+          "idShort": "ContactInformation",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "Street",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO128#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "Bruckenstrasse 14"
+                }
+              ]
+            },
+            {
+              "idShort": "ZipCode",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO129#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "70173"
+                }
+              ]
+            },
+            {
+              "idShort": "CityTown",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO132#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "Stuttgart"
+                }
+              ]
+            },
+            {
+              "idShort": "NationalCode",
+              "modelType": "MultiLanguageProperty",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "0173-1#02-AAO134#002"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "language": "en",
+                  "text": "DE"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "idShort": "OrderCodeOfManufacturer",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "0112/2///61987#ABA950#008"
+              }
+            ]
+          },
+          "value": "EA-LF120-230V-EU",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerProductFamily",
+          "modelType": "Property",
+          "value": "LinFill Series",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "SerialNumber",
+          "modelType": "Property",
+          "value": "EA-LF-2024-00472",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "YearOfConstruction",
+          "modelType": "Property",
+          "value": "2024",
+          "valueType": "xs:string"
+        }
+      ]
+    },
+    {
+      "idShort": "AID",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/AID",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "InterfaceMQTT",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+              }
+            ]
+          },
+          "supplementalSemanticIds": [
+            {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://www.w3.org/2019/wot/td/v1/binding/mqtt"
+                }
+              ]
+            },
+            {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://www.w3.org/2019/wot/td"
+                }
+              ]
+            }
+          ],
+          "value": [
+            {
+              "idShort": "title",
+              "modelType": "Property",
+              "value": "LinFill-120 MQTT Interface",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "EndpointMetadata",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "base",
+                  "modelType": "Property",
+                  "value": "[VERIFY: MQTT broker endpoint not stated in spec; broker is site-provided]",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "contentType",
+                  "modelType": "Property",
+                  "value": "application/json",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "securityDefinitions",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "nosec_sc",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "scheme",
+                          "modelType": "Property",
+                          "value": "nosec",
+                          "valueType": "xs:string"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "idShort": "security",
+                  "modelType": "SubmodelElementList",
+                  "orderRelevant": true,
+                  "typeValueListElement": "Property",
+                  "valueTypeListElement": "xs:string",
+                  "value": [
+                    {
+                      "modelType": "Property",
+                      "value": "nosec_sc",
+                      "valueType": "xs:string"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "InteractionMetadata",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+                  }
+                ]
+              },
+              "supplementalSemanticIds": [
+                {
+                  "type": "ExternalReference",
+                  "keys": [
+                    {
+                      "type": "GlobalReference",
+                      "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"
+                    }
+                  ]
+                }
+              ],
+              "value": [
+                {
+                  "idShort": "actions",
+                  "modelType": "SubmodelElementCollection",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://www.w3.org/2019/wot/td#ActionAffordance"
+                      }
+                    ]
+                  },
+                  "value": [
+                    {
+                      "idShort": "Start",
+                      "modelType": "SubmodelElementCollection"
+                    },
+                    {
+                      "idShort": "Stop",
+                      "modelType": "SubmodelElementCollection"
+                    },
+                    {
+                      "idShort": "Home",
+                      "modelType": "SubmodelElementCollection"
+                    },
+                    {
+                      "idShort": "Reset",
+                      "modelType": "SubmodelElementCollection"
+                    }
+                  ]
+                },
+                {
+                  "idShort": "properties",
+                  "modelType": "SubmodelElementCollection",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"
+                      }
+                    ]
+                  },
+                  "value": [
+                    {
+                      "idShort": "State",
+                      "modelType": "SubmodelElementCollection"
+                    },
+                    {
+                      "idShort": "CycleTime",
+                      "modelType": "SubmodelElementCollection"
+                    },
+                    {
+                      "idShort": "SyringeWeight",
+                      "modelType": "SubmodelElementCollection"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "OperationalData",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/OperationalData",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "State",
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "InterfaceReference",
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+                  }
+                ]
+              },
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "properties"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "NonexistentProperty"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "idShort": "CycleTime",
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "InterfaceReference",
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+                  }
+                ]
+              },
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "properties"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "CycleTime"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "idShort": "SyringeWeight",
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "InterfaceReference",
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+                  }
+                ]
+              },
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/AID"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InterfaceMQTT"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "InteractionMetadata"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "properties"
+                  },
+                  {
+                    "type": "SubmodelElementCollection",
+                    "value": "SyringeWeight"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "HierarchicalStructures",
+      "displayName": [
+        {
+          "language": "en",
+          "text": "BillOfMaterials"
+        }
+      ],
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/HierarchicalStructures",
+      "administration": {
+        "version": "1",
+        "revision": "1"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "ArcheType",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"
+              }
+            ]
+          },
+          "value": "OneUp",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "EntryNode",
+          "modelType": "Entity",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+              }
+            ]
+          },
+          "statements": [
+            {
+              "idShort": "IsPartOf_SPL01",
+              "modelType": "RelationshipElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/HierarchicalStructures/Relationship/1/0"
+                  }
+                ]
+              },
+              "first": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/HierarchicalStructures"
+                  },
+                  {
+                    "type": "Entity",
+                    "value": "EntryNode"
+                  }
+                ]
+              },
+              "second": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/HierarchicalStructures"
+                  },
+                  {
+                    "type": "Entity",
+                    "value": "EntryNode"
+                  },
+                  {
+                    "type": "Entity",
+                    "value": "SPL01"
+                  }
+                ]
+              }
+            },
+            {
+              "idShort": "SPL01",
+              "modelType": "Entity",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0"
+                  }
+                ]
+              },
+              "statements": [
+                {
+                  "idShort": "SameAs",
+                  "modelType": "ReferenceElement",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0"
+                      }
+                    ]
+                  },
+                  "supplementalSemanticIds": [
+                    {
+                      "type": "ExternalReference",
+                      "keys": [
+                        {
+                          "type": "GlobalReference",
+                          "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+                        }
+                      ]
+                    }
+                  ],
+                  "value": {
+                    "type": "ModelReference",
+                    "keys": [
+                      {
+                        "type": "Submodel",
+                        "value": "https://smartproductionlab.aau.dk/submodels/instances/SPL01AAS/HierarchicalStructures"
+                      },
+                      {
+                        "type": "Entity",
+                        "value": "EntryNode"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "entityType": "SelfManagedEntity",
+              "globalAssetId": "https://smartproductionlab.aau.dk/assets/SPL01"
+            }
+          ],
+          "entityType": "SelfManagedEntity",
+          "globalAssetId": "https://smartproductionlab.aau.dk/assets/LinFill120"
+        }
+      ]
+    },
+    {
+      "idShort": "Capabilities",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "CapabilitySet",
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "StartContainer",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/Capability/Start",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Start",
+                  "modelType": "Capability",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://smartproductionlab.aau.dk/Capability/Start"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "idShort": "realizedBy",
+                  "modelType": "SubmodelElementList",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                      }
+                    ]
+                  },
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "first": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "CapabilitySet"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "StartContainer"
+                          }
+                        ]
+                      },
+                      "second": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "Start"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "StopContainer",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/Capability/Stop",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Stop",
+                  "modelType": "Capability",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://smartproductionlab.aau.dk/Capability/Stop"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "idShort": "realizedBy",
+                  "modelType": "SubmodelElementList",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                      }
+                    ]
+                  },
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "first": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "CapabilitySet"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "StopContainer"
+                          }
+                        ]
+                      },
+                      "second": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "Stop"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "HomeContainer",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/Capability/Home",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Home",
+                  "modelType": "Capability",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://smartproductionlab.aau.dk/Capability/Home"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "idShort": "realizedBy",
+                  "modelType": "SubmodelElementList",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                      }
+                    ]
+                  },
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "first": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "CapabilitySet"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "HomeContainer"
+                          }
+                        ]
+                      },
+                      "second": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "Home"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "ResetContainer",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/Capability/Reset",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Reset",
+                  "modelType": "Capability",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://smartproductionlab.aau.dk/Capability/Reset"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "idShort": "realizedBy",
+                  "modelType": "SubmodelElementList",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                      }
+                    ]
+                  },
+                  "orderRelevant": true,
+                  "typeValueListElement": "RelationshipElement",
+                  "value": [
+                    {
+                      "modelType": "RelationshipElement",
+                      "first": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Capabilities"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "CapabilitySet"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "ResetContainer"
+                          }
+                        ]
+                      },
+                      "second": {
+                        "type": "ModelReference",
+                        "keys": [
+                          {
+                            "type": "Submodel",
+                            "value": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills"
+                          },
+                          {
+                            "type": "SubmodelElementCollection",
+                            "value": "Reset"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "Skills",
+      "modelType": "Submodel",
+      "id": "https://smartproductionlab.aau.dk/submodels/instances/LinFill120_AAS/Skills",
+      "administration": {
+        "version": "1",
+        "revision": "0"
+      },
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/ControlComponentType/1/0"
+          }
+        ]
+      },
+      "submodelElements": [
+        {
+          "idShort": "Interfaces",
+          "modelType": "SubmodelElementCollection"
+        },
+        {
+          "idShort": "Skills",
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "Start",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Skill: Start"
+                }
+              ],
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/skills/Start",
+                  "valueType": "xs:string"
+                }
+              ]
+            },
+            {
+              "idShort": "Stop",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Skill: Stop"
+                }
+              ],
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/skills/Stop",
+                  "valueType": "xs:string"
+                }
+              ]
+            },
+            {
+              "idShort": "Home",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Skill: Home"
+                }
+              ],
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/skills/Home",
+                  "valueType": "xs:string"
+                }
+              ]
+            },
+            {
+              "idShort": "Reset",
+              "description": [
+                {
+                  "language": "en",
+                  "text": "Skill: Reset"
+                }
+              ],
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "SemanticId",
+                  "modelType": "Property",
+                  "value": "https://smartproductionlab.aau.dk/skills/Reset",
+                  "valueType": "xs:string"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "idShort": "Errors",
+          "modelType": "SubmodelElementCollection"
+        }
+      ]
+    }
+  ]
+}
