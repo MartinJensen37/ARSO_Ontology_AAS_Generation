@@ -8,11 +8,11 @@
 <http://www.w3id.org/hsu-aut/css#Capability> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Implementation-independent specification of a function in industrial production to achieve an effect in the physical or virtual world.
-
-Notes:
-- A capability can be restricted by constraints.
-- A capability can be specified by capability properties.
+    rdfs:comment """Implementation-independent specification of a function in industrial production to achieve an effect in the physical or virtual world.\r
+\r
+Notes:\r
+- A capability can be restricted by constraints.\r
+- A capability can be specified by capability properties.\r
 - A capability can be realized by skills""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Resource>,
         <http://www.w3id.org/hsu-aut/css#ServiceOffer>,
@@ -29,12 +29,12 @@ Notes:
 <http://www.w3id.org/hsu-aut/css#Process> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Production-relevant activity at any level of granularity that might affect materials and is performed by resources.
-
-Notes:
-- In general, a process can be decomposed into sub-processes or single activities.
-- A process can require capabilities to express that any suitable resource used for
-performing this process needs to provide compatible capabilities.
+    rdfs:comment """Production-relevant activity at any level of granularity that might affect materials and is performed by resources.\r
+\r
+Notes:\r
+- In general, a process can be decomposed into sub-processes or single activities.\r
+- A process can require capabilities to express that any suitable resource used for\r
+performing this process needs to provide compatible capabilities.\r
 - A process step relates to materials that constitute either input or output for the processing in this step""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Resource>,
         <http://www.w3id.org/hsu-aut/css#Service>,
@@ -50,10 +50,10 @@ performing this process needs to provide compatible capabilities.
 <http://www.w3id.org/hsu-aut/css#Property> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Quality or characteristic inherent in or ascribed to any CSS model element
-
-Notes:
-- Properties may be used to describe and differentiate all kinds of PPR entities (i.e., products, process steps, resources)
+    rdfs:comment """Quality or characteristic inherent in or ascribed to any CSS model element\r
+\r
+Notes:\r
+- Properties may be used to describe and differentiate all kinds of PPR entities (i.e., products, process steps, resources)\r
 - Capabilities, services and offers are specified by properties in order to detail their description with regard to certain entities (e.g. products, process steps, resources)""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Resource>,
         <http://www.w3id.org/hsu-aut/css#Service>,
@@ -75,11 +75,11 @@ Notes:
 <http://www.w3id.org/hsu-aut/css#Resource> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Entity capable of performing functions specified as Capabilities and potentially implemented as Skills.
-
-Notes
-- A production resource may consist of hardware, software or both
-- A production resource may only provide capabilities (i.e. when engineering a resource, for planning purposes) and may additionally provide skills for automatic execution of the specified function.
+    rdfs:comment """Entity capable of performing functions specified as Capabilities and potentially implemented as Skills.\r
+\r
+Notes\r
+- A production resource may consist of hardware, software or both\r
+- A production resource may only provide capabilities (i.e. when engineering a resource, for planning purposes) and may additionally provide skills for automatic execution of the specified function.\r
 - A human becomes a Production Resource, if that person is able to perform a function specified as a capability.""" ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:onClass <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -100,12 +100,12 @@ Notes
 <http://www.w3id.org/hsu-aut/css#Service> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Description of the commercial aspects and means of provision of offered capabilities.
-
-Notes:
-- The term “service” should be understood in the sense of economics and shall not be confused with e.g., web services.
-- The capabilities and means of provisions are specified by properties
-- A service is demanded by service requesters and provided by a service provider
+    rdfs:comment """Description of the commercial aspects and means of provision of offered capabilities.\r
+\r
+Notes:\r
+- The term “service” should be understood in the sense of economics and shall not be confused with e.g., web services.\r
+- The capabilities and means of provisions are specified by properties\r
+- A service is demanded by service requesters and provided by a service provider\r
 - A service is an input for an offer proposed by""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#ServiceOffer>,
         <http://www.w3id.org/hsu-aut/css#ServiceProvider>,
@@ -133,7 +133,7 @@ Notes:
 <http://www.w3id.org/hsu-aut/css#ServiceRequester> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Demands Services under particular commercial aspects by providing either a specification of
+    rdfs:comment """Demands Services under particular commercial aspects by providing either a specification of\r
 services or a specification of product requirements.""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Skill>,
         <http://www.w3id.org/hsu-aut/css#SkillInterface>,
@@ -146,13 +146,13 @@ services or a specification of product requirements.""" ;
 <http://www.w3id.org/hsu-aut/css#Skill> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Executable implementation of an encapsulated (automation) function specified by a Capability.
-
-Notes:
-- A skill must have a skill interface. 
-- One capability can be realized by more than one skill. 
-- A skill may have any number of SkillParameters. 
-- A skill’s behavior conforms to a state machine. 
+    rdfs:comment """Executable implementation of an encapsulated (automation) function specified by a Capability.\r
+\r
+Notes:\r
+- A skill must have a skill interface. \r
+- One capability can be realized by more than one skill. \r
+- A skill may have any number of SkillParameters. \r
+- A skill’s behavior conforms to a state machine. \r
 - A skill controls a process step""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#SkillParameter> ;
     sh:property <http://www.w3id.org/hsu-aut/css#Skill-accessibleThrough>,
@@ -165,13 +165,13 @@ Notes:
 <http://www.w3id.org/hsu-aut/css#SkillInterface> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment """Access point to configure, control and monitor a skill.
-
-Notes:
-- A skill interface exposes interaction points to be used by other external systems
-(e.g. MES, other skills).
-- A skill interface exposes the state machine of a skill so that skill states can be
-monitored and transitions triggered.
+    rdfs:comment """Access point to configure, control and monitor a skill.\r
+\r
+Notes:\r
+- A skill interface exposes interaction points to be used by other external systems\r
+(e.g. MES, other skills).\r
+- A skill interface exposes the state machine of a skill so that skill states can be\r
+monitored and transitions triggered.\r
 - A skill interface exposes the parameters of a skill so that they can be written and read.""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#SkillParameter>,
         <http://www.w3id.org/hsu-aut/css#StateMachine> ;
@@ -736,11 +736,11 @@ monitored and transitions triggered.
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfaceReferenceRef> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfaceProfileMLP> ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfaceProfileMLP> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfaceReferenceRef> ] ],
         <https://w3id.org/2025/arso#CCInterfaceSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
 
 <https://w3id.org/2025/arso#CapabilitiesSubmodel> a rdfs:Class,
@@ -788,11 +788,11 @@ monitored and transitions triggered.
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#ComposedOfSetSMC> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#GeneralizedBySetSMC> ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#GeneralizedBySetSMC> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#ComposedOfSetSMC> ] ],
         <https://w3id.org/2025/arso#CapabilityRelationsSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
 
 <https://w3id.org/2025/arso#CapabilitySetSMC> a rdfs:Class,
@@ -889,15 +889,15 @@ monitored and transitions triggered.
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#AddressInformationSMC> ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#AssetSpecificPropertiesSMC> ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#MarkingsSML> ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#AddressInformationSMC> ] ],
         <https://w3id.org/2025/arso#DigitalNameplateSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements> .
 
 <https://w3id.org/2025/arso#EndpointMetadataSMC> a rdfs:Class,
@@ -1009,61 +1009,61 @@ monitored and transitions triggered.
 <https://w3id.org/2025/arso#HasCapabilitiesAAS> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:subClassOf _:nb92e1651cb3a4bba98f2d49787ac1c08b51,
+    rdfs:subClassOf _:n8a4c4413837847459c63a10ea8bb0ba8b51,
         [ a owl:Restriction ;
             owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
             owl:someValuesFrom <https://w3id.org/2025/arso#SkillsSubmodel> ] ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b52 ] ;
-    owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b52 ;
+            owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b52 ] ;
+    owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b52 ;
     sh:property <https://w3id.org/2025/arso#HasCapabilitiesAAS-hasSubmodel> .
 
 <https://w3id.org/2025/arso#HasOperationalDataAAS> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:subClassOf _:nb92e1651cb3a4bba98f2d49787ac1c08b41,
+    rdfs:subClassOf _:n8a4c4413837847459c63a10ea8bb0ba8b41,
         [ a owl:Restriction ;
             owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
             owl:someValuesFrom <https://w3id.org/2025/arso#AIDSubmodel> ] ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b42 ] ;
-    owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b42 ;
+            owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b42 ] ;
+    owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b42 ;
     sh:property <https://w3id.org/2025/arso#HasOperationalDataAAS-hasSubmodel> .
 
 <https://w3id.org/2025/arso#HasParametersAAS> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:subClassOf _:nb92e1651cb3a4bba98f2d49787ac1c08b46,
+    rdfs:subClassOf _:n8a4c4413837847459c63a10ea8bb0ba8b46,
         [ a owl:Restriction ;
             owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
             owl:someValuesFrom <https://w3id.org/2025/arso#AIDSubmodel> ] ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b47 ] ;
-    owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b47 ;
+            owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b47 ] ;
+    owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b47 ;
     sh:property <https://w3id.org/2025/arso#HasParametersAAS-hasSubmodel> .
 
 <https://w3id.org/2025/arso#HasSkillsAAS> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:subClassOf _:nb92e1651cb3a4bba98f2d49787ac1c08b36,
+    rdfs:subClassOf _:n8a4c4413837847459c63a10ea8bb0ba8b36,
         [ a owl:Restriction ;
             owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
             owl:someValuesFrom <https://w3id.org/2025/arso#AIDSubmodel> ] ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b37 ] ;
-    owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b37 ;
+            owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b37 ] ;
+    owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b37 ;
     sh:property <https://w3id.org/2025/arso#HasSkillsAAS-hasSubmodel> .
 
 <https://w3id.org/2025/arso#HasSkillsFromCapabilitiesAAS> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:subClassOf _:nb92e1651cb3a4bba98f2d49787ac1c08b56,
+    rdfs:subClassOf _:n8a4c4413837847459c63a10ea8bb0ba8b56,
         [ a owl:Restriction ;
             owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
             owl:someValuesFrom <https://w3id.org/2025/arso#CapabilitiesSubmodel> ] ;
     owl:equivalentClass [ a owl:Class ;
-            owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b57 ] ;
-    owl:intersectionOf _:nb92e1651cb3a4bba98f2d49787ac1c08b57 ;
+            owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b57 ] ;
+    owl:intersectionOf _:n8a4c4413837847459c63a10ea8bb0ba8b57 ;
     sh:property <https://w3id.org/2025/arso#HasSkillsFromCapabilitiesAAS-hasSubmodel> .
 
 <https://w3id.org/2025/arso#HierarchicalStructuresSubmodel> a rdfs:Class,
@@ -1084,12 +1084,12 @@ monitored and transitions triggered.
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#ArcheTypeProperty> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#EntryNodeEntity> ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#EntryNodeEntity> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#ArcheTypeProperty> ] ],
         <https://w3id.org/2025/arso#HierarchicalStructuresSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements> .
 
 <https://w3id.org/2025/arso#InterfaceSMC> a rdfs:Class,
@@ -1242,46 +1242,25 @@ monitored and transitions triggered.
 <https://w3id.org/2025/arso#SkillSMC> a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment "SMC {skill_name} — a named skill. Contains Disabled, Modes, Parameters, Errors (all mandatory) and optional Uses." ;
+    rdfs:comment "SMC {skill_name} — a named skill. Contains SemanticId, an Operation, and an InterfaceReference (all mandatory), plus an optional StateMachine for asynchronous skills." ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass <https://w3id.org/2025/arso#SkillUsesSMC> ;
+            owl:onClass <https://w3id.org/2025/arso#SkillStateMachineProperty> ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
         [ a owl:Restriction ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom <https://w3id.org/2025/arso#SkillDisabledProperty> ],
+            owl:someValuesFrom <https://w3id.org/2025/arso#SkillSemanticIdProperty> ],
         [ a owl:Restriction ;
-            owl:onClass <https://w3id.org/2025/arso#SkillModesSMC> ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+            owl:someValuesFrom <https://w3id.org/2025/arso#SkillOperationElement> ],
         [ a owl:Restriction ;
-            owl:onClass <https://w3id.org/2025/arso#SkillParametersSMC> ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        [ a owl:Restriction ;
-            owl:onClass <https://w3id.org/2025/arso#SkillErrorsSMC> ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+            owl:someValuesFrom <https://w3id.org/2025/arso#SkillInterfaceReferenceRef> ],
         <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#SkillErrorsSMC> ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#SkillParametersSMC> ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#SkillUsesSMC> ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#SkillModesSMC> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#SkillStateMachineProperty> ] ],
         <https://w3id.org/2025/arso#SkillSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
 
 <https://w3id.org/2025/arso#SkillsSubmodel> a rdfs:Class,
@@ -1306,7 +1285,7 @@ monitored and transitions triggered.
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfacesSMC> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCSkillsSMC> ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
@@ -1316,8 +1295,131 @@ monitored and transitions triggered.
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCSkillsSMC> ] ],
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#CCInterfacesSMC> ] ],
         <https://w3id.org/2025/arso#SkillsSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements> .
+
+<https://w3id.org/2025/arso#TechnicalDataSubmodel> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:label "Technical Data Submodel" ;
+    rdfs:comment "IDTA 02003 — Technical Data for product-related information." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onClass <https://w3id.org/2025/arso#TechnicalGeneralInformationSMC> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom [ a owl:Class ;
+                    owl:unionOf ( <https://w3id.org/2025/arso#TechnicalGeneralInformationSMC> <https://w3id.org/2025/arso#TechnicalProductClassificationsSML> <https://w3id.org/2025/arso#TechnicalPropertyAreasSML> <https://w3id.org/2025/arso#TechnicalFurtherInformationSMC> <https://w3id.org/2025/arso#TechnicalSpecificDescriptionsSML> ) ] ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ],
+        <https://admin-shell.io/aas/3/1/Submodel> ;
+    sh:property [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#TechnicalGeneralInformationSMC> ] ],
+        <https://w3id.org/2025/arso#TechnicalDataSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements> .
+
+<https://w3id.org/2025/arso#TechnicalFurtherInformationSMC> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC FurtherInformation — optional top-level container for additional notes." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass <https://w3id.org/2025/arso#TechnicalTextStatementMLP> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass <https://w3id.org/2025/arso#TechnicalValidDateProperty> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:property [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#TechnicalValidDateProperty> ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class <https://w3id.org/2025/arso#TechnicalTextStatementMLP> ] ],
+        <https://w3id.org/2025/arso#TechnicalFurtherInformationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
+
+<https://w3id.org/2025/arso#TechnicalGeneralInformationSMC> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC GeneralInformation — mandatory top-level container for general product information." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalManufacturerProductDesignationMLP> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalManufacturerArticleNumberProperty> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalManufacturerOrderCodeProperty> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalManufacturerNameMLP> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalGeneralInformationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassificationSMC> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC ProductClassification — one classification record with classification system metadata." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom [ a owl:Class ;
+                    owl:unionOf ( <https://w3id.org/2025/arso#TechnicalClassificationSystemProperty> <https://w3id.org/2025/arso#TechnicalClassificationSystemVersionProperty> <https://w3id.org/2025/arso#TechnicalClassificationSystemUrlProperty> <https://w3id.org/2025/arso#TechnicalProductClassIdProperty> <https://w3id.org/2025/arso#TechnicalProductClassCodedNameProperty> <https://w3id.org/2025/arso#TechnicalProductClassNameProperty> ) ] ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalProductClassificationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
+
+<https://w3id.org/2025/arso#TechnicalProductImageSMC> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC ProductImage — one product image entry with file and optional note." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalImageFile> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalProductImageSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
+
+<https://w3id.org/2025/arso#TechnicalProductImagesSML> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SML ProductImages — list of product images." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/2025/arso#TechnicalProductImageSMC> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalProductImageSMC> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalProductImagesSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> .
+
+<https://w3id.org/2025/arso#TechnicalPropertyAreasSML> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SML TechnicalPropertyAreas — list of technical property area entries." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/2025/arso#TechnicalPropertyAreaSMC> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalPropertyAreaSMC> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalPropertyAreasSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> .
+
+<https://w3id.org/2025/arso#TechnicalSpecificDescriptionsSML> a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SML SpecificDescriptions — list of specific description entries." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom <https://w3id.org/2025/arso#TechnicalSpecificDescriptionSMC> ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ],
+        [ a owl:Restriction ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementList/value> ;
+            owl:someValuesFrom <https://w3id.org/2025/arso#TechnicalSpecificDescriptionSMC> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
+    sh:property <https://w3id.org/2025/arso#TechnicalSpecificDescriptionsSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> .
 
 <https://w3id.org/2025/arso#TransitionConstraintContainerSMC> a rdfs:Class,
         owl:Class,
@@ -1945,26 +2047,26 @@ monitored and transitions triggered.
     sh:targetSubjectsOf <https://admin-shell.io/aas/3/1/ValueReferencePair/valueId> .
 
 <https://w3id.org/2025/arso> a owl:Ontology ;
-    rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.
-
-  This ontology:
-    - imports the official AAS v3.1 ontology for structural validation
-    - imports per-submodel modules that define element types and internal constraints
-    - defines the CSS Resource ↔ AAS link and cross-submodel dependencies here
-    - uses AAS properties (submodelElements, value, etc.) for containment
-    - adds arso: properties only for cross-submodel dependency checks
-
-  Structural/formatting validation is handled by the AAS ontology + SHACL.
+    rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.\r
+\r
+  This ontology:\r
+    - imports the official AAS v3.1 ontology for structural validation\r
+    - imports per-submodel modules that define element types and internal constraints\r
+    - defines the CSS Resource ↔ AAS link and cross-submodel dependencies here\r
+    - uses AAS properties (submodelElements, value, etc.) for containment\r
+    - adds arso: properties only for cross-submodel dependency checks\r
+\r
+  Structural/formatting validation is handled by the AAS ontology + SHACL.\r
   This ontology adds ONLY domain-specific constraints on top.""" ;
     owl:imports <http://www.w3id.org/hsu-aut/css>,
         <https://admin-shell.io/aas/3/1/>,
         <https://w3id.org/2025/arso/modules/aid>,
         <https://w3id.org/2025/arso/modules/capabilities>,
+        <https://w3id.org/2025/arso/modules/control-component>,
         <https://w3id.org/2025/arso/modules/hierarchical-structures>,
         <https://w3id.org/2025/arso/modules/nameplate>,
         <https://w3id.org/2025/arso/modules/operational-data>,
         <https://w3id.org/2025/arso/modules/parameters>,
-        <https://w3id.org/2025/arso/modules/control-component>,
         <https://w3id.org/2025/arso/modules/technical-data> ;
     owl:versionIRI <https://w3id.org/2025/arso/0.4.0> .
 
@@ -2110,6 +2212,10 @@ monitored and transitions triggered.
     rdfs:comment "SMC opcua_channel_sc — OPC UA channel security scheme. semanticId: http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityChannelScheme" ;
     rdfs:subClassOf <https://w3id.org/2025/arso#SecuritySchemeSMC> .
 
+<https://w3id.org/2025/arso#OperationalDataVariableProperty> a owl:Class ;
+    rdfs:comment "A direct variable Property of the OperationalData submodel, as currently produced by the generation pipeline. Its semanticId must use the lab's URI namespace (enforced via SHACL sh:pattern)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
 <https://w3id.org/2025/arso#ProductArticleNumberProperty> a owl:Class ;
     rdfs:comment "Property ProductArticleNumberOfManufacturer (xs:string) — unique product identifier of the manufacturer. semanticId: 0112/2///61987#ABA581#007. Optional (0..1)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
@@ -2134,9 +2240,21 @@ monitored and transitions triggered.
     rdfs:comment "SMC {mode_name} — a named execution mode of a skill." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> .
 
+<https://w3id.org/2025/arso#SkillOperationElement> a owl:Class ;
+    rdfs:comment "Operation {skill_name} — the invocable Operation of a skill entry. Its semanticId must use the lab's URI namespace (enforced via SHACL sh:pattern)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Operation> .
+
 <https://w3id.org/2025/arso#SoftwareVersionProperty> a owl:Class ;
     rdfs:comment "Property SoftwareVersion (xs:string) — version of software used by the device. semanticId: 0112/2///61987#ABA601#008. Optional (0..1)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalCompanyLogoFile> a owl:Class ;
+    rdfs:comment "File CompanyLogo — company logo image." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/File> .
+
+<https://w3id.org/2025/arso#TechnicalImageNoteMLP> a owl:Class ;
+    rdfs:comment "MLP ImageNote — note or explanation about the product image." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/MultiLanguageProperty> .
 
 <https://w3id.org/2025/arso#UavEncodingProperty> a owl:Class ;
     rdfs:comment "Property encoding (xs:string) — message encoding, typically 'TCP Binary'. OPC UA EndpointMetadata." ;
@@ -2199,8 +2317,8 @@ monitored and transitions triggered.
     sh:targetSubjectsOf <https://w3id.org/2025/arso#representsResource> .
 
 <http://www.w3id.org/hsu-aut/css> a owl:Ontology ;
-    rdfs:comment """An ontology for the Capability, Skill and Service reference model defined by Plattform Industrie 4.0. See https://www.plattform-i40.de/IP/Redaktion/DE/Downloads/Publikation/CapabilitiesSkillsServices.html for a description of the abstract reference model.
-
+    rdfs:comment """An ontology for the Capability, Skill and Service reference model defined by Plattform Industrie 4.0. See https://www.plattform-i40.de/IP/Redaktion/DE/Downloads/Publikation/CapabilitiesSkillsServices.html for a description of the abstract reference model.\r
+\r
 Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Downloads/Publikation/2025-i40-capabilities.pdf?__blob=publicationFile&v=5.""" ;
     rdfs:isDefinedBy "https://www.plattform-i40.de/IP/Redaktion/DE/Downloads/Publikation/2025-i40-capabilities.pdf?__blob=publicationFile&v=5",
         "https://www.plattform-i40.de/IP/Redaktion/DE/Downloads/Publikation/CapabilitiesSkillsServices.html" ;
@@ -3544,7 +3662,9 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Entity/globalAssetId> .
 
 <https://w3id.org/2025/arso#SkillSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
-    ns1:hasValueWithClass <https://w3id.org/2025/arso#SkillDisabledProperty> ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#SkillSemanticIdProperty>,
+        <https://w3id.org/2025/arso#SkillOperationElement>,
+        <https://w3id.org/2025/arso#SkillInterfaceReferenceRef> ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
@@ -3553,6 +3673,79 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> .
 
+<https://w3id.org/2025/arso#TechnicalClassificationSystemProperty> a owl:Class ;
+    rdfs:comment "Property ClassificationSystem (xs:string) — classification system identifier." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalClassificationSystemUrlProperty> a owl:Class ;
+    rdfs:comment "Property ClassificationSystemUrl (xs:string) — URL of the classification system." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalClassificationSystemVersionProperty> a owl:Class ;
+    rdfs:comment "Property ClassificationSystemVersion (xs:string) — version of the classification system." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalDataSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements> a sh:PropertyShape ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> .
+
+<https://w3id.org/2025/arso#TechnicalFurtherInformationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
+<https://w3id.org/2025/arso#TechnicalGeneralInformationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#TechnicalManufacturerArticleNumberProperty>,
+        <https://w3id.org/2025/arso#TechnicalManufacturerNameMLP>,
+        <https://w3id.org/2025/arso#TechnicalManufacturerOrderCodeProperty>,
+        <https://w3id.org/2025/arso#TechnicalManufacturerProductDesignationMLP> ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:minCount 1 ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassCodedNameProperty> a owl:Class ;
+    rdfs:comment "Property ProductClassCodedName (xs:string) — coded class name." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassIdProperty> a owl:Class ;
+    rdfs:comment "Property ProductClassId (xs:string) — class identifier." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassNameProperty> a owl:Class ;
+    rdfs:comment "Property ProductClassName (xs:string) — human-readable class name." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassificationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
+<https://w3id.org/2025/arso#TechnicalProductClassificationsSML> a owl:Class ;
+    rdfs:comment "SML ProductClassifications — list of product classification entries." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> .
+
+<https://w3id.org/2025/arso#TechnicalProductImageSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#TechnicalImageFile> ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:minCount 1 ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
+<https://w3id.org/2025/arso#TechnicalProductImagesSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> a sh:PropertyShape ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#TechnicalProductImageSMC> ;
+    sh:class <https://w3id.org/2025/arso#TechnicalProductImageSMC> ;
+    sh:minCount 1 ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
+
+<https://w3id.org/2025/arso#TechnicalPropertyAreasSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> a sh:PropertyShape ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#TechnicalPropertyAreaSMC> ;
+    sh:class <https://w3id.org/2025/arso#TechnicalPropertyAreaSMC> ;
+    sh:minCount 1 ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
+
+<https://w3id.org/2025/arso#TechnicalSpecificDescriptionsSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value> a sh:PropertyShape ;
+    ns1:hasValueWithClass <https://w3id.org/2025/arso#TechnicalSpecificDescriptionSMC> ;
+    sh:class <https://w3id.org/2025/arso#TechnicalSpecificDescriptionSMC> ;
+    sh:minCount 1 ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
+
 <https://w3id.org/2025/arso#TransitionConstraintContainerSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> a sh:PropertyShape ;
     ns1:hasValueWithClass <https://w3id.org/2025/arso#TransitionConstrainedByRel> ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
@@ -3560,231 +3753,50 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
 <https://w3id.org/2025/arso/modules/aid> a owl:Ontology ;
-    rdfs:comment """ARSO module: Asset Interfaces Description (IDTA 02017-1-1, W3C WoT TD aligned).
-
-  Submodel semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel
-  Interface semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface
-
-  SMT structure:
-    AID (Submodel)
-      └─ {interface_name} [SMC Interface, 1..*]
-           ├─ title               [Property, xs:string, 1]
-           ├─ created             [Property, xs:dateTime, 0..1]
-           ├─ modified            [Property, xs:dateTime, 0..1]
-           ├─ support             [Property, xs:anyURI, 0..1]
-           ├─ EndpointMetadata    [SMC, 1]
-           │    ├─ base              [Property, xs:anyURI, 1]
-           │    ├─ contentType       [Property, xs:string, 0..1]
-           │    ├─ security          [SML of Property xs:string, 1]
-           │    ├─ securityDefinitions [SMC, 1]
-           │    │    └─ {scheme_name}  [SMC SecurityScheme, 1..*]
-           │    │         ├─ scheme    [Property, xs:string, 1]
-           │    │         └─ ...       [scheme-specific properties]
-           │    ├─ modv_mostSignificantByte  [Property, xs:boolean, 0..1]
-           │    └─ modv_mostSignificantWord  [Property, xs:boolean, 0..1]
-           ├─ InteractionMetadata [SMC, 0..1]
-           │    ├─ properties [SMC, 0..1]
-           │    │    └─ {prop_name}  [SMC PropertyDefinition, 0..*]
-           │    │         ├─ key          [Property, xs:string, 0..1]
-           │    │         ├─ type         [Property, xs:string, 0..1]
-           │    │         ├─ description  [MLP, 0..1]
-           │    │         ├─ observable   [Property, xs:boolean, 0..1]
-           │    │         └─ forms        [SMC, 1]
-           │    │              ├─ href          [Property, xs:string, 1]
-           │    │              ├─ contentType   [Property, xs:string, 0..1]
-           │    │              ├─ security      [SML, 0..1]
-           │    │              ├─ subprotocol   [Property, xs:string, 0..1]
-           │    │              ├─ htv_methodName  [Property, xs:string, 0..1]
-           │    │              ├─ modv_function   [Property, xs:string, 0..1]
-           │    │              ├─ modv_address    [Property, xs:unsignedShort, 0..1]
-           │    │              └─ mqv_topic       [Property, xs:string, 0..1]
-           │    ├─ actions  [SMC, 0..1]
-           │    │    └─ {action_name} [SMC ActionDefinition, 0..*]
-           │    │         └─ forms  [SMC, 1]
-           │    └─ events   [SMC, 0..1]
-           │         └─ {event_name}  [SMC EventDefinition, 0..*]
-           │              └─ forms  [SMC, 1]
-           └─ ExternalDescriptor [SMC, 0..1]
-                └─ {file}  [File, 1..*]""" ;
+    rdfs:comment """ARSO module: Asset Interfaces Description (IDTA 02017-1-1, W3C WoT TD aligned).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel\r
+  Interface semanticId: https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface""" ;
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
 <https://w3id.org/2025/arso/modules/capabilities> a owl:Ontology ;
-    rdfs:comment """ARSO module: Capability Description (IDTA 02020-1-0).
-
-  Submodel semanticId: https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0
-
-  SMT structure:
-    CapabilityDescription (Submodel)
-      └─ CapabilitySet [SMC, 1..*]
-           └─ CapabilityContainer [SMC, 1..*]
-                ├─ Capability [Capability, 1]           ← AAS Capability metamodel type
-                │    └─ CapabilityRoleQualifier [Qualifier] — Required | Offered | NotAssigned
-                ├─ CapabilityComment [MLP, 0..1]
-                ├─ PropertySet [SMC, 0..*]
-                │    └─ PropertyContainer [SMC, 1..*]
-                │         ├─ SameProperty [RelationshipElement, 0..*]
-                │         ├─ PropertyComment [MLP, 0..1]
-                │         └─ CapabilityPropertyType [abstract, 1]
-                │              one of: Range | Property | MLP | SubmodelElementList
-                └─ CapabilityRelations [SMC, 0..1]
-                     ├─ CapabilityRealizedBy [RelationshipElement, 0..*]
-                     │    first: Capability (this SM), second: Skill (Skills SM)
-                     ├─ ComposedOfSet [SMC, 0..1]
-                     │    └─ ComposedOfContainer [SMC, 1..*]
-                     │         ├─ CapabilityComposedOf [RelationshipElement, 2..*]
-                     │         └─ ComposedOfComment [MLP, 0..1]
-                     ├─ GeneralizedBySet [SMC, 0..1]
-                     │    └─ CapabilityGeneralizedBy [RelationshipElement, 1..*]
-                     └─ ConstraintSet [SMC, 0..*]
-                          ├─ PropertyConstraintContainer [SMC, 0..*]
-                          │    ├─ PropertyConstraintType [abstract, 1]
-                          │    │    one of: OperationConstraint (Ref) | OCLConstraint (File)
-                          │    │          | BasicConstraint (Property) | CustomConstraint (SMC)
-                          │    ├─ PropertyConditionalType [Property, 1]
-                          │    │    values: Pre | Post | Invariant | PrePost | PreInvariant
-                          │    │           | InvariantPost | PrePostInvariant
-                          │    └─ ConstraintPropertyRelations [SMC, 1]
-                          │         └─ ConstraintHasProperty [RelationshipElement, 1..*]
-                          └─ TransitionConstraintContainer [SMC, 0..*]
-                               ├─ TransitionConstrainedBy [RelationshipElement, 1]
-                               └─ TransitionConditionalType [Property, 1]
-
-  Cross-submodel: CapabilityRealizedBy.second must reference a Skill in the Skills SM
-  of the same AAS — enforced via SPARQL SHACL rule (not expressible in OWL).""" ;
-    owl:imports <https://admin-shell.io/aas/3/1/> .
-
-<https://w3id.org/2025/arso/modules/hierarchical-structures> a owl:Ontology ;
-    rdfs:comment """ARSO module: Hierarchical Structures enabling Bills of Material (IDTA 02011-1-1, June 2024).
-
-  Submodel semanticId: https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel
-
-  SMT structure:
-    HierarchicalStructures (Submodel)
-      ├─ EntryNode [Entity, 1] — must be SelfManagedEntity; root of the BoM tree
-      │    ├─ Node [Entity, 1..*]
-      │    │    ├─ Node [Entity, 0..*] — recursive nesting
-      │    │    ├─ SameAs [RelationshipElement, 0..*]
-      │    │    ├─ IsPartOf [RelationshipElement, 0..*] ─┐ XOR
-      │    │    ├─ HasPart [RelationshipElement, 0..*] ──┘ (per entity)
-      │    │    └─ BulkCount [Property, xs:unsignedLong, 0..1]
-      │    ├─ SameAs [RelationshipElement, 0..*]
-      │    ├─ IsPartOf [RelationshipElement, 0..*] ─┐ XOR
-      │    └─ HasPart [RelationshipElement, 0..*] ──┘ (per entity)
-      └─ ArcheType [Property, xs:string, 1] — "Full" | "OneDown" | "OneUp"
-
-  SPARQL SHACL constraints (not expressible in OWL):
-    - EntryNodeEntity must have entityType SelfManagedEntity
-    - Any entity with entityType SelfManagedEntity must have a globalAssetId
-    - ArcheTypeProperty value must be one of "Full", "OneDown", "OneUp"
-    - HasPart and IsPartOf are mutually exclusive per entity instance""" ;
-    owl:imports <https://admin-shell.io/aas/3/1/> .
-
-<https://w3id.org/2025/arso/modules/nameplate> a owl:Ontology ;
-    rdfs:comment """ARSO module: Digital Nameplate (IDTA 02006-3-0, November 2024).
-
-  Submodel semanticId: https://admin-shell.io/idta/nameplate/3/0/Nameplate
-
-  SMT structure (v3.0):
-    Nameplate (Submodel)
-      ├─ URIOfTheProduct              [Property, xs:anyURI, 1]
-      ├─ ManufacturerName             [MLP, 1]
-      ├─ ManufacturerProductDesignation [MLP, 1]
-      ├─ AddressInformation           [SMC drop-in, 1]
-      │    mandatory: Street, Zipcode, CityTown, NationalCode [MLP]
-      ├─ ManufacturerProductRoot      [MLP, 0..1]
-      ├─ ManufacturerProductFamily    [MLP, 0..1]
-      ├─ ManufacturerProductType      [Property, xs:string, 0..1]
-      ├─ OrderCodeOfManufacturer      [Property, xs:string, 1]
-      ├─ ProductArticleNumberOfManufacturer [Property, xs:string, 0..1]
-      ├─ SerialNumber                 [Property, xs:string, 0..1]
-      ├─ YearOfConstruction           [Property, xs:string, 0..1]
-      ├─ DateOfManufacture            [Property, xs:date, 0..1]
-      ├─ HardwareVersion              [Property, xs:string, 0..1]
-      ├─ FirmwareVersion              [Property, xs:string, 0..1]
-      ├─ SoftwareVersion              [Property, xs:string, 0..1]
-      ├─ CountryOfOrigin              [Property, xs:string, 0..1]
-      ├─ UniqueFacilityIdentifier     [Property, xs:string, 0..1]
-      ├─ CompanyLogo                  [File, 0..1]
-      ├─ Markings                     [SML, 0..1]         ← SML in v3 (was SMC in v2)
-      │    └─ Markings__00__          [SMC, 1..*]
-      │         ├─ MarkingName        [Property, xs:string, 1]
-      │         ├─ DesignationOfCertificateOrApproval [Property, xs:string, 0..1]
-      │         ├─ IssueDate          [Property, xs:date, 0..1]
-      │         ├─ ExpiryDate         [Property, xs:date, 0..1]
-      │         ├─ MarkingFile        [File, 1]
-      │         └─ MarkingAdditionalText [Property, xs:string, 0..*]
-      └─ AssetSpecificProperties      [SMC, 0..1]
-           ├─ ArbitraryProperty       [Property, 0..*]
-           ├─ ArbitraryMLP            [MLP, 0..*]
-           ├─ ArbitraryFile           [File, 0..*]
-           └─ GuidelineSpecificProperties [SML, 0..1]
-                └─ GuidelineSpecificProperties__00__ [SMC, 1..*]
-                     ├─ GuidelineForConformityDeclaration [Property, xs:string, 1]
-                     ├─ ArbitraryProperty [Property, 0..*]
-                     ├─ ArbitraryFile     [File, 0..*]
-                     └─ ArbitraryMLP      [MLP, 0..*]
-
-""" ;
-    owl:imports <https://admin-shell.io/aas/3/1/> .
-
-<https://w3id.org/2025/arso/modules/operational-data> a owl:Ontology ;
-    rdfs:comment """ARSO module: Operational Data (Custom).
-
-  SMT structure:
-    OperationalData (Submodel)
-      └─ Datapoint [Property, 1..*]
-           ├─ valueType: xs:decimal (constrained)
-           └─ semanticId: mandatory
-      └─ DatapointGroup [SMC, 0..*]
-           └─ contains only Datapoint children""" ;
-    owl:imports <https://admin-shell.io/aas/3/1/> .
-
-<https://w3id.org/2025/arso/modules/parameters> a owl:Ontology ;
-    rdfs:comment """ARSO module: Parameters (Custom).
-
-  SMT structure:
-    Parameters (Submodel)
-      └─ ParameterEntry [SMC, 1..*]
-           ├─ name [Property]
-           ├─ value [Property]
-           ├─ valueType [Property]
-           └─ unit [Property, optional]""" ;
+    rdfs:comment """ARSO module: Capability Description (IDTA 02020-1-0).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0\r
+  Cross-submodel: CapabilityRealizedBy.second must reference a Skill in the Skills SM of the same AAS (enforced via SPARQL SHACL).""" ;
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
 <https://w3id.org/2025/arso/modules/control-component> a owl:Ontology ;
-    rdfs:comment """ARSO module: Control Component / Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
+    rdfs:comment """ARSO module: Control Component / Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0\r
+  Cross-submodel: CCInterfaceReferenceRef targets are validated in SPARQL SHACL.""" ;
+    owl:imports <https://admin-shell.io/aas/3/1/> .
 
-  Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0
+<https://w3id.org/2025/arso/modules/hierarchical-structures> a owl:Ontology ;
+    rdfs:comment """ARSO module: Hierarchical Structures enabling Bills of Material (IDTA 02011-1-1, June 2024).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel""" ;
+    owl:imports <https://admin-shell.io/aas/3/1/> .
 
-  Design decision: ARSO SkillsSubmodel follows CCType (not CCInstance) because CCType can
-  be embedded directly in an instance AAS, ARSO's AID submodel already handles endpoint
-  binding (making CCInstance Endpoints SMC redundant), and the InterfaceReference → AID
-  pattern aligns with the existing ARSO AID module.
+<https://w3id.org/2025/arso/modules/nameplate> a owl:Ontology ;
+    rdfs:comment """ARSO module: Digital Nameplate (IDTA 02006-3-0, November 2024).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta/nameplate/3/0/Nameplate""" ;
+    owl:imports <https://admin-shell.io/aas/3/1/> .
 
-  SMT structure:
-    Skills (Submodel)
-      ├─ Interfaces [SMC, 1] — mandatory, always present (may be empty)
-      │    └─ {interface_name} [SMC CCInterface, 0..*]
-      │         ├─ InterfaceProfile [MLP, 0..1]
-      │         └─ InterfaceReference [ReferenceElement, 0..1] → AID InterfaceSMC
-      ├─ Skills [SMC, 1] — mandatory, always present (may be empty)
-      │    └─ {skill_name} [SMC Skill, 0..*]
-      │         ├─ Disabled [Property, xs:boolean, 1]
-      │         ├─ Modes [SMC, 1]
-      │         │    └─ {mode_name} [SMC Mode, 0..*]
-      │         ├─ Parameters [SMC, 1]
-      │         │    └─ [parameter elements]
-      │         ├─ Errors [SMC, 1]
-      │         │    └─ {error_name} [SMC Error, 0..*]
-      │         │         └─ ErrorCode [Property, xs:integer, 1]
-      │         └─ Uses [SMC, 0..1]
-      │              └─ [used capability references]
-      └─ Errors [SMC, 1] — global errors, always present (may be empty)
-           └─ {error_name} [SMC Error, 0..*]
-                └─ ErrorCode [Property, xs:integer, 1]
+<https://w3id.org/2025/arso/modules/operational-data> a owl:Ontology ;
+    rdfs:comment "ARSO module: Operational Data (Custom)." ;
+    owl:imports <https://admin-shell.io/aas/3/1/> .
 
-  Cross-submodel: CCInterfaceReferenceRef must point to an arso:InterfaceSMC within the
-  AIDSubmodel of the same AAS — enforced via SPARQL SHACL rule (not expressible in OWL).""" ;
+<https://w3id.org/2025/arso/modules/parameters> a owl:Ontology ;
+    rdfs:comment "ARSO module: Parameters (Custom)." ;
+    owl:imports <https://admin-shell.io/aas/3/1/> .
+
+<https://w3id.org/2025/arso/modules/technical-data> a owl:Ontology ;
+    rdfs:comment """ARSO module: Technical Data (IDTA 02003-2-0).\r
+\r
+  Submodel semanticId: https://admin-shell.io/idta-02003-2-0""" ;
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
 <http://www.w3id.org/hsu-aut/css#accessibleThrough> a owl:ObjectProperty ;
@@ -4737,6 +4749,34 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     rdfs:comment "SMC Uses — optional container for references to capabilities used by this skill." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> .
 
+<https://w3id.org/2025/arso#TechnicalImageFile> a owl:Class ;
+    rdfs:comment "File ImageFile — pictorial representation of the product." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/File> .
+
+<https://w3id.org/2025/arso#TechnicalManufacturerArticleNumberProperty> a owl:Class ;
+    rdfs:comment "Property ManufacturerArticleNumber (xs:string) — unique product identifier of the manufacturer." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalManufacturerNameMLP> a owl:Class ;
+    rdfs:comment "MLP ManufacturerName — legally valid designation of the manufacturer." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/MultiLanguageProperty> .
+
+<https://w3id.org/2025/arso#TechnicalManufacturerOrderCodeProperty> a owl:Class ;
+    rdfs:comment "Property ManufacturerOrderCode (xs:string) — unique code used for ordering." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
+<https://w3id.org/2025/arso#TechnicalManufacturerProductDesignationMLP> a owl:Class ;
+    rdfs:comment "MLP ManufacturerProductDesignation — short description of the product." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/MultiLanguageProperty> .
+
+<https://w3id.org/2025/arso#TechnicalTextStatementMLP> a owl:Class ;
+    rdfs:comment "MLP TextStatement — note or explanation about the product." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/MultiLanguageProperty> .
+
+<https://w3id.org/2025/arso#TechnicalValidDateProperty> a owl:Class ;
+    rdfs:comment "Property ValidDate (xs:date) — validity date for the further information entry." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> .
+
 <https://w3id.org/2025/arso#TransitionConstrainedByRel> a owl:Class ;
     rdfs:comment "RelationshipElement TransitionConstrainedBy — first: constrained Capability; second: constraining Capability from another CapabilityContainer." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/RelationshipElement> .
@@ -4804,15 +4844,15 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     owl:inverseOf <https://w3id.org/2025/arso#hasAAS> .
 
 <http://www.w3id.org/hsu-aut/css#Constraint> a owl:Class ;
-    rdfs:comment """Condition imposed on a capability that further details its applicability. 
-
-Notes:
-- A capability constraint can be formulated as one of the following three constraint types:
-▪ A precondition, i.e., a condition that must hold before a function can be executed.
-▪ A postcondition, i.e., a condition that must hold after a function has been executed.
-▪ An invariant, i.e., a condition that must hold during the execution of a
-function.
-- A capability constraint restricts the values of the properties associated with the respective capability.
+    rdfs:comment """Condition imposed on a capability that further details its applicability. \r
+\r
+Notes:\r
+- A capability constraint can be formulated as one of the following three constraint types:\r
+▪ A precondition, i.e., a condition that must hold before a function can be executed.\r
+▪ A postcondition, i.e., a condition that must hold after a function has been executed.\r
+▪ An invariant, i.e., a condition that must hold during the execution of a\r
+function.\r
+- A capability constraint restricts the values of the properties associated with the respective capability.\r
 - A capability constraint can involve one or more properties""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Resource>,
         <http://www.w3id.org/hsu-aut/css#Service>,
@@ -4881,6 +4921,14 @@ function.
     rdfs:comment "State of an event"@en ;
     owl:oneOf ( <https://admin-shell.io/aas/3/1/StateOfEvent/Off> <https://admin-shell.io/aas/3/1/StateOfEvent/On> ) .
 
+<https://w3id.org/2025/arso#TechnicalPropertyAreaSMC> a owl:Class ;
+    rdfs:comment "SMC TechnicalPropertyArea — one technical property area entry." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> .
+
+<https://w3id.org/2025/arso#TechnicalSpecificDescriptionSMC> a owl:Class ;
+    rdfs:comment "SMC SpecificDescription — one specific description entry." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> .
+
 <https://w3id.org/2025/arso#hasAAS> a owl:ObjectProperty ;
     rdfs:comment "Connects a CSS Resource to the AAS that represents it." ;
     rdfs:domain <http://www.w3id.org/hsu-aut/css#Resource> ;
@@ -4906,12 +4954,6 @@ function.
     rdfs:comment "Enumeration for denoting whether an asset is a type asset or an instance asset."@en ;
     owl:oneOf ( <https://admin-shell.io/aas/3/1/AssetKind/Instance> <https://admin-shell.io/aas/3/1/AssetKind/NotApplicable> <https://admin-shell.io/aas/3/1/AssetKind/Role> <https://admin-shell.io/aas/3/1/AssetKind/Type> ) .
 
-<https://admin-shell.io/aas/3/1/SubmodelElementList/value> a owl:ObjectProperty ;
-    rdfs:label "has value"^^xsd:string ;
-    rdfs:comment "Submodel element contained in the list."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
-
 <https://admin-shell.io/aas/3/1/Entity/statements> a owl:ObjectProperty ;
     rdfs:label "has statements"^^xsd:string ;
     rdfs:comment "Describes statements applicable to the entity by a set of submodel elements, typically with a qualified value."@en ;
@@ -4919,14 +4961,14 @@ function.
     rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
 <http://www.w3id.org/hsu-aut/css#Product> a owl:Class ;
-    rdfs:comment """Physical object being used as an input or created as an output of a production process.
-
-Notes:
-- The term Product may be used for objects in various states of manufacturing and may be seen as a generic term for raw materials, work in process and finished goods. Consumable supplies such as fuel, lubricants or cleaning agents may also be regarded as products. Furthermore, both purchased parts as well as parts manufactured in-house may be regarded as products.
-- Besides the actual product, there can be additional artifacts related to that product that are created and used in different life cycle phases to specify the product.
-▪ 3D/CAD models
-▪ specifications
-▪ BOM
+    rdfs:comment """Physical object being used as an input or created as an output of a production process.\r
+\r
+Notes:\r
+- The term Product may be used for objects in various states of manufacturing and may be seen as a generic term for raw materials, work in process and finished goods. Consumable supplies such as fuel, lubricants or cleaning agents may also be regarded as products. Furthermore, both purchased parts as well as parts manufactured in-house may be regarded as products.\r
+- Besides the actual product, there can be additional artifacts related to that product that are created and used in different life cycle phases to specify the product.\r
+▪ 3D/CAD models\r
+▪ specifications\r
+▪ BOM\r
 - A Service Requester may use these additional artifacts to formulate requirements against products.""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Service>,
         <http://www.w3id.org/hsu-aut/css#ServiceOffer>,
@@ -4953,11 +4995,11 @@ Notes:
     owl:versionInfo "V3.1" .
 
 <http://www.w3id.org/hsu-aut/css#ServiceOffer> a owl:Class ;
-    rdfs:comment """Proposal for a binding contract from the Service Provider to execute one or more particular services that a ServiceRequester can receive and accept.
-
-Notes:
-- A ServiceOffer should determine the commercial aspects of the service provision
-and may remain valid for a certain period of time.
+    rdfs:comment """Proposal for a binding contract from the Service Provider to execute one or more particular services that a ServiceRequester can receive and accept.\r
+\r
+Notes:\r
+- A ServiceOffer should determine the commercial aspects of the service provision\r
+and may remain valid for a certain period of time.\r
 - An Offer may consist of partial offers proposed by different service providers""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#ServiceProvider>,
         <http://www.w3id.org/hsu-aut/css#ServiceRequester>,
@@ -4965,6 +5007,12 @@ and may remain valid for a certain period of time.
         <http://www.w3id.org/hsu-aut/css#SkillInterface>,
         <http://www.w3id.org/hsu-aut/css#SkillParameter>,
         <http://www.w3id.org/hsu-aut/css#StateMachine> .
+
+<https://admin-shell.io/aas/3/1/SubmodelElementList/value> a owl:ObjectProperty ;
+    rdfs:label "has value"^^xsd:string ;
+    rdfs:comment "Submodel element contained in the list."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
 <https://admin-shell.io/aas/3/1/AasSubmodelElements> a owl:Class ;
     rdfs:label "AAS Submodel Elements"^^xsd:string ;
@@ -4976,11 +5024,11 @@ and may remain valid for a certain period of time.
     owl:oneOf ( <https://admin-shell.io/aas/3/1/DataTypeIec61360/Blob> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Boolean> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Date> <https://admin-shell.io/aas/3/1/DataTypeIec61360/File> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Html> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Irdi> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Iri> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Rational> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RationalMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/String> <https://admin-shell.io/aas/3/1/DataTypeIec61360/StringTranslatable> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Time> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Timestamp> ) .
 
 <http://www.w3id.org/hsu-aut/css#SkillParameter> a owl:Class ;
-    rdfs:comment """Data unit to configure, control and monitor the execution of a skill.
-
-Notes:
-- Skill parameters might be used as in- /output parameters
-- Skill parameters might be used as results
+    rdfs:comment """Data unit to configure, control and monitor the execution of a skill.\r
+\r
+Notes:\r
+- Skill parameters might be used as in- /output parameters\r
+- Skill parameters might be used as results\r
 - Skill parameters might have a relation or be equivalent to capability properties""" ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#StateMachine> .
 
@@ -4989,16 +5037,16 @@ Notes:
     rdfs:comment "Enumeration of different key value types within a key."@en ;
     owl:oneOf ( <https://admin-shell.io/aas/3/1/KeyTypes/AnnotatedRelationshipElement> <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> <https://admin-shell.io/aas/3/1/KeyTypes/BasicEventElement> <https://admin-shell.io/aas/3/1/KeyTypes/Blob> <https://admin-shell.io/aas/3/1/KeyTypes/Capability> <https://admin-shell.io/aas/3/1/KeyTypes/ConceptDescription> <https://admin-shell.io/aas/3/1/KeyTypes/DataElement> <https://admin-shell.io/aas/3/1/KeyTypes/Entity> <https://admin-shell.io/aas/3/1/KeyTypes/EventElement> <https://admin-shell.io/aas/3/1/KeyTypes/File> <https://admin-shell.io/aas/3/1/KeyTypes/FragmentReference> <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> <https://admin-shell.io/aas/3/1/KeyTypes/Identifiable> <https://admin-shell.io/aas/3/1/KeyTypes/MultiLanguageProperty> <https://admin-shell.io/aas/3/1/KeyTypes/Operation> <https://admin-shell.io/aas/3/1/KeyTypes/Property> <https://admin-shell.io/aas/3/1/KeyTypes/Range> <https://admin-shell.io/aas/3/1/KeyTypes/Referable> <https://admin-shell.io/aas/3/1/KeyTypes/ReferenceElement> <https://admin-shell.io/aas/3/1/KeyTypes/RelationshipElement> <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElement> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementList> ) .
 
+<https://w3id.org/2025/arso#hasSubmodel> a owl:ObjectProperty ;
+    rdfs:comment "Direct link from AAS to a submodel instance (bypassing Reference indirection)." ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Submodel> .
+
 <https://admin-shell.io/aas/3/1/Submodel/submodelElements> a owl:ObjectProperty ;
     rdfs:label "has submodel elements"^^xsd:string ;
     rdfs:comment "A submodel consists of zero or more submodel elements."@en ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Submodel> ;
     rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
-
-<https://w3id.org/2025/arso#hasSubmodel> a owl:ObjectProperty ;
-    rdfs:comment "Direct link from AAS to a submodel instance (bypassing Reference indirection)." ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Submodel> .
 
 <https://admin-shell.io/aas/3/1/DataTypeDefXsd> a owl:Class ;
     rdfs:label "Data Type Def XSD"^^xsd:string ;
@@ -5059,53 +5107,53 @@ Notes:
                 owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
                 owl:someValuesFrom <https://w3id.org/2025/arso#SkillsSubmodel> ] ) .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b38 rdf:first _:nb92e1651cb3a4bba98f2d49787ac1c08b36 ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b38 rdf:first _:n8a4c4413837847459c63a10ea8bb0ba8b36 ;
     rdf:rest () .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b43 rdf:first _:nb92e1651cb3a4bba98f2d49787ac1c08b41 ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b43 rdf:first _:n8a4c4413837847459c63a10ea8bb0ba8b41 ;
     rdf:rest () .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b48 rdf:first _:nb92e1651cb3a4bba98f2d49787ac1c08b46 ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b48 rdf:first _:n8a4c4413837847459c63a10ea8bb0ba8b46 ;
     rdf:rest () .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b53 rdf:first _:nb92e1651cb3a4bba98f2d49787ac1c08b51 ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b53 rdf:first _:n8a4c4413837847459c63a10ea8bb0ba8b51 ;
     rdf:rest () .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b58 rdf:first _:nb92e1651cb3a4bba98f2d49787ac1c08b56 ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b58 rdf:first _:n8a4c4413837847459c63a10ea8bb0ba8b56 ;
     rdf:rest () .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b36 a owl:Restriction ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b36 a owl:Restriction ;
     owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
     owl:someValuesFrom <https://w3id.org/2025/arso#SkillsSubmodel> .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b37 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdf:rest _:nb92e1651cb3a4bba98f2d49787ac1c08b38 .
+_:n8a4c4413837847459c63a10ea8bb0ba8b37 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdf:rest _:n8a4c4413837847459c63a10ea8bb0ba8b38 .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b41 a owl:Restriction ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b41 a owl:Restriction ;
     owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
     owl:someValuesFrom <https://w3id.org/2025/arso#OperationalDataSubmodel> .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b42 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdf:rest _:nb92e1651cb3a4bba98f2d49787ac1c08b43 .
+_:n8a4c4413837847459c63a10ea8bb0ba8b42 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdf:rest _:n8a4c4413837847459c63a10ea8bb0ba8b43 .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b46 a owl:Restriction ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b46 a owl:Restriction ;
     owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
     owl:someValuesFrom <https://w3id.org/2025/arso#ParametersSubmodel> .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b47 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdf:rest _:nb92e1651cb3a4bba98f2d49787ac1c08b48 .
+_:n8a4c4413837847459c63a10ea8bb0ba8b47 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdf:rest _:n8a4c4413837847459c63a10ea8bb0ba8b48 .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b51 a owl:Restriction ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b51 a owl:Restriction ;
     owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
     owl:someValuesFrom <https://w3id.org/2025/arso#CapabilitiesSubmodel> .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b52 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdf:rest _:nb92e1651cb3a4bba98f2d49787ac1c08b53 .
+_:n8a4c4413837847459c63a10ea8bb0ba8b52 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdf:rest _:n8a4c4413837847459c63a10ea8bb0ba8b53 .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b56 a owl:Restriction ;
+_:n8a4c4413837847459c63a10ea8bb0ba8b56 a owl:Restriction ;
     owl:onProperty <https://w3id.org/2025/arso#hasSubmodel> ;
     owl:someValuesFrom <https://w3id.org/2025/arso#SkillsSubmodel> .
 
-_:nb92e1651cb3a4bba98f2d49787ac1c08b57 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdf:rest _:nb92e1651cb3a4bba98f2d49787ac1c08b58 .
+_:n8a4c4413837847459c63a10ea8bb0ba8b57 rdf:first <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdf:rest _:n8a4c4413837847459c63a10ea8bb0ba8b58 .
 

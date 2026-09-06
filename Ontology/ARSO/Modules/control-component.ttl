@@ -8,24 +8,40 @@
 #################################################################
 # SMT STRUCTURE OVERVIEW
 #################################################################
-# Design note: SkillsSubmodel follows CCType (not CCInstance) because endpoint
-# binding is handled by the AID module and InterfaceReference points into AID.
+# Design note: ARSO adapts IDTA 02015 ControlComponentType (CCType) to a
+# flatter shape than the full standard. The submodel keeps CCType's
+# mandatory top-level Interfaces/Skills/Errors containers, but does not use
+# CCType's per-skill Modes/Parameters/Disabled/Errors/Uses sub-structure or
+# its device-level Interfaces entries -- endpoint binding is handled
+# entirely by the AID module, and each Skill links directly to the one AID
+# action it invokes (finer-grained than CCType's device-level interface
+# grouping). Realigned 2026-09-06 to describe what the generation pipeline
+# actually builds and what is actually SHACL-enforced (see
+# arso:SkillInterfaceRefActionShape / arso:SkillInterfaceRefTargetShape in
+# arso-rules.shacl.ttl, which validate this flat shape already and predate
+# this realignment).
+#
 # Skills (Submodel)
-#   ├─ Interfaces [SMC, 1]
-#   │    └─ {interface_name} [SMC CCInterface, 0..*]
-#   │         ├─ InterfaceProfile [MLP, 0..1]
-#   │         └─ InterfaceReference [ReferenceElement, 0..1]
+#   ├─ Interfaces [SMC, 1] — always present, empty (CCType's mandatory
+#   │    top-level container; ARSO does not populate device-level
+#   │    interface entries here, see design note above)
 #   ├─ Skills [SMC, 1]
 #   │    └─ {skill_name} [SMC Skill, 0..*]
-#   │         ├─ Disabled [Property, xs:boolean, 1]
-#   │         ├─ Modes [SMC, 1]
-#   │         ├─ Parameters [SMC, 1]
-#   │         ├─ Errors [SMC, 1]
-#   │         └─ Uses [SMC, 0..1]
-#   └─ Errors [SMC, 1]
-#        └─ {error_name} [SMC Error, 0..*]
-#             └─ ErrorCode [Property, xs:integer, 1]
-# Cross-submodel note: InterfaceReference targets are validated via SPARQL SHACL.
+#   │         ├─ SemanticId [Property, xs:string, 1]
+#   │         ├─ Operation {skill_name} [Operation, 1] — the invocable
+#   │         │    operation; its input/output variables are derived from
+#   │         │    the referenced AID action's schemas
+#   │         ├─ InterfaceReference [ReferenceElement, 1] — points
+#   │         │    directly at the specific AID action idShort
+#   │         │    (arso:InterfaceSMC/InteractionMetadata/actions/{action})
+#   │         │    this skill invokes. Cross-submodel target validated via
+#   │         │    SPARQL SHACL, not OWL restriction (see
+#   │         │    arso:SkillInterfaceRefActionShape /
+#   │         │    arso:SkillInterfaceRefTargetShape in arso-rules.shacl.ttl)
+#   │         └─ StateMachine [Property, xs:string, 0..1] — present only
+#   │              for asynchronous skills; polled for IDLE/RUNNING/
+#   │              SUCCESS/FAILURE
+#   └─ Errors [SMC, 1] — always present, empty (not currently populated)
 
 #################################################################
 # ONTOLOGY METADATA
@@ -34,10 +50,10 @@
 <https://w3id.org/2025/arso/modules/control-component>
   rdf:type owl:Ontology ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
-  rdfs:comment """ARSO module: Control Component / Skills (based on IDTA 02015-2-0 ControlComponentType, February 2025).
+  rdfs:comment """ARSO module: Control Component / Skills -- an ARSO-flattened adaptation of IDTA 02015-2-0 ControlComponentType (February 2025). See the design note above for how this diverges from the full standard.
 
   Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0
-  Cross-submodel: CCInterfaceReferenceRef targets are validated in SPARQL SHACL.""" .
+  Cross-submodel: Skill InterfaceReference targets are validated in SPARQL SHACL (arso-rules.shacl.ttl).""" .
 
 
 #################################################################
@@ -47,7 +63,9 @@
 arso:SkillsSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Skills Submodel" ;
-  rdfs:comment "IDTA 02015 CCType — Control Component Type (Interfaces, Skills, Errors)." .
+  arso:semanticId "https://admin-shell.io/idta/ControlComponentType/1/0" ,
+                  "https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel" ;
+  rdfs:comment "IDTA 02015 CCType — Control Component Type (Interfaces, Skills, Errors), ARSO-flattened; see design note above." .
 
 
 #################################################################
@@ -56,19 +74,9 @@ arso:SkillsSubmodel rdf:type owl:Class ;
 
 arso:CCInterfacesSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Interfaces — mandatory top-level container for all CC interface entries. Always present, may be empty." .
-
-arso:CCInterfaceSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {interface_name} — a named CC interface. Optional InterfaceProfile and InterfaceReference." .
-
-arso:CCInterfaceProfileMLP rdf:type owl:Class ;
-  rdfs:subClassOf aas:MultiLanguageProperty ;
-  rdfs:comment "MLP InterfaceProfile — human-readable description of the CC interface profile." .
-
-arso:CCInterfaceReferenceRef rdf:type owl:Class ;
-  rdfs:subClassOf aas:ReferenceElement ;
-  rdfs:comment "ReferenceElement InterfaceReference — points to an arso:InterfaceSMC within the AIDSubmodel of the same AAS. Cross-SM enforcement via SPARQL SHACL." .
+  arso:parentClass arso:SkillsSubmodel ;
+  arso:idShort "Interfaces" ;
+  rdfs:comment "SMC Interfaces — mandatory top-level container, always present and always empty. ARSO handles interface binding per-skill via each SkillSMC's own InterfaceReference (see design note above), not via device-level entries here." .
 
 
 #################################################################
@@ -77,48 +85,52 @@ arso:CCInterfaceReferenceRef rdf:type owl:Class ;
 
 arso:CCSkillsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:SkillsSubmodel ;
+  arso:idShort "Skills" ;
   rdfs:comment "SMC Skills — mandatory top-level container for all Skill entries. Always present, may be empty." .
 
 arso:SkillSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {skill_name} — a named skill. Contains Disabled, Modes, Parameters, Errors (all mandatory) and optional Uses." .
+  arso:parentClass arso:CCSkillsSMC ;
+  rdfs:comment "SMC {skill_name} — a named skill. Applied unconditionally to every direct child of Skills (no idShort — the skill name is user-defined). Contains SemanticId, an Operation, and an InterfaceReference (all mandatory), plus an optional StateMachine for asynchronous skills." .
 
-arso:SkillDisabledProperty rdf:type owl:Class ;
+arso:SkillSemanticIdProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
-  rdfs:comment "Property Disabled (xs:boolean) — whether this skill is currently disabled." .
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "SemanticId" ;
+  rdfs:comment "Property SemanticId (xs:string) — the skill's own semantic identifier URI (lab namespace convention, enforced via SHACL sh:pattern)." .
 
-arso:SkillModesSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Modes — mandatory container for Mode entries within a Skill. Always present, may be empty." .
+arso:SkillOperationElement rdf:type owl:Class ;
+  rdfs:subClassOf aas:Operation ;
+  arso:parentClass arso:SkillSMC ;
+  rdfs:comment "Operation {skill_name} — the invocable Operation of a skill entry. Applied unconditionally to every direct child of a SkillSMC with AAS modelType Operation (no idShort — its idShort matches the skill name). Its semanticId must use the lab's URI namespace (enforced via SHACL sh:pattern)." .
 
-arso:SkillModeSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {mode_name} — a named execution mode of a skill." .
+arso:SkillInterfaceReferenceRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "InterfaceReference" ;
+  rdfs:comment "ReferenceElement InterfaceReference — points directly at the specific AID action idShort (arso:InterfaceSMC/InteractionMetadata/actions/{action}) this skill invokes. Cross-submodel target validated via SPARQL SHACL, not OWL restriction (arso:SkillInterfaceRefActionShape / arso:SkillInterfaceRefTargetShape in arso-rules.shacl.ttl)." .
 
-arso:SkillParametersSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Parameters — mandatory container for skill parameter elements. Always present, may be empty." .
-
-arso:SkillErrorsSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Errors — mandatory container for skill-specific Error entries. Always present, may be empty." .
-
-arso:SkillUsesSMC rdf:type owl:Class ;
-  rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Uses — optional container for references to capabilities used by this skill." .
+arso:SkillStateMachineProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "StateMachine" ;
+  rdfs:comment "Property StateMachine (xs:string) — present only on asynchronous skills. Polled by clients for intermediate state (IDLE, RUNNING, SUCCESS, FAILURE) during execution." .
 
 
 #################################################################
-# ELEMENT TYPES — Errors (shared between submodel level and skill level)
+# ELEMENT TYPES — Errors (submodel level)
 #################################################################
 
 arso:CCErrorsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC Errors — mandatory top-level container for global CC error entries. Always present, may be empty." .
+  arso:parentClass arso:SkillsSubmodel ;
+  arso:idShort "Errors" ;
+  rdfs:comment "SMC Errors — mandatory top-level container for global CC error entries. Always present, may be empty; not currently populated by the generation pipeline." .
 
 arso:ErrorSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {error_name} — a named error entry, used at both submodel level and per-skill level." .
+  rdfs:comment "SMC {error_name} — a named error entry, if populated." .
 
 arso:ErrorCodeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
@@ -148,49 +160,28 @@ arso:SkillsSubmodel rdfs:subClassOf [
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:CCErrorsSMC ] .
 
-# Each CCInterfaceSMC: at most one InterfaceProfile and one InterfaceReference
-arso:CCInterfaceSMC rdfs:subClassOf [
-  rdf:type owl:Restriction ;
-  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:CCInterfaceProfileMLP ] .
-
-arso:CCInterfaceSMC rdfs:subClassOf [
-  rdf:type owl:Restriction ;
-  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:CCInterfaceReferenceRef ] .
-
-# Each Skill must contain Disabled, Modes, Parameters, Errors (all mandatory, cardinality 1)
+# Each Skill must contain SemanticId, an Operation, and an InterfaceReference (all mandatory)
 arso:SkillSMC rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:someValuesFrom arso:SkillDisabledProperty ] .
+  owl:someValuesFrom arso:SkillSemanticIdProperty ] .
 
 arso:SkillSMC rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:SkillModesSMC ] .
+  owl:someValuesFrom arso:SkillOperationElement ] .
 
 arso:SkillSMC rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:SkillParametersSMC ] .
+  owl:someValuesFrom arso:SkillInterfaceReferenceRef ] .
 
-arso:SkillSMC rdfs:subClassOf [
-  rdf:type owl:Restriction ;
-  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:SkillErrorsSMC ] .
-
-# Skill.Uses: at most one
+# Skill.StateMachine: at most one (present only for asynchronous skills)
 arso:SkillSMC rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:SkillUsesSMC ] .
+  owl:onClass arso:SkillStateMachineProperty ] .
 
 # Each Error entry must contain ErrorCode (mandatory)
 arso:ErrorSMC rdfs:subClassOf [

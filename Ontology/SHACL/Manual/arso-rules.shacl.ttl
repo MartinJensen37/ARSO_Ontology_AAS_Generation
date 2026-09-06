@@ -18,17 +18,21 @@ arso:SkillInterfaceRefTargetShape
     sh:message "arso:SkillInterfaceRef points at no AID Interface in the same AAS, or AID submodel is missing." ;
     sh:select """
       SELECT $this WHERE {
-        $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
-        ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
-        ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
-
         ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
                 <https://w3id.org/2025/arso#hasSkillsSubmodel>               ?skillsSm .
         ?skillsSm
                 (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
                 $this .
 
+        # Violates only if NONE of $this's reference keys resolve to an AID Interface --
+        # a Reference/keys set is unordered in RDF (no list index survives the JSON->RDF
+        # projection), so we can't single out "the last key" and must test all of them
+        # existentially, exactly like the working SkillInterfaceRefActionShape below.
         FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
           ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
           ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
                   ?iface .
@@ -40,32 +44,35 @@ arso:SkillInterfaceRefTargetShape
   ] .
 
 # Capability realizedBy targets must resolve to a Skill in the same AAS.
+# CapabilityRealizedByRel is a RelationshipElement (first/second), not a ReferenceElement --
+# the target lives on RelationshipElement/second, not ReferenceElement/value.
 
 arso:RealizedByRefTargetShape
   a sh:NodeShape ;
-  rdfs:label "RealizedByRef must target a SkillSMC in the same AAS's Skills submodel" ;
+  rdfs:label "CapabilityRealizedBy.second must reference an existing Skill element in the same AAS's Skills submodel" ;
   sh:targetClass arso:CapabilityRealizedByRel ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "arso:RealizedByRef points at no Skill in the same AAS's Skills submodel." ;
+    sh:message "A Capability realizedBy relationship's 'second' reference points at no Skill in the same AAS's Skills submodel." ;
     sh:select """
       SELECT $this WHERE {
-        $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
-        ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
-        ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
-
         ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
                 <https://w3id.org/2025/arso#hasCapabilitiesSubmodel>         ?capsSm .
         ?capsSm
-                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
                 $this .
 
+        # Same existential-over-all-keys reasoning as SkillInterfaceRefTargetShape above.
         FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/RelationshipElement/second> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>             ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>                  ?targetIdShort .
+
           ?shell  <https://w3id.org/2025/arso#hasSkillsSubmodel>       ?skillsSm .
           ?skillsSm
                   (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
                   ?skill .
-          ?skill  rdf:type                                              <https://w3id.org/2025/arso#SkillSMC> ;
+          ?skill  rdf:type                                              <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
                   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
         }
       }
@@ -107,60 +114,12 @@ arso:SkillInterfaceRefActionShape
     """ ;
   ] .
 
-# Capability realizedBy references must name an existing Skill.
-
-arso:RealizedByRefSkillShape
-  a sh:NodeShape ;
-  rdfs:label "Capability realizedBy reference must resolve to an existing Skill SMC idShort" ;
-  sh:targetClass arso:CapabilityRealizedByRel ;
-  sh:sparql [
-    a sh:SPARQLConstraint ;
-    sh:message "A Capability realizedBy ReferenceElement contains no key value matching any Skill idShort in the Skills submodel." ;
-    sh:select """
-      SELECT $this WHERE {
-        $this (<https://admin-shell.io/aas/3/1/SubmodelElementList/value>
-               | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+ ?refElem .
-        ?refElem rdf:type <https://admin-shell.io/aas/3/1/ReferenceElement> .
-
-        ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm .
-        ?capsSm (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
-                 | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>
-                 | <https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+ $this .
-
-        FILTER NOT EXISTS {
-          ?refElem <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
-          ?ref     <https://admin-shell.io/aas/3/1/Reference/keys>         ?key .
-          ?key     <https://admin-shell.io/aas/3/1/Key/value>              ?keyVal .
-
-          ?shell <https://w3id.org/2025/arso#hasSkillsSubmodel> ?skillsSm .
-          ?skillsSm (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>
-                     | <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+ ?skillSmc .
-          ?skillSmc rdf:type <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-                    <https://admin-shell.io/aas/3/1/Referable/idShort> ?keyVal .
-        }
-      }
-    """ ;
-  ] .
-
-# InteractionMetadata blocks must contain at least one action.
-
-arso:InteractionMetadataHasActionsShape
-  a sh:NodeShape ;
-  rdfs:label "AID InteractionMetadataSMC must have an 'actions' collection with at least one entry" ;
-  sh:targetClass arso:InteractionMetadataSMC ;
-  sh:sparql [
-    a sh:SPARQLConstraint ;
-    sh:message "InteractionMetadataSMC has no 'actions' SubmodelElementCollection or its actions collection is empty." ;
-    sh:select """
-      SELECT $this WHERE {
-        FILTER NOT EXISTS {
-          $this <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?actionsContainer .
-          ?actionsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "actions"^^xsd:string .
-          ?actionsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?action .
-        }
-      }
-    """ ;
-  ] .
+# NOTE: an earlier "InteractionMetadata must have >=1 action" rule was removed
+# here (2026-09-06). IDTA 02017-1 AID and WoT TD both allow property-only
+# interfaces (e.g. a read-only Modbus register bank, an OPC-UA telemetry node)
+# with no ActionAffordance at all -- that's valid data, not an error. An
+# interface with neither actions nor properties is still separately caught
+# by the empty-interface check (see invalid_aid_empty_interface test case).
 
 # EntryNode should not be empty when HierarchicalStructures exists.
 
@@ -176,6 +135,126 @@ arso:HierarchicalStructuresEntryNodeNonEmptyShape
       SELECT $this WHERE {
         FILTER NOT EXISTS {
           $this <https://admin-shell.io/aas/3/1/Entity/statements> ?stmt .
+        }
+      }
+    """ ;
+  ] .
+
+# Lab URI-namespace convention for Skill/Capability/OperationalData semanticIds.
+# Previously enforced only client-side (ui/src/components/shared/SemanticIdInput.tsx);
+# moved here so the backend is the single source of truth and any client can rely on it.
+
+arso:SkillOperationSemanticIdPatternShape
+  a sh:NodeShape ;
+  rdfs:label "Skill Operation semanticId must use the lab's URI namespace" ;
+  sh:targetClass arso:SkillOperationElement ;
+  sh:property [
+    sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+              <https://admin-shell.io/aas/3/1/Reference/keys>
+              <https://admin-shell.io/aas/3/1/Key/value> ) ;
+    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
+    sh:message "Skill semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
+  ] .
+
+arso:CapabilitySemanticIdPatternShape
+  a sh:NodeShape ;
+  rdfs:label "Capability semanticId must use the lab's URI namespace" ;
+  sh:targetClass arso:CapabilityElement ;
+  sh:property [
+    sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+              <https://admin-shell.io/aas/3/1/Reference/keys>
+              <https://admin-shell.io/aas/3/1/Key/value> ) ;
+    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
+    sh:message "Capability semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
+  ] .
+
+arso:OperationalDataVariableSemanticIdPatternShape
+  a sh:NodeShape ;
+  rdfs:label "OperationalData variable semanticId must use the lab's URI namespace" ;
+  sh:targetClass arso:OperationalDataVariableSMC ;
+  sh:property [
+    sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+              <https://admin-shell.io/aas/3/1/Reference/keys>
+              <https://admin-shell.io/aas/3/1/Key/value> ) ;
+    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
+    sh:message "OperationalData variable semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
+  ] .
+
+arso:ParameterSemanticIdPatternShape
+  a sh:NodeShape ;
+  rdfs:label "Parameter entry semanticId must use the lab's URI namespace" ;
+  sh:targetClass arso:ParameterEntrySMC ;
+  sh:property [
+    sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+              <https://admin-shell.io/aas/3/1/Reference/keys>
+              <https://admin-shell.io/aas/3/1/Key/value> ) ;
+    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
+    sh:message "Parameter entry semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
+  ] .
+
+# OperationalData / Parameters InterfaceReference targets must name an existing
+# AID property (variables_builder.py / parameters_builder.py both hardcode the
+# "properties" path segment -- never "actions" or "events"). Same existential-
+# over-all-keys reasoning as SkillInterfaceRefTargetShape above (a Reference's
+# keys are unordered once projected to RDF).
+
+arso:OperationalDataInterfaceRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "OperationalData variable InterfaceReference must resolve to an existing AID property" ;
+  sh:targetClass arso:OperationalDataInterfaceReferenceRef ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "An OperationalData variable's InterfaceReference points at no AID property in the same AAS, or the AID submodel is missing." ;
+    sh:select """
+      SELECT $this WHERE {
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasOperationalDataSubmodel>      ?opSm .
+        ?opSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+          ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
+          ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                  ?propsContainer .
+          ?propsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "properties"^^xsd:string .
+          ?propsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?prop .
+          ?prop   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+      }
+    """ ;
+  ] .
+
+arso:ParameterInterfaceRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "Parameter InterfaceReference must resolve to an existing AID property" ;
+  sh:targetClass arso:ParameterInterfaceReferenceRef ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "A Parameter's InterfaceReference points at no AID property in the same AAS, or the AID submodel is missing." ;
+    sh:select """
+      SELECT $this WHERE {
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasParametersSubmodel>          ?paramsSm .
+        ?paramsSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+          ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
+          ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                  ?propsContainer .
+          ?propsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "properties"^^xsd:string .
+          ?propsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?prop .
+          ?prop   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
         }
       }
     """ ;
