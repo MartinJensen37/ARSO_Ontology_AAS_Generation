@@ -13,6 +13,16 @@ export default defineConfig({
     // Bind 0.0.0.0, not just localhost -- required for the dev server to be
     // reachable from outside its container via the docker-compose port mapping.
     host: true,
+    // Docker Desktop bind mounts (Windows/macOS) don't reliably forward native
+    // filesystem change events into the container, so Vite's default watcher
+    // can silently never fire -- edits on the host never trigger HMR even
+    // though the file content is live-mounted. Polling works everywhere at
+    // the cost of a bit of CPU, so it's on unconditionally rather than only
+    // inside Docker.
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
     proxy: {
       '/api': apiTarget,
       '/n8n-webhook': {
