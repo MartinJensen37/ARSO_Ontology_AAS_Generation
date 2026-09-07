@@ -47,6 +47,11 @@ This reduces the risk of malformed AAS JSON and makes the generated output easie
 ![Simplified architecture for the generation pipeline.](images/architecture.png)
 ---
 
+## Demonstration Video
+
+[Ontology_grounded_AAS_gen_720p.webm](https://github.com/user-attachments/assets/57838bc5-169b-48e5-b690-b0683bc1d920)
+
+
 ## Repository Structure
 
 ```text
