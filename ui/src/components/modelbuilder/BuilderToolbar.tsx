@@ -6,6 +6,7 @@ import { GenerateAIDialog } from './GenerateAIDialog';
 import type { SubmodelNodeData } from './nodes/SubmodelNode';
 import type { SubmodelKey } from '../../store/useAppStore';
 import type { AIDInterface } from '../../types/resourceaas';
+import { SUBMODEL_POSITIONS } from './submodelLayout';
 
 /**
  * Find the AID row id (matches SubmodelNode.tsx's getRows 'AID' case:
@@ -177,9 +178,6 @@ export function BuilderToolbar() {
           return;
         }
 
-        const SHELL_HEADER_H = 70;
-        const SUBMODEL_START_X = 40;
-
         // Drop all existing submodel nodes and edges for this shell so there
         // are no stale edges referencing old node/handle IDs.
         const keptNodes = existingNodes.filter(
@@ -197,10 +195,10 @@ export function BuilderToolbar() {
         );
 
         // Create fresh submodel nodes for all selected submodels
-        const newNodes: Node[] = selectedKeys.map((key, i) => ({
+        const newNodes: Node[] = selectedKeys.map((key) => ({
           id: `submodel-${key}-${crypto.randomUUID().slice(0, 8)}`,
           type: 'submodel' as const,
-          position: { x: SUBMODEL_START_X, y: SHELL_HEADER_H + i * 160 },
+          position: { ...SUBMODEL_POSITIONS[key] },
           parentId: activeShellId,
           extent: 'parent' as const,
           data: { submodelKey: key, parentId: activeShellId } satisfies SubmodelNodeData,

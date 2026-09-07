@@ -32,9 +32,7 @@ import { PropertyEditorModal } from './modals/PropertyEditorModal';
 import { IdentityEditorModal } from './modals/IdentityEditorModal';
 import { GuidancePanel } from '../shared/GuidancePanel';
 import type { SubmodelNodeData } from './nodes/SubmodelNode';
-
-// Positions are RELATIVE to the shell container (accounting for the header height)
-const SHELL_HEADER_H = 70;
+import { SHELL_HEADER_H, DEFAULT_SHELL_WIDTH, DEFAULT_SHELL_HEIGHT } from './submodelLayout';
 
 /** Parse a BoM source handle ID to its relationship key, or null if not a BoM handle. */
 function bomRelKeyFromHandle(handle: string): 'HasPart' | 'IsPartOf' | null {
@@ -330,8 +328,8 @@ function ModelBuilderCanvas() {
       const targetShell = shellNodes.find((shell) => {
         const sx = shell.position.x;
         const sy = shell.position.y;
-        const sw = (shell.style?.width as number) ?? 960;
-        const sh = (shell.style?.height as number) ?? 600;
+        const sw = (shell.style?.width as number) ?? DEFAULT_SHELL_WIDTH;
+        const sh = (shell.style?.height as number) ?? DEFAULT_SHELL_HEIGHT;
         return absPos.x >= sx && absPos.x <= sx + sw && absPos.y >= sy && absPos.y <= sy + sh;
       }) ?? shellNodes[0];
 

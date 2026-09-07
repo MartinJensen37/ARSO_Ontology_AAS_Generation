@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Node, Edge } from '@xyflow/react';
 import type { SubmodelKey } from './useAppStore';
+import { DEFAULT_SHELL_WIDTH, DEFAULT_SHELL_HEIGHT } from '../components/modelbuilder/submodelLayout';
 
 export type EdgeLineType = 'default' | 'straight' | 'smoothstep' | 'step';
 
@@ -80,7 +81,7 @@ export const useModelStore = create<ModelState>()(
           id: shellNodeId,
           type: 'aasShell',
           position: defaultPos,
-          style: { width: 540, height: 360 },
+          style: { width: DEFAULT_SHELL_WIDTH, height: DEFAULT_SHELL_HEIGHT },
           data: { label: 'AAS Shell' },
           dragHandle: '.mb-drag-handle',
           deletable: true,
