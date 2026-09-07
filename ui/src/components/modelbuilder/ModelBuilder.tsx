@@ -140,9 +140,11 @@ function ModelBuilderCanvas() {
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
-      // Remove BoM entities when their connecting edge is deleted
       const currentEdges = useModelStore.getState().edges;
       const currentNodes = useModelStore.getState().nodes;
+      const removedIds = new Set(changes.filter((c) => c.type === 'remove').map((c) => c.id));
+
+      // Remove BoM entities when their connecting edge is deleted
       for (const change of changes) {
         if (change.type !== 'remove') continue;
         const edge = currentEdges.find((e) => e.id === change.id);
@@ -163,6 +165,43 @@ function ModelBuilderCanvas() {
           removeProfileEntryForNode(srcShellId, [srcNs.identitySystemId, 'HierarchicalStructures', relKey, entityKey]);
         }
       }
+
+      // Recompute realizedBy when a Capability → Skill edge is deleted, so a
+      // disconnected Skill doesn't stay listed via a stale profile value —
+      // mirrors the union logic in onConnect's isCapToSkill branch.
+      const affectedCapHandles = new Set<string>();
+      for (const change of changes) {
+        if (change.type !== 'remove') continue;
+        const edge = currentEdges.find((e) => e.id === change.id);
+        if (edge?.sourceHandle?.includes('-cap-') && edge.targetHandle?.includes('-sk-')) {
+          affectedCapHandles.add(edge.sourceHandle);
+        }
+      }
+      for (const srcHandle of affectedCapHandles) {
+        const capEdge = currentEdges.find((e) => e.sourceHandle === srcHandle);
+        if (!capEdge) continue;
+        const capName = srcHandle.split('-cap-').slice(1).join('-cap-');
+        const srcNode = currentNodes.find((n) => n.id === capEdge.source);
+        const srcShellId = (srcNode?.data as SubmodelNodeData)?.parentId;
+        if (!srcShellId) continue;
+        const { aasNodes, updateProfileFieldForNode, removeProfileEntryForNode } = useAppStore.getState();
+        const ns = aasNodes[srcShellId];
+        if (!ns?.identitySystemId) continue;
+
+        const remainingSkills = [...new Set(
+          currentEdges
+            .filter((e) => e.sourceHandle === srcHandle && e.targetHandle?.includes('-sk-') && !removedIds.has(e.id))
+            .map((e) => e.targetHandle!.split('-sk-').slice(1).join('-sk-'))
+        )];
+
+        if (remainingSkills.length === 0) {
+          removeProfileEntryForNode(srcShellId, [ns.identitySystemId, 'Capabilities', capName, 'realizedBy']);
+        } else {
+          const realizedBy = remainingSkills.length === 1 ? remainingSkills[0] : remainingSkills;
+          updateProfileFieldForNode(srcShellId, [ns.identitySystemId, 'Capabilities', capName, 'realizedBy'], realizedBy);
+        }
+      }
+
       setEdges((prev: Edge[]) => applyEdgeChanges(changes, prev));
     },
     [setEdges]
@@ -194,7 +233,11 @@ function ModelBuilderCanvas() {
 
       const allNodes = useModelStore.getState().nodes;
 
-      // Capability → Skill: set realizedBy on the capability
+      // Capability → Skill: set realizedBy on the capability. A Capability can
+      // realize several Skills at once, so realizedBy is derived from every
+      // -cap-<name> edge currently on this handle (not just the one just
+      // connected) — a single string when there's one, a list when there's
+      // more than one, matching what the backend already accepts.
       if (isCapToSkill) {
         const capName   = sourceHandle!.split('-cap-').slice(1).join('-cap-');
         const skillName = targetHandle!.split('-sk-').slice(1).join('-sk-');
@@ -204,7 +247,17 @@ function ModelBuilderCanvas() {
         const { aasNodes, updateProfileFieldForNode } = useAppStore.getState();
         const ns = aasNodes[srcShellId];
         if (!ns?.identitySystemId) return;
-        updateProfileFieldForNode(srcShellId, [ns.identitySystemId, 'Capabilities', capName, 'realizedBy'], skillName);
+
+        const connectedSkills = new Set<string>();
+        for (const e of useModelStore.getState().edges) {
+          if (e.source === srcId && e.sourceHandle === sourceHandle && e.targetHandle?.includes('-sk-')) {
+            connectedSkills.add(e.targetHandle.split('-sk-').slice(1).join('-sk-'));
+          }
+        }
+        connectedSkills.add(skillName);
+        const skillList = [...connectedSkills];
+        const realizedBy = skillList.length === 1 ? skillList[0] : skillList;
+        updateProfileFieldForNode(srcShellId, [ns.identitySystemId, 'Capabilities', capName, 'realizedBy'], realizedBy);
         return;
       }
 
