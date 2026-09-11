@@ -41,12 +41,9 @@
 ##
 ##  CONVERTER ANNOTATION PROPERTIES
 ##
-##  These carry no OWL semantics (no cardinality/existence
-##  implications) — they exist purely so
+##  No OWL semantics -- these exist so
 ##  Transformation/AAS_to_RDF/aas_to_rdf.py can be ontology-driven
-##  instead of hand-maintaining Python lookup tables. Adding a new
-##  submodel/element type that follows this convention needs no
-##  converter code change.
+##  rather than hand-maintaining Python lookup tables.
 ##
 #################################################################
 #################################################################
@@ -113,10 +110,9 @@ aas:AssetAdministrationShell rdfs:subClassOf [
 #################################################################
 ##  Convenience: AAS → typed submodel direct links
 ##
-##  The AAS ontology uses aas:AssetAdministrationShell/submodels
-##  → aas:Reference (indirection). For OWL reasoning over
-##  cross-submodel dependencies, we need direct typed links.
-##  The JSON-to-RDF projection creates these.
+##  The AAS ontology reaches submodels via aas:Reference indirection.
+##  These direct typed links let OWL reason over cross-submodel
+##  dependencies; the JSON-to-RDF projection creates them.
 #################################################################
 
 arso:hasSubmodel rdf:type owl:ObjectProperty ;

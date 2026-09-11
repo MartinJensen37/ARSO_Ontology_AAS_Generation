@@ -8,18 +8,11 @@
 #################################################################
 # SMT STRUCTURE OVERVIEW
 #################################################################
-# Design note: ARSO adapts IDTA 02015 ControlComponentType (CCType) to a
-# flatter shape than the full standard. The submodel keeps CCType's
-# mandatory top-level Interfaces/Skills/Errors containers, but does not use
-# CCType's per-skill Modes/Parameters/Disabled/Errors/Uses sub-structure or
-# its device-level Interfaces entries -- endpoint binding is handled
-# entirely by the AID module, and each Skill links directly to the one AID
-# action it invokes (finer-grained than CCType's device-level interface
-# grouping). Realigned 2026-09-06 to describe what the generation pipeline
-# actually builds and what is actually SHACL-enforced (see
-# arso:SkillInterfaceRefActionShape / arso:SkillInterfaceRefTargetShape in
-# arso-rules.shacl.ttl, which validate this flat shape already and predate
-# this realignment).
+# Design note: ARSO flattens IDTA 02015 ControlComponentType. It keeps CCType's
+# mandatory Interfaces/Skills/Errors containers but drops the per-skill
+# Modes/Parameters/Disabled/Errors/Uses sub-structure and device-level Interfaces
+# entries -- endpoint binding lives in the AID module, and each Skill links
+# directly to the one AID action it invokes.
 #
 # Skills (Submodel)
 #   ├─ Interfaces [SMC, 1] — always present, empty (CCType's mandatory

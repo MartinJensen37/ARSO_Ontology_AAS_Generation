@@ -243,12 +243,9 @@ arso:SkillInterfaceRefActionShape
     """ ;
   ] .
 
-# NOTE: an earlier "InteractionMetadata must have >=1 action" rule was removed
-# here (2026-09-06). IDTA 02017-1 AID and WoT TD both allow property-only
-# interfaces (e.g. a read-only Modbus register bank, an OPC-UA telemetry node)
-# with no ActionAffordance at all -- that's valid data, not an error. An
-# interface with neither actions nor properties is still separately caught
-# by the empty-interface check (see invalid_aid_empty_interface test case).
+# No "InteractionMetadata must have >=1 action" rule: property-only interfaces
+# are valid per IDTA 02017-1 and WoT TD. Interfaces with neither actions nor
+# properties are caught by the empty-interface check below.
 
 # EntryNode should not be empty when HierarchicalStructures exists.
 
@@ -322,10 +319,7 @@ arso:ParameterSemanticIdPatternShape
   ] .
 
 # OperationalData / Parameters InterfaceReference targets must name an existing
-# AID property (variables_builder.py / parameters_builder.py both hardcode the
-# "properties" path segment -- never "actions" or "events"). Same existential-
-# over-all-keys reasoning as SkillInterfaceRefTargetShape above (a Reference's
-# keys are unordered once projected to RDF).
+# AID property -- both builders hardcode the "properties" path segment.
 
 arso:OperationalDataInterfaceRefTargetShape
   a sh:NodeShape ;
