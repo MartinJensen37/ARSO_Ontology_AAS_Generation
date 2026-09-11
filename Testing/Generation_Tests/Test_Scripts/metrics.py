@@ -1,61 +1,4 @@
-﻿"""Pure metric functions for evaluation harness.
-
-Each function returns a dict of metrics. Keys used by downstream reports:
-
-Conformance:
-- shacl_conforms (bool)
-- shacl_metamodel_count (int) AAS SHACL violations
-- shacl_ontology_count (int) ARSO domain SHACL violations
-- shacl_violation_count (int) total
-- attempts (int) retry-loop attempts (1 = no retry)
-- wallclock_seconds (float)
-
-Coverage / accuracy:
-- submodel_coverage (float 0-1) fraction of expected submodels present
-- sme_coverage (float 0-1) fraction of expected SMEs present
-- mandatory_sme_coverage (float 0-1) coverage on required SMEs
-- optional_sme_coverage (float 0-1) coverage on optional SMEs
-- sme_precision (float 0-1) matched / generated
-- sme_recall (float 0-1) matched / expected = sme_coverage
-- sme_f1 (float 0-1) harmonic mean
-- hallucination_rate (float 0-1) generated SMEs not in expected = 1 - precision
-- expected_submodels (int)
-- expected_smes (int)
-- present_smes (int)
-- generated_smes (int)
-
-Semantic IDs:
-- semanticid_present_rate (float 0-1) fraction of generated SMEs with any semanticId
-- semanticid_idta_alignment (float 0-1) fraction with a known IDTA/ARSO prefix
-- semanticid_exact_match (float 0-1) fraction matching expected URL exactly
-- semanticid_per_submodel (dict[str, float]) exact_match by submodel idShort
-
-Value quality:
-- value_substring_match (float 0-1) when ground truth has expected_value_contains
-- verify_rate (float 0-1) fraction of generated SME values with [VERIFY:]
-- value_total (int) SMEs with non-empty values
-- verify_total (int) SMEs flagged with [VERIFY:]
-- idshort_format_violations (int) idShorts failing ^[A-Za-z0-9_]+$
-- value_format_violations (int) bad xs:date, malformed xsd:int values, etc.
-
-Negative checks:
-- must_not_contain_violations (int) forbidden substrings found anywhere in the generated AAS
-- must_not_contain_hits (list[str]) which ones
-
-Cross-reference correctness:
-- skill_links_to_aid_action (float 0-1) Skills with a valid AID action target
-- capability_realizedby_skill (float 0-1) Capabilities pointing at a real Skill
-- bom_globalassetid_present (bool) SelfManagedEntity has globalAssetId
-- archetype_value_in_enum (bool) ArcheType in {Full, OneDown, OneUp}
-
-Efficiency:
-- input_chars_estimate (int) system_prompt + user_prompt char count
-- output_chars_estimate (int) final AAS JSON char count
-- input_tokens_estimate (int) input_chars // 4
-- output_tokens_estimate (int) output_chars // 4
-- cost_estimate_usd (float) provider price table x tokens
-"""
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 from typing import Any, Iterable
@@ -282,24 +225,35 @@ def cross_reference_metrics(aas_doc: dict) -> dict[str, Any]:
             if len(path) >= 2 and path[-2].lower() == "actions":
                 aid_actions.add(path[-1])
 
+    # Individual skills sit one level below the submodel's "Skills" container:
+    # Skills (Submodel) -> Skills [SMC] -> {skill_name} [SMC]. The sibling
+    # Interfaces/Errors containers are always present and always empty.
+    # This previously matched len(path) == 1, which selected those three
+    # containers instead of the skills themselves, so skill_total counted 3,
+    # skill_linked stayed 0, and both this metric and
+    # capability_realizedby_skill (which compares against skill_idshorts)
+    # reported 0.0 even for a fully correct AAS.
     skills = sms.get("Skills")
     skill_total = skill_linked = 0
     skill_idshorts: set[str] = set()
     if skills:
         for path, elem in _walk_smes(skills):
-            if elem.get("modelType") == "SubmodelElementCollection" and len(path) == 1:
-                skill_total += 1
-                skill_idshorts.add(path[0])
-                for child in elem.get("value", []) or []:
-                    if not isinstance(child, dict):
-                        continue
-                    if child.get("idShort") == "InterfaceReference":
-                        ref_value = child.get("value") or {}
-                        keys = ref_value.get("keys", []) if isinstance(ref_value, dict) else []
-                        last = keys[-1].get("value") if keys and isinstance(keys[-1], dict) else None
-                        if last in aid_actions:
-                            skill_linked += 1
-                            break
+            if elem.get("modelType") != "SubmodelElementCollection":
+                continue
+            if len(path) != 2 or path[0] != "Skills":
+                continue
+            skill_total += 1
+            skill_idshorts.add(path[1])
+            for child in elem.get("value", []) or []:
+                if not isinstance(child, dict):
+                    continue
+                if child.get("idShort") == "InterfaceReference":
+                    ref_value = child.get("value") or {}
+                    keys = ref_value.get("keys", []) if isinstance(ref_value, dict) else []
+                    last = keys[-1].get("value") if keys and isinstance(keys[-1], dict) else None
+                    if last in aid_actions:
+                        skill_linked += 1
+                        break
 
     capabilities = sms.get("Capabilities")
     cap_total = cap_linked = 0
