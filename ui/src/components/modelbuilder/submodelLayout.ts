@@ -1,22 +1,14 @@
 import type { SubmodelKey } from '../../store/useAppStore';
 
 /**
- * Fixed grid position (relative to the parent AAS shell) for each submodel
- * node type. Shared by addAasShell.ts (new AAS) and BuilderToolbar.tsx
- * (AI-generated / file import) so every code path that populates a shell
- * lays submodels out identically instead of stacking them in one column.
- *
- * Layout (columns left-to-right, rows top-to-bottom):
- *   Nameplate   Variables       Parameters
+ * Fixed grid position (relative to the parent AAS shell) per submodel node type,
+ * so every code path that populates a shell lays them out identically:
+ *   Nameplate     Variables   Parameters
  *   Hierarch.
- *   Capabilities  Skills        AID
+ *   Capabilities  Skills      AID
  *
- * Row/column gaps are sized from each submodel's row-count cap in
- * SubmodelNode.tsx's getRows() (header ~36px + rows * 22px), with enough
- * margin that typical content doesn't collide with the node below/right of
- * it. AID and Skills sit at the bottom of their column with nothing below,
- * so their unbounded content (multiple interfaces, many actions) can grow
- * downward without needing to be budgeted for.
+ * Gaps are sized from SubmodelNode.tsx's getRows() row caps. AID and Skills sit
+ * at the bottom of their column so their unbounded content can grow downward.
  */
 export const SHELL_HEADER_H = 70;
 export const SUBMODEL_START_X = 40;

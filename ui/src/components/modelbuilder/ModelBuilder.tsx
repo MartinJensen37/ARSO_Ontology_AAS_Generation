@@ -45,11 +45,9 @@ function bomRelKeyFromHandle(handle: string): 'HasPart' | 'IsPartOf' | null {
 const AID_IFACE_NAMES = ['InterfaceMQTT', 'InterfaceOPCUA', 'InterfaceHTTP'];
 
 /**
- * Extract the AID affordance key (property/action/event idShort) an AID
- * target handle refers to. AID row ids are `aid-{prop|act|evt}-{ifaceName}-{key}`
- * (see SubmodelNode.tsx's getRows 'AID' case) — strip the known interface
- * name prefix to recover the bare key, which is what InterfaceReference /
- * Skill.interface actually store.
+ * Extract the AID affordance key from a target handle id
+ * (`aid-{prop|act|evt}-{ifaceName}-{key}`), which is what InterfaceReference /
+ * Skill.interface store.
  */
 function parseAidAffordanceHandle(handle: string): string | null {
   const m = handle.match(/-aid-(?:prop|act|evt)-(.+)$/);
@@ -112,10 +110,8 @@ function ModelBuilderCanvas() {
 
   const seededRef = useRef(false);
 
-  // One-time migration for state persisted by an older app version: ensure
-  // aasShell nodes have dragHandle and aren't still marked deletable:false
-  // (the first shell used to be permanently undeletable; now every shell
-  // must be deletable). Submodel seeding moved to addAasShell.
+  // One-time migration of older persisted state: give aasShell nodes a
+  // dragHandle and clear deletable:false, since every shell is now deletable.
   useEffect(() => {
     if (seededRef.current) return;
     seededRef.current = true;
@@ -233,11 +229,8 @@ function ModelBuilderCanvas() {
 
       const allNodes = useModelStore.getState().nodes;
 
-      // Capability → Skill: set realizedBy on the capability. A Capability can
-      // realize several Skills at once, so realizedBy is derived from every
-      // -cap-<name> edge currently on this handle (not just the one just
-      // connected) — a single string when there's one, a list when there's
-      // more than one, matching what the backend already accepts.
+      // Capability -> Skill: realizedBy is derived from every -cap-<name> edge
+      // on this handle -- a string for one, a list for several.
       if (isCapToSkill) {
         const capName   = sourceHandle!.split('-cap-').slice(1).join('-cap-');
         const skillName = targetHandle!.split('-sk-').slice(1).join('-sk-');
@@ -329,11 +322,8 @@ function ModelBuilderCanvas() {
 
   const onNodesDelete: OnNodesDelete = useCallback(
     (deleted: Node[]) => {
-      // toggleSubmodel always operates on whichever AAS is currently active,
-      // so a deleted node belonging to a *different* (non-active) shell must
-      // switch the active AAS to that shell first — otherwise this either
-      // silently no-ops (its key isn't in the active shell's list) or, worse,
-      // toggles the wrong submodel off on the wrong AAS.
+      // toggleSubmodel acts on the active AAS, so switch to the deleted node's
+      // shell first or the wrong submodel gets toggled.
       for (const node of deleted) {
         if (node.type !== 'submodel' || !node.data?.submodelKey) continue;
         const key = node.data.submodelKey as SubmodelKey;
@@ -416,11 +406,8 @@ function ModelBuilderCanvas() {
       // Switch active AAS to the shell this submodel was dropped onto
       setActiveAasNode(targetShell.id);
 
-      // Sync selection state — read fresh from the store rather than the
-      // `selectedSubmodels` hook value above, which is still the *previous*
-      // active shell's list until the next render (setActiveAasNode's update
-      // hasn't been reflected here yet). Matters whenever the drop target
-      // isn't the shell that was already active.
+      // Read selection fresh from the store: the hook value above is still the
+      // previously active shell's list until the next render.
       const targetSelected = useAppStore.getState().aasNodes[targetShell.id]?.selectedSubmodels ?? [];
       if (!targetSelected.includes(key)) {
         toggleSubmodel(key);

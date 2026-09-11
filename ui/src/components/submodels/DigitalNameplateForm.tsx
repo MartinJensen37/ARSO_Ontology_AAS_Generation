@@ -11,20 +11,14 @@ function deriveBaseUrl(id: string) {
 
 const NAMEPLATE_INSTANCE_BASE = 'https://smartproduction.aau.dk/submodels/instances/';
 
-// Fields the MLP write-path (setFieldValue below) must wrap as [{language,text}] --
-// exactly ManufacturerName and ManufacturerProductDesignation per
-// nameplate_builder.py (every other field, including ManufacturerProductFamily,
-// is a plain string Property there, not a MultiLanguageProperty).
+// Fields setFieldValue must wrap as [{language,text}] -- the only two MLPs in
+// nameplate_builder.py; everything else there is a plain string Property.
 const MLP_FIELDS = new Set(['ManufacturerName', 'ManufacturerProductDesignation']);
 
 type Field = { key: string; label: string; required?: boolean; placeholder?: string };
 
-// Every field here must correspond 1:1 to an idShort
-// nameplate_builder.py actually reads/emits -- see that file's
-// `optional_string_fields` dict and the ManufacturerName/
-// ManufacturerProductDesignation/OrderCodeOfManufacturer handling above it.
-// AddressInformation (ContactInformation SMC) is edited separately below,
-// it's not a flat string field.
+// Each key must be an idShort nameplate_builder.py reads/emits.
+// AddressInformation is edited separately below.
 const FIELDS: Field[] = [
   { key: 'ManufacturerName', label: 'ManufacturerName', required: true, placeholder: '' },
   { key: 'ManufacturerProductDesignation', label: 'ManufacturerProductDesignation', required: true, placeholder: '' },
@@ -93,12 +87,8 @@ export function DigitalNameplateForm() {
     updateProfileField([systemId, 'DigitalNameplate', key], value);
   };
 
-  // AddressInformation — nested object (ContactInformation SMC in
-  // nameplate_builder.py), not a flat string. All 4 sub-fields are
-  // individually mandatory once ContactInformation exists at all; the
-  // builder no longer fabricates placeholders for missing ones (a real
-  // extraction failure should surface as a SHACL violation, not be hidden),
-  // so filling these in here is how a human resolves that violation.
+  // AddressInformation is a nested object (ContactInformation SMC), and all 4
+  // sub-fields are mandatory once it exists.
   const getAddressInformation = (): Record<string, string> =>
     (nameplate.AddressInformation ?? {}) as Record<string, string>;
 

@@ -9,11 +9,8 @@ import type { AIDInterface } from '../../types/resourceaas';
 import { SUBMODEL_POSITIONS } from './submodelLayout';
 
 /**
- * Find the AID row id (matches SubmodelNode.tsx's getRows 'AID' case:
- * `aid-{prop|act|evt}-{ifaceName}-{key}`) for a given property/action/event
- * key, searching every configured interface. Used to reconstruct
- * Variable/Parameter/Skill → AID edges from InterfaceReference / interface
- * values already present in an imported profile.
+ * Find the AID row id (`aid-{prop|act|evt}-{ifaceName}-{key}`, per
+ * SubmodelNode.tsx's getRows) for a key, across every configured interface.
  */
 function findAidRowId(aid: Record<string, AIDInterface> | undefined, key: string): string | null {
   if (!aid) return null;
@@ -206,11 +203,8 @@ export function BuilderToolbar() {
 
         modelState.setNodes([...keptNodes, ...newNodes]);
 
-        // Rebuild reference edges from the parsed profile: Capability → Skill
-        // (realizedBy) and Variable/Parameter/Skill → AID (InterfaceReference /
-        // interface) — same connectors onConnect in ModelBuilder.tsx writes when
-        // drawn by hand, reconstructed here so an imported/generated AAS shows
-        // up already wired instead of needing every connection redrawn manually.
+        // Rebuild reference edges from the parsed profile (Capability -> Skill,
+        // Variable/Parameter/Skill -> AID) so an imported AAS arrives wired.
         const systemId = appState.identitySystemId;
         const profile = appState.parsedProfile;
         const cfg = profile?.[systemId];

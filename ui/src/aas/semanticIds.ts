@@ -1,14 +1,10 @@
 /**
- * Semantic ID URI constants — ported from generation/core/semantic_ids.py.
- * Used by the TypeScript AAS builders to set standard semantic IDs.
+ * Semantic ID URI constants, mirroring Transformation/.../core/semantic_ids.py.
  */
 
-// ── IDTA submodel semantic IDs ────────────────────────────────────────────────
-// These must match the arso:semanticId value(s) declared on the corresponding
-// class in Ontology/ARSO/Modules/*.ttl — that's what the backend's
-// Transformation/AAS_to_RDF/aas_to_rdf.py converter actually matches against
-// to type a submodel. A mismatch here means the submodel silently never gets
-// its ARSO type (or the ontology's SHACL validation for it) at all.
+// IDTA submodel semantic IDs. Must match the arso:semanticId declared on the
+// corresponding class in Ontology/ARSO/Modules/*.ttl, or aas_to_rdf.py never
+// types the submodel and its SHACL shapes never fire.
 export const DIGITAL_NAMEPLATE_SUBMODEL  = 'https://admin-shell.io/idta/nameplate/3/0/Nameplate';
 export const HIERARCHICAL_STRUCTURES     = 'https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel';
 export const OPERATIONAL_DATA_SUBMODEL   = 'https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel';

@@ -28,9 +28,8 @@ interface ModelState {
   resetAll: () => void;
 }
 
-// Conventional ID for a default/fallback shell reference (e.g. openIdentityModal's
-// optional argument) -- no longer a guaranteed-to-exist node. The canvas starts
-// empty; every shell (including the first) is created via addShellNode below.
+// Conventional id for a default shell reference; not guaranteed to exist, since
+// the canvas starts empty.
 export const SHELL_NODE_ID = 'aas-shell';
 
 /** Generate a unique shell node ID */

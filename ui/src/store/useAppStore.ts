@@ -198,11 +198,9 @@ function withSync(s: AppState, updates: Partial<AppState>): Partial<AppState> {
 }
 
 /**
- * Reshape an AASNodeState into the profile-document wire body POST
- * /api/profile-to-aas expects — the exact shape
- * Transformation/AAS_Builder/AAS_builder.py::profile_document_to_aas_json
- * consumes. No AAS-element construction happens client-side any more; the
- * server (same builder code the LLM pipeline and validator use) does that.
+ * Reshape an AASNodeState into the profile-document body POST /api/profile-to-aas
+ * expects -- the shape profile_document_to_aas_json consumes. All AAS-element
+ * construction happens server-side.
  */
 function buildProfilePayload(ns: AASNodeState): {
   asset_name: string;
@@ -231,8 +229,7 @@ function buildProfilePayload(ns: AASNodeState): {
 }
 
 // ── Initial state ─────────────────────────────────────────────────────────────
-// Canvas starts with zero AAS nodes -- every shell (including the first) is
-// created explicitly via addAasNode, and can be deleted like any other.
+// Canvas starts with zero AAS nodes; every shell is created via addAasNode.
 
 const INITIAL_STATE = {
   aasNodes: {} as Record<string, AASNodeState>,
@@ -488,9 +485,7 @@ export const useAppStore = create<AppState>()(
     }
     const systemConfig = profile[systemId] as Record<string, unknown>;
 
-    // selected_submodels already comes back as SubmodelKey-shaped strings
-    // (see _SUBMODEL_IDSHORT_TO_KEY in aas_to_profile.py) — no idShort
-    // translation needed on this side.
+    // selected_submodels already arrives SubmodelKey-shaped (aas_to_profile.py).
     const finalKeys = [...new Set([...REQUIRED_SUBMODELS, ...(selected_submodels as SubmodelKey[])])];
 
     const updates: Partial<AppState> = {

@@ -10,10 +10,8 @@ export interface SystemConfig {
   idShort: string;
   id: string;
   globalAssetId: string;
-  // Pass-through root-level profile fields (Generation/Context_Builder/Parsing/
-  // profile_structure.py::CORE_PROFILE_KEYS) -- no dedicated form input for
-  // serialNumber/derivedFrom/location yet, but they round-trip through the
-  // profile untouched if a partner tool or the backend populates them.
+  // Pass-through root-level profile fields (CORE_PROFILE_KEYS in
+  // profile_structure.py) -- no form input yet, but they round-trip untouched.
   assetType?: string;
   serialNumber?: string;
   derivedFrom?: string;
@@ -136,10 +134,8 @@ export interface AIDFormResponse {
 }
 
 export interface Variable {
-  // idShort of the AID property/action this variable reads (under
-  // AID/InterfaceMQTT/InteractionMetadata/properties). Field name matches the
-  // Python profile dict key exactly (variables_builder.py) -- no case
-  // translation needed since this object is sent to /api/profile-to-aas as-is.
+  // idShort of the AID property/action this variable reads. Key name matches the
+  // Python profile dict exactly, since this object is posted as-is.
   InterfaceReference?: string;
   semanticId?: string;
 }
@@ -158,10 +154,8 @@ export interface BomEntity {
   submodelId?: string;
 }
 
-// 'Full' | 'OneDown' | 'OneUp' is the ontology's own ArcheType enum
-// (hierarchical-structures.ttl owl:oneOf) -- the only 3 legal values, not
-// 'OneUpAndOneDown'. No SameAs field: the builder writes that reference
-// automatically into every IsPartOf/HasPart node, it's not user-configured.
+// Archetype is the ontology's ArcheType owl:oneOf enum. No SameAs field -- the
+// builder writes that reference into every IsPartOf/HasPart node itself.
 export interface HierarchicalStructures {
   Name: string;
   Archetype?: 'OneUp' | 'OneDown' | 'Full';
@@ -177,11 +171,8 @@ export interface Capability {
 
 export interface Skill {
   semantic_id: string;
-  // idShort of the AID action this skill invokes (under AID/InterfaceMQTT/
-  // InteractionMetadata/actions). Required -- skills_builder.py/AAS_builder.py
-  // ::_check_required_fields hard-requires this on every skill; Operation
-  // input/output variables and delegation/sync qualifiers are all derived
-  // server-side from that action's own schema, not authored per-skill here.
+  // idShort of the AID action this skill invokes. Required; Operation variables
+  // and qualifiers are derived server-side from that action's schema.
   interface: string;
   description?: string;
 }

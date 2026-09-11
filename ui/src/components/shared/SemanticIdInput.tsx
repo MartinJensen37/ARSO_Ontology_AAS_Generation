@@ -6,9 +6,8 @@ interface Props {
   required?: boolean;
 }
 
-// Format is enforced backend-side by the arso:*SemanticIdPatternShape SHACL shapes
-// (Ontology/SHACL/Manual/arso-rules.shacl.ttl); violations surface through the
-// live validation panel rather than being duplicated here.
+// Format is enforced by the arso:*SemanticIdPatternShape SHACL shapes and
+// surfaces through the live validation panel.
 export function SemanticIdInput({ value, onChange, label = 'Semantic ID', required }: Props) {
   return (
     <div className="field-group">

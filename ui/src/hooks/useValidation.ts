@@ -4,22 +4,12 @@ import { useAppStore } from '../store/useAppStore';
 const DEBOUNCE_MS = 400;
 
 /**
- * Validates only the currently active AAS whenever its data changes (debounced).
+ * Debounced validation of the active AAS whenever its data changes.
  * Results are stored per-node in validationIssuesByNode so the GuidancePanel
- * can show issues per AAS without cross-contamination.
+ * shows issues per AAS without cross-contamination.
  *
- * buildAasJsonForNode now builds AND validates in one round trip to the
- * server (POST /api/profile-to-aas) — there is no separate local build step
- * any more, so this hook's only job is debouncing + guarding against a slow
- * earlier request clobbering a faster later one.
- *
- * Watches the *entire* active AASNodeState object (aasNodes[activeAasNodeId])
- * rather than a hand-picked subset of its fields. useAppStore's withSync
- * helper gives that object a new reference on every mutation that touches
- * it — identity fields (idShort/id/globalAssetId/assetType), selectedSubmodels
- * (including submodel add/remove/delete), and parsedProfile content all flow
- * through it — so this fires on any change to the active AAS, not just edits
- * to profile fields.
+ * Watches the whole active AASNodeState, since withSync re-references it on any
+ * mutation. Guards against a slow earlier request clobbering a faster later one.
  */
 export function useValidation() {
   const activeAasNodeId = useAppStore((s) => s.activeAasNodeId);

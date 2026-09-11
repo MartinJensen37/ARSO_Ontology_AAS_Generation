@@ -16,11 +16,8 @@ async function post<T>(path: string, body: Record<string, unknown>, signal?: Abo
   return res.json() as Promise<T>;
 }
 
-// ---------------------------------------------------------------------------
-// Profile <-> AAS JSON (single canonical build/parse path — see
-// Transformation/AAS_Builder/AAS_builder.py and
-// Transformation/AAS_Builder/AAS_to_Profile/aas_to_profile.py)
-// ---------------------------------------------------------------------------
+// Profile <-> AAS JSON: the single canonical build/parse path
+// (Transformation/AAS_Builder/AAS_builder.py and .../AAS_to_Profile/aas_to_profile.py).
 
 export interface ProfileToAasRequest {
   asset_name: string;

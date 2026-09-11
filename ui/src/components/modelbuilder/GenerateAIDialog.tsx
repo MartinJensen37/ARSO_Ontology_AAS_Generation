@@ -156,9 +156,7 @@ export function GenerateAIDialog({ isOpen, onClose, onImport }: GenerateAIDialog
 
   // --- Generation options ---
   const [genConfig, setGenConfig] = useState<GenerationConfig | null>(null);
-  // Populated once /api/generation-config loads (see effect below) — the set
-  // of providers is server-configured and open-ended, so there's no safe
-  // hardcoded default to show before that.
+  // Providers come from /api/generation-config; no safe hardcoded default.
   const [provider, setProvider] = useState<string>('');
   const [model, setModel] = useState<string>('');
   const [generationMode, setGenerationMode] = useState<string>('json-description');

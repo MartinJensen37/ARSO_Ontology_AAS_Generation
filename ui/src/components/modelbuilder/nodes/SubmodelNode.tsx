@@ -169,9 +169,8 @@ function getRows(
       const hasPart  = Object.keys(hs.HasPart  ?? {}).length;
       const isPartOf = Object.keys(hs.IsPartOf ?? {}).length;
 
-      // Always expose both relationship handles so edges can be drawn immediately.
-      // No SameAs handle here -- that's an automatic reference the builder writes
-      // into every HasPart/IsPartOf node itself, not a relationship a human configures.
+      // Both relationship handles are always exposed. No SameAs handle -- the
+      // builder writes that reference itself.
       return [
         { id: 'hs-entry',    label: 'EntryNode', value: hs.Name ?? identitySystemId, handleType: 'target' },
         { id: 'hs-haspart',  label: 'HasPart',   value: hasPart  > 0 ? `${hasPart} part${hasPart !== 1 ? 's' : ''}`             : '—', handleType: 'source' },
@@ -206,9 +205,8 @@ export const SubmodelNode = memo(function SubmodelNode({ id, data, selected }: N
   const parsedProfile = ownState?.parsedProfile ?? globalParsedProfile;
   const identitySystemId = ownState?.identitySystemId ?? globalIdentitySystemId;
 
-  // The backend's issue.field uses ontology/config-style submodel names, which
-  // for these two keys don't match the UI's SubmodelKey literal (see
-  // Validation/Validator/validator.py's map_issue_to_field / _FIELD_KEYWORDS).
+  // issue.field uses ontology-style submodel names, which differ from the UI's
+  // SubmodelKey for two keys (see validator.py's _FIELD_KEYWORDS).
   const fieldPrefix = SUBMODEL_KEY_TO_FIELD_PREFIX[submodelKey] ?? submodelKey;
   const violationCount = nodeIssues.filter(
     (i) => i.severity === 'Violation' && i.field?.startsWith(fieldPrefix)

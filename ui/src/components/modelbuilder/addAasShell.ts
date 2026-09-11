@@ -6,10 +6,8 @@ import { SUBMODEL_POSITIONS } from './submodelLayout';
 
 /**
  * Create a new AAS shell (profile state + canvas node) with its required
- * submodel nodes pre-populated, and make it the active AAS. Shared by the
- * catalog's click-to-add button and the canvas's drag-and-drop "new AAS"
- * handler -- every shell is created this way, including the first, since the
- * canvas can start (and be reset to) zero AAS nodes.
+ * submodel nodes, and make it active. Used by both click-to-add and
+ * drag-and-drop; the canvas can hold zero shells, so this creates the first too.
  */
 export function addAasShell(position?: { x: number; y: number }): string {
   const shellNodeId = createShellNodeId();
