@@ -233,20 +233,16 @@ class CapabilitiesSubmodelBuilder:
     def _create_capability_relations(self, system_id: str, cap_name: str,
                                      cap_config: Dict,
                                      relations: List[Any]) -> List[model.SubmodelElement]:
-        """
-        Create capability relation elements.
-
-        Capability relations describe relationships between capabilities,
-        such as requires, isPartOf, isComposedOf, etc.
+        """Create capability relation elements (requires, isPartOf, isComposedOf, ...).
 
         Args:
-            system_id: System identifier
-            cap_name: Name of the capability
-            cap_config: Configuration for the capability
-            relations: List of relation configurations
+            system_id: System identifier.
+            cap_name: Name of the capability.
+            cap_config: Configuration for the capability.
+            relations: List of relation configurations.
 
         Returns:
-            List of SubmodelElements representing the relations
+            List of SubmodelElements representing the relations.
         """
         relation_elements = []
         for idx, relation in enumerate(relations):

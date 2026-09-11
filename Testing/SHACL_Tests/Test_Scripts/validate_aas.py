@@ -1,12 +1,10 @@
 """Validate an AAS JSON file against the combined ARSO SHACL shapes.
 
+Thin CLI wrapper around Validation.Validator.validator.run_shacl, the same
+function /api/validate and the generation retry loop use.
+
 Usage:
     python Testing/SHACL_Tests/Test_Scripts/validate_aas.py <path-to-aas.json>
-
-Thin CLI wrapper around Validation.Validator.validator.run_shacl -- the same
-function the API's /api/validate endpoint and the generation pipeline's
-retry loop use, so this always checks against the current shapes/ontology,
-never a separately-maintained copy.
 """
 from __future__ import annotations
 

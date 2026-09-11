@@ -1,10 +1,7 @@
-﻿"""DigitalNameplateSubmodelBuilderV2 — overrides v1 to thread IDTA semanticIds
-into mandatory child SMEs (ManufacturerName, ProductDesignation,
-ContactInformation, OrderCodeOfManufacturer).
+﻿"""DigitalNameplate submodel builder, IDTA 02006 aligned.
 
-The submodel-level semanticId is corrected automatically by passing a
-SemanticIdFactoryV2 instance to the constructor (it overrides the broken
-"https://admin-shell.io/IDTA 02006-3-0" via the inherited property).
+Threads IDTA semanticIds onto the mandatory child SMEs (ManufacturerName,
+ManufacturerProductDesignation, ContactInformation, OrderCodeOfManufacturer).
 """
 from __future__ import annotations
 
@@ -22,18 +19,12 @@ class DigitalNameplateSubmodelBuilder:
         self.semantic_factory = semantic_factory
         self.element_factory = element_factory
 
-    """Inherits everything; overrides build() to attach mandatory SME semanticIds."""
-
     def build(self, system_id: str, config: Dict) -> model.Submodel:
         nameplate_config = (
             config.get("DigitalNameplate", {}) or config.get("Nameplate", {}) or {}
         )
         if not isinstance(nameplate_config, dict):
-            # An LLM occasionally emits a whole section as a bare "[VERIFY: ...]"
-            # string instead of an object when it has nothing to report. Treat
-            # that the same as the section being absent -- the individual
-            # mandatory-field SHACL shapes below still correctly surface the
-            # gap to a human; we just must not crash trying to read from it.
+            # LLM sometimes emits a bare "[VERIFY: ...]" string; treat as absent.
             nameplate_config = {}
         elements = []
 
@@ -49,12 +40,8 @@ class DigitalNameplateSubmodelBuilder:
             )
         )
 
-        # ManufacturerName — IDTA-aligned semanticId (mandatory per IDTA 02006).
-        # No fallback: a fabricated "Unknown Manufacturer" would satisfy SHACL
-        # (structural cardinality only, it doesn't check content) while hiding
-        # that the real value was never supplied. Omitting the element when
-        # missing lets the existing ManufacturerNameMLP MinCount1 shape surface
-        # that to a human instead.
+        # Mandatory per IDTA 02006. No fallback: a fabricated value would pass
+        # SHACL's structural check while hiding that nothing was supplied.
         manufacturer_name = nameplate_config.get("ManufacturerName") or config.get("manufacturerName")
         if manufacturer_name:
             elements.append(
@@ -65,9 +52,7 @@ class DigitalNameplateSubmodelBuilder:
                 )
             )
 
-        # ManufacturerProductDesignation — IDTA-aligned (mandatory). Same
-        # no-silent-fallback reasoning as ManufacturerName above -- defaulting
-        # to the system/idShort is a fabricated value, not the real designation.
+        # Mandatory; no fallback -- a defaulted designation would be fabricated.
         product_designation = (
             nameplate_config.get("ManufacturerProductDesignation")
             or config.get("manufacturerProductDesignation")
@@ -81,20 +66,16 @@ class DigitalNameplateSubmodelBuilder:
                 )
             )
 
-        # ContactInformation — IDTA-aligned (mandatory). IDTA 02006 expects an SMC
-        # holding an IDTA 02002 ContactInformation; we emit a minimal-yet-typed SMC
-        # so the ontology's `someValuesFrom arso:ContactInformationSMC` restriction
-        # is satisfied. Inner SMEs can be filled by callers via config.
-        # "ContactInformation" is the legacy key; "AddressInformation" is v3 canonical
+        # Mandatory; a minimal typed SMC satisfying the ontology's
+        # someValuesFrom arso:ContactInformationSMC restriction.
+        # "ContactInformation" is legacy; "AddressInformation" is v3 canonical.
         contact_config = (
             nameplate_config.get("AddressInformation")
             or nameplate_config.get("ContactInformation")
             or {}
         )
         if not isinstance(contact_config, dict):
-            # Same "[VERIFY: ...]" placeholder-string case as nameplate_config
-            # above -- treat as absent rather than crash; the 4 mandatory
-            # AddressXxxMLP shapes below still surface the missing address.
+            # Placeholder string instead of an object; treat as absent.
             contact_config = {}
         _address_sids = {
             "Street":       self.semantic_factory.NP_ADDRESS_STREET,
@@ -102,11 +83,7 @@ class DigitalNameplateSubmodelBuilder:
             "CityTown":     self.semantic_factory.NP_ADDRESS_CITY_TOWN,
             "NationalCode": self.semantic_factory.NP_ADDRESS_NATIONAL_CODE,
         }
-        # Each of these 4 is individually mandatory (minCount 1) per IDTA
-        # 02006-3-0. Not defaulted to a placeholder when missing: address
-        # data is normally present in the source material, so its absence
-        # means extraction failed upstream -- the resulting MinCount
-        # violation should surface that to a human, not be papered over.
+        # Each individually mandatory (minCount 1) per IDTA 02006-3-0.
         contact_inner: list[model.SubmodelElement] = []
         for field, idshort in (
             ("Street", "Street"),
@@ -131,10 +108,7 @@ class DigitalNameplateSubmodelBuilder:
             )
         )
 
-        # OrderCodeOfManufacturer — IDTA-aligned (mandatory). Same no-silent-
-        # fallback reasoning: "[VERIFY: order code]" used to satisfy SHACL
-        # unconditionally, hiding a genuinely missing value behind text that
-        # only a human reading the raw AAS JSON would ever notice.
+        # Mandatory; omitted when missing so the SHACL shape flags it.
         order_code = (
             nameplate_config.get("OrderCodeOfManufacturer")
             or nameplate_config.get("ManufacturerArticleNumber")

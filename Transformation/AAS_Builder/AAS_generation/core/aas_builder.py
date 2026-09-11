@@ -151,9 +151,8 @@ class AASBuilder:
         if 'Capabilities' in config and config.get('Capabilities'):
             submodel_names.append('Capabilities')
 
-        # Add Skills submodel reference if:
-        # 1. Skills are explicitly defined in config, OR
-        # 2. There are actions in AssetInterfacesDescription (auto-generation)
+        # Skills reference when explicitly configured, or auto-generated from
+        # AssetInterfacesDescription actions.
         has_explicit_skills = 'Skills' in config and config.get('Skills')
         has_actions = self._has_interface_actions(config)
 

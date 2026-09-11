@@ -5,11 +5,10 @@ from basyx.aas import model
 
 
 class AssetInterfacesBuilder:
-    """
-    Builder class for creating AssetInterfacesDescription submodel.
+    """Builds the AssetInterfacesDescription submodel.
 
-    This submodel describes the communication interfaces of an asset,
-    primarily MQTT-based interfaces following W3C Thing Description patterns.
+    Describes an asset's communication interfaces, primarily MQTT, following
+    W3C Thing Description patterns.
     """
 
     def __init__(self, base_url: str, semantic_factory, element_factory):
@@ -45,15 +44,10 @@ class AssetInterfacesBuilder:
     @staticmethod
     def _as_named_dict(value) -> Dict:
         """Coerce InteractionMetadata / actions / properties / events into the
-        {name: {...}} shape these builders expect.
+        {name: {...}} shape the builders expect.
 
-        An LLM will sometimes emit a list of entries instead (a plausible
-        alternate encoding, each item carrying its own name), or occasionally
-        a bare "[VERIFY: ...]" placeholder string for a whole section. Rather
-        than crash on the first .get()/.items() call downstream, reinterpret
-        a list using each item's own 'name' or 'key' field as the dict key
-        (dropping only entries with neither), and treat anything else
-        unrecognized as absent.
+        A list is re-keyed by each item's own 'name' or 'key'; anything else
+        unrecognized (e.g. a bare "[VERIFY: ...]" string) is treated as absent.
         """
         if isinstance(value, dict):
             return value
@@ -544,16 +538,13 @@ class AssetInterfacesBuilder:
         )
 
     def _create_events_from_interaction_metadata(self, events: Dict) -> Optional[model.SubmodelElementCollection]:
-        """
-        Create Events collection from interaction metadata (arso:EventsSMC,
-        WoT EventAffordances — subscribable notifications; key/title/forms
-        only, no input/output schema like actions/properties have).
+        """Create the Events collection (arso:EventsSMC / WoT EventAffordances).
 
         Args:
-            events: Dictionary of event name -> event config
+            events: Dict of event name -> event config.
 
         Returns:
-            Events SubmodelElementCollection or None
+            Events SubmodelElementCollection, or None if there are no events.
         """
         events = self._as_named_dict(events)
         if not events:

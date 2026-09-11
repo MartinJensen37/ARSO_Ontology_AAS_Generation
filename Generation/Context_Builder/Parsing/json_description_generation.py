@@ -395,10 +395,7 @@ def validate_profile_document(document: dict[str, Any], cfg: Config) -> list[str
         else:
             nameplate = root.get("DigitalNameplate")
             if isinstance(nameplate, dict):
-                # DateOfManufacture is optional per IDTA 02006. If the LLM doesn't
-                # have a value for it, the prompt instructs to OMIT the field
-                # entirely rather than emit a [VERIFY: ...] placeholder. We only
-                # validate the format when a non-VERIFY value is present.
+                # Optional per IDTA 02006; only format-check a real value.
                 date_of_manufacture = nameplate.get("DateOfManufacture")
                 if isinstance(date_of_manufacture, str) and not _is_verify(date_of_manufacture):
                     if not re.match(r"^\d{4}-\d{2}-\d{2}$", date_of_manufacture):

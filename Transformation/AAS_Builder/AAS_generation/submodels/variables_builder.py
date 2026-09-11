@@ -102,23 +102,18 @@ class VariablesSubmodelBuilder:
 
     def _create_variable_collection(self, var_name: str,
                                     var_config: Dict) -> Optional[model.SubmodelElementCollection]:
-        """
-        Create a variable collection from config format.
+        """Create a variable collection from config.
 
-        Field names and types are derived from the MQTT schema if an
-        InterfaceReference is present and the referenced property has a schema.
-
-        If a 'Field' is specified in the config, only that field from the schema
-        is included. This allows multiple Variables to reference the same MQTT
-        property but extract different fields (e.g., 'State' vs 'ProcessQueue'
-        from a single stationState message).
+        Field names and types come from the MQTT schema when an InterfaceReference
+        resolves to a property with one. A 'Field' entry narrows the collection to
+        that single schema field, so several Variables can share one MQTT property.
 
         Args:
-            var_name: Name of the variable
-            var_config: Configuration dictionary for the variable
+            var_name: Name of the variable.
+            var_config: Configuration dict for the variable.
 
         Returns:
-            SubmodelElementCollection for the variable or None if no elements
+            SubmodelElementCollection for the variable, or None if it has no elements.
         """
         elements = []
 

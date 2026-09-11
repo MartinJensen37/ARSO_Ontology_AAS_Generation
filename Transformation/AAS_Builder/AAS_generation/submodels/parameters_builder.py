@@ -95,21 +95,18 @@ class ParametersSubmodelBuilder:
 
     def _create_parameter_collection(self, param_name: str,
                                      param_config: Dict) -> Optional[model.SubmodelElementCollection]:
-        """
-        Create a parameter collection from config format.
+        """Create a parameter collection from config.
 
-        Field names and types are derived from the MQTT schema if an
-        InterfaceReference is present and the referenced property has an input schema.
-
-        If a 'Field' is specified in the config, only that field from the schema
-        is included.
+        Field names and types come from the MQTT input schema when an
+        InterfaceReference resolves to one; a 'Field' entry narrows it to that
+        single schema field.
 
         Args:
-            param_name: Name of the parameter
-            param_config: Configuration dictionary for the parameter
+            param_name: Name of the parameter.
+            param_config: Configuration dict for the parameter.
 
         Returns:
-            SubmodelElementCollection for the parameter or None if no elements
+            SubmodelElementCollection for the parameter, or None if it has no elements.
         """
         elements = []
 

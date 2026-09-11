@@ -182,12 +182,8 @@ def _extract_file_context(
         if provider == "gemini":
             return f"[File: {file_name}] PDF attached as binary context for Gemini.", uploaded.content_base64
         try:
-            # Shares the same pdfplumber (falls back to PyMuPDF/fitz on failure)
-            # extraction Generation.pipeline already uses for the CLI's own
-            # --pdf flag — one working implementation instead of two, and it
-            # doesn't depend on pymupdf4llm's ONNX-based layout model, which
-            # can fail with an ONNXRuntimeError on some numpy/onnxruntime
-            # version combinations regardless of the input PDF.
+            # Same pdfplumber (PyMuPDF fallback) extraction Generation.pipeline
+            # uses; avoids pymupdf4llm's ONNX layout model and its version clashes.
             tmp_pdf: Path | None = None
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
                 f.write(raw)

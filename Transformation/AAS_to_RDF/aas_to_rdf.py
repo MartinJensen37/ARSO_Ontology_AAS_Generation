@@ -19,17 +19,11 @@ AAS  = Namespace("https://admin-shell.io/aas/3/1/")
 CSS  = Namespace("http://www.w3id.org/hsu-aut/css#")
 ARSO = Namespace("https://w3id.org/2025/arso#")
 
-# ---------------------------------------------------------------------------
-# Ontology-driven typing.
-#
-# Everything the converter needs to know about *which* semanticId or
-# structural position identifies *which* ARSO class is read directly out of
-# the ontology (via the arso:semanticId / arso:idShort / arso:parentClass /
-# arso:transitiveParentClass / arso:unconditionalAasType annotations declared
-# on each class -- see Ontology/ARSO/ARSO_AAS.ttl) rather than hand-copied
-# into Python. Adding a new submodel or element type that follows this
-# annotation convention needs no change here.
-# ---------------------------------------------------------------------------
+# Ontology-driven typing: which semanticId or structural position maps to which
+# ARSO class is read from the arso:semanticId / arso:idShort / arso:parentClass /
+# arso:transitiveParentClass / arso:unconditionalAasType annotations in the
+# ontology, not hand-copied here. New elements following that convention need no
+# change in this file.
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _ONTOLOGY_DIR = _REPO_ROOT / "Ontology"
@@ -37,9 +31,7 @@ _ARSO_AAS_TTL = _ONTOLOGY_DIR / "ARSO" / "ARSO_AAS.ttl"
 _AAS_RDF_TTL = _ONTOLOGY_DIR / "AAS" / "aas-rdf-ontology.ttl"
 _CSS_TTL = _ONTOLOGY_DIR / "CSS" / "CSS-Ontology.ttl"
 
-# External (non-ARSO-module) owl:imports that aren't reachable by relative
-# path guessing -- mirrors the catalog in Validation/Validator/validator.py
-# and Transformation/Generate_Shapes/generate_shapes.py.
+# External owl:imports not reachable by relative path guessing.
 _EXTERNAL_IMPORT_CATALOG: dict[str, Path] = {
     "https://admin-shell.io/aas/3/1/": _AAS_RDF_TTL,
     "https://admin-shell.io/aas/3/1":  _AAS_RDF_TTL,
@@ -607,16 +599,12 @@ def _apply_structural_typing(g: Graph) -> None:
     (see the arso:parentClass / arso:transitiveParentClass /
     arso:unconditionalAasType annotations in the ontology modules)."""
 
-    # 1. Unconditional-AAS-type rules (e.g. every aas:Capability -> arso:CapabilityElement).
-    #    Safe only for AAS modelTypes specific to one concept -- see
-    #    arso:unconditionalAasType's doc comment in ARSO_AAS.ttl.
+    # 1. Unconditional AAS-type rules (e.g. aas:Capability -> arso:CapabilityElement).
     for aas_cls, arso_cls in _STRUCTURAL_RULES.unconditional_aas_type.items():
         for node in list(g.subjects(RDF.type, aas_cls)):
             g.add((node, RDF.type, arso_cls))
 
-    # 2. Direct-child rules, run to a fixpoint: typing a child can make it the
-    #    parent for a subsequent rule (e.g. CCInterfacesSMC -> CCInterfaceSMC
-    #    -> CCInterfaceReferenceRef is two direct-child hops deep).
+    # 2. Direct-child rules, to a fixpoint: typing a child can enable the next hop.
     changed = True
     while changed:
         changed = False
@@ -624,11 +612,8 @@ def _apply_structural_typing(g: Graph) -> None:
             containment_prop = _containment_prop_for(_ONTOLOGY, parent_cls)
             if containment_prop is None:
                 continue
-            # Without an idShort anchor, still require the child's own official
-            # AAS modelType to match child_cls's declared AAS supertype, so an
-            # unconditional rule can't swallow unrelated siblings of a
-            # different modelType (e.g. a SubmodelElementCollection sibling
-            # of the intended Property).
+                # Without an idShort anchor, require a matching AAS modelType
+                # so the rule can't swallow unrelated siblings.
             base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
             for parent_node in list(g.subjects(RDF.type, parent_cls)):
                 for child_node in g.objects(parent_node, containment_prop):
@@ -643,12 +628,8 @@ def _apply_structural_typing(g: Graph) -> None:
                     g.add((child_node, RDF.type, child_cls))
                     changed = True
 
-    # 3. Transitive rules, for the rare case where the real containment path
-    #    passes through an intermediate node the converter doesn't otherwise
-    #    type (e.g. a flat Skill SMC holding an Operation directly, rather
-    #    than the full nested CCType Interfaces/Skills/Errors structure).
-    #    Without an idShort anchor, disambiguation falls back to the child's
-    #    own official AAS modelType (e.g. aas:Operation).
+    # 3. Transitive rules, for containment paths through untyped intermediates.
+    #    Falls back to the child's AAS modelType when no idShort anchor.
     for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.transitive.items():
         base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
         for parent_node in list(g.subjects(RDF.type, parent_cls)):

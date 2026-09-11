@@ -55,10 +55,8 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
     selected = {name.strip().lower() for name in cfg.submodels}
 
     if ("nameplate" in selected or "digitalnameplate" in selected) and "DigitalNameplate" not in body:
-        # Only seed mandatory fields. Optional fields (DateOfManufacture,
-        # YearOfConstruction, HardwareVersion, etc.) are intentionally absent —
-        # the LLM should OMIT them when the spec sheet doesn't provide a value
-        # rather than fill them with a [VERIFY: ...] placeholder.
+        # Seed mandatory fields only -- the LLM should omit optional ones it has
+        # no value for rather than emit a [VERIFY: ...] placeholder.
         body["DigitalNameplate"] = {
             "ManufacturerName": "[VERIFY: manufacturer name]",
             "SerialNumber": str(body.get("serialNumber", "[VERIFY: serial number]")),
@@ -66,10 +64,8 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
         }
 
     if "hierarchicalstructures" in selected and "HierarchicalStructures" not in body:
-        # Archetype MUST be exactly "OneUp", "OneDown", or "Full" (ontology
-        # owl:oneOf in hierarchical-structures.ttl) -- this scaffold shows the
-        # "OneUp" case (IsPartOf only). Swap in HasPart (same shape) for
-        # "OneDown", or both fields for "Full".
+        # Archetype enum from hierarchical-structures.ttl. "OneUp" uses IsPartOf,
+        # "OneDown" HasPart (same shape), "Full" both.
         body["HierarchicalStructures"] = {
             "Name": "BillOfMaterials",
             "Archetype": "OneUp",
@@ -81,10 +77,8 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
         }
 
     if ("aid" in selected or "assetinterfacesdescription" in selected) and "AssetInterfacesDescription" not in body:
-        # InteractionMetadata.actions / .properties / .events are each an
-        # OBJECT keyed by name -- never a JSON array/list. This scaffold shows
-        # one action and one property populated (not left empty) specifically
-        # so that shape is unambiguous to whoever/whatever fills this in next.
+        # InteractionMetadata.actions/.properties/.events are objects keyed by
+        # name, never arrays -- one of each is populated to make that explicit.
         body["AssetInterfacesDescription"] = {
             "MqttInterface": {
                 "protocol": "MQTT",
@@ -128,11 +122,8 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
         body["Skills"] = {}
 
 
-# Field-name aliases the LLM plausibly reaches for instead of the profile
-# schema's actual key. "semanticId" (the real AAS metamodel property name
-# everywhere else in the spec) instead of "semantic_id" here is a harmless
-# naming mismatch, not a missing value -- normalize it so
-# AAS_builder.py's _check_required_fields isn't tripped by naming alone.
+# Field-name aliases the LLM reaches for instead of the profile schema's key.
+# Normalized so _check_required_fields isn't tripped by naming alone.
 _SKILL_CAPABILITY_FIELD_ALIASES: dict[str, str] = {
     "semanticId": "semantic_id",
     "realized_by": "realizedBy",
@@ -177,9 +168,7 @@ def normalize_profile_for_builder(document: Any, cfg: Config) -> dict[str, Any]:
         _apply_field_aliases(system_config["Capabilities"])
 
     if "DigitalNameplate" not in system_config:
-        # Seed only mandatory fields; optional ones (DateOfManufacture,
-        # YearOfConstruction, etc.) are absent by design — the builder skips
-        # them when not present rather than emitting [VERIFY:] placeholders.
+        # Seed mandatory fields only; the builder skips absent optional ones.
         system_config["DigitalNameplate"] = {
             "ManufacturerName": "[VERIFY: manufacturer name]",
             "SerialNumber": str(system_config.get("serialNumber", "[VERIFY: serial number]")),

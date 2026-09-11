@@ -31,22 +31,18 @@ class SkillsSubmodelBuilder:
         self.schema_handler = schema_handler
 
     def build(self, system_id: str, config: Dict) -> model.Submodel:
-        """
-        Create the Skills submodel with Operations derived from action interfaces.
+        """Create the Skills submodel with Operations derived from action interfaces.
 
-        Each operation is wrapped in a SubmodelElementCollection that also contains
-        a reference to its corresponding action interface.
-
-        The operations are generated from:
-        - Explicit Skills configuration in YAML (if provided)
-        - OR automatically from action interfaces in AssetInterfacesDescription
+        Each Operation is wrapped in an SMC that also holds a reference to its
+        action interface. Operations come from an explicit Skills config when
+        present, otherwise from the AssetInterfacesDescription actions.
 
         Args:
-            system_id: Unique identifier for the system
-            config: Configuration dictionary
+            system_id: Unique identifier for the system.
+            config: Configuration dictionary; reads the 'Skills' section.
 
         Returns:
-            Skills submodel with Operations wrapped in SubmodelElementCollections
+            Skills submodel with Operations wrapped in SMCs.
         """
         skills_config = config.get('Skills', {}) or {}
         if isinstance(skills_config, list):

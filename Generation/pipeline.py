@@ -1,12 +1,7 @@
-"""pipeline_v2 — v2 generation + validation retry loop.
+"""Generation pipeline: build context, call the LLM, validate, retry on violations.
 
-Byte-for-byte parallel of generation/pipeline.py with two import lines flipped:
-  - profile_json_text_to_aas_json comes from AAS_builder_v2 (uses v2 AASGenerator)
-  - run_shacl is replaced by run_shacl_v2 (single pyshacl call, no basyx step)
-
-Anything else (progress_callback, generation_mode plumbing, profile-issue
-continue-on-failure logic) is identical to v1 so that a `validation.profile`
-flip is a clean A/B test.
+Produces a compact AAS profile, expands it to full AAS JSON and runs SHACL,
+feeding structured violations back to the model for up to max_attempts rounds.
 """
 from __future__ import annotations
 
@@ -70,11 +65,8 @@ def run_pipeline(
 		gemini_contents = []
 		groq_history = [{"role": "user", "content": user_prompt}]
 
-	# `attempt` gets decremented back when call_llm returns empty text (no
-	# error to trigger the model-switch path), so a model stuck returning
-	# empty output forever would otherwise loop forever. Give up after a few
-	# consecutive empties from the *same* model (a real model switch still
-	# gets its own fresh attempts).
+	# call_llm returning empty text refunds the attempt, so cap consecutive
+	# empties from one model to avoid looping forever.
 	MAX_CONSECUTIVE_EMPTY_SAME_MODEL = 3
 	consecutive_empty_same_model = 0
 	empty_response_model_idx = model_idx

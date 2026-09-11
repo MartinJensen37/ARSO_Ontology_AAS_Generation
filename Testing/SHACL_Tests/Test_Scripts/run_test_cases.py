@@ -1,15 +1,10 @@
-"""Run every fixture in Testing/SHACL_Tests/Test_Cases/ through the SHACL
-validator and report conformance + issue counts for each.
+"""Run every fixture in Testing/SHACL_Tests/Test_Cases/ through the SHACL validator.
+
+Every invalid_*.aas.json fixture is deliberately broken against one shape, so all
+are expected to fail. Exits nonzero if any unexpectedly conforms.
 
 Usage:
     python Testing/SHACL_Tests/Test_Scripts/run_test_cases.py
-
-All fixtures here are named invalid_*.aas.json by convention: each is a
-deliberately broken AAS exercising one specific SHACL shape, so the expected
-result for every one of them is conforms=False. This script's exit code is
-nonzero if any fixture unexpectedly conforms (a regression that silently
-weakened a shape) -- it does not track exact issue counts run-to-run, since
-those can legitimately shift as shapes are added/changed.
 """
 from __future__ import annotations
 

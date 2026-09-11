@@ -1,21 +1,8 @@
-"""Regenerates EA-MI-LF120-EN_MQTT_Interface.pdf (the LinFill-120 MQTT interface
-spec test fixture) with two fixes:
+"""Regenerate the LinFill-120 MQTT interface spec fixture PDF.
 
-1. The previous version of this PDF had a text-encoding bug (UTF-8 bytes fed to
-   ReportLab after being mis-decoded as Latin-1 somewhere upstream), corrupting
-   every accented character in the manufacturer address ("BrÃ¼ckenstraÃe" instead
-   of "Brückenstraße"). This script builds every string as a native Python str
-   (no manual .encode()/.decode() round-trips) so ReportLab's default
-   Helvetica/WinAnsiEncoding renders them correctly -- WinAnsiEncoding covers
-   ü/ß/· natively, so no font substitution is needed.
-
-2. The MQTT topic structure has been redesigned to match the real InnoLab
-   MQTT_classes.ResponseAsync/Publisher pattern (confirmed against actual
-   Dispensing/Stoppering proxy scripts): each command gets its own
-   {base}/CMD/<Action> (subscribe) + {base}/DATA/<Action> (publish) topic pair
-   with JSON payloads correlated by a "Uuid" field, rather than one shared
-   command topic taking a bare string payload. QoS is 2 (matching the real
-   proxies) rather than 1.
+Builds every string as a native str so ReportLab's WinAnsiEncoding renders the
+accented address correctly, and lays out topics as the InnoLab
+{base}/CMD/<Action> + {base}/DATA/<Action> pairs correlated by "Uuid", QoS 2.
 
 Run: python generate_linfill120_mqtt_pdf.py
 """

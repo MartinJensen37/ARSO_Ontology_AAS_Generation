@@ -1,14 +1,9 @@
-"""Full AAS JSON -> profile document (the reverse of AAS_builder.py::profile_document_to_aas_json).
+"""Full AAS JSON -> profile document; inverse of profile_document_to_aas_json.
 
-Each parse_* function is an explicit inverse of the matching builder in
-Transformation/AAS_Builder/AAS_generation/submodels/*.py -- read the shape a
-builder emits there before changing the corresponding parser here, they must
-stay in lockstep.
-
-This is the canonical (and only) AAS-JSON -> profile converter used by both
-the UI (via api/routers/aas_to_profile.py) and anywhere else that needs to
-invert a generated AAS, replacing what used to be a second, independent
-implementation in ui/src/aas/parsers/parseAasToProfile.ts.
+Each parse_* function mirrors the matching builder in
+Transformation/AAS_Builder/AAS_generation/submodels/*.py and must stay in lockstep
+with it. Canonical converter for both the UI (via api/routers/aas_to_profile.py)
+and in-process callers.
 """
 from __future__ import annotations
 
@@ -161,12 +156,9 @@ def parse_hierarchical_structures(sm: AnyDict) -> AnyDict:
     if not entry_node:
         return result
 
-    # RelationshipElement statements (idShort "IsPartOf_<name>"/"HasPart_<name>")
-    # say which group each Entity node belongs to; archetype 'Full' has both
-    # groups at once, so the relationship prefix -- not the archetype alone --
-    # determines where an entity is placed. Mirrors _create_entry_node's
-    # `f"{relationship_prefix}_{entity_name}"` naming in
-    # hierarchical_structures_builder.py.
+    # RelationshipElement statements ("IsPartOf_<name>"/"HasPart_<name>") decide
+    # each Entity's group -- archetype 'Full' has both. Mirrors _create_entry_node
+    # in hierarchical_structures_builder.py.
     statements = entry_node.get("statements") or []
     entity_group: dict[str, str] = {}
     for stmt in statements:
@@ -285,9 +277,7 @@ def parse_capabilities(sm: AnyDict) -> AnyDict:
         if semantic_id:
             entry["semantic_id"] = semantic_id
         if realized_by:
-            # capabilities_builder.py accepts a str or a list on the way in, but
-            # the TS Capability type (and the canvas's cap->skill edge logic)
-            # only models a single realizing skill -- emit the first one.
+            # The TS Capability type models a single realizing skill.
             entry["realizedBy"] = realized_by[0]
         result[cap_name] = entry
 

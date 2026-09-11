@@ -1,39 +1,16 @@
-"""Evaluation runner — calls the v2 pipeline directly (no HTTP/SSE) and saves
-a complete reproducible dossier per experiment.
+"""Evaluation runner: calls the generation pipeline directly (no HTTP/SSE).
 
-Output layout:
-    evaluation/results/<run_id>/
-        manifest.json              run-level metadata + counts + matrix snapshot
-        results.jsonl              one row per experiment (analysis-friendly)
-        <experiment_dir>/
-            metrics.json           the same row, broken out for browsability
-            aas_output.json        generated AAS JSON (final attempt)
-            prompts/
-                system_prompt.txt
-                user_prompt.txt
-                spec_text.md       combined datasheet + interface text fed in
-                profile_attempt_N.json  raw LLM profile JSON for attempt N (json-description mode)
-            shacl/
-                data.ttl           the AAS-as-RDF projection
-                report.ttl         the SHACL validation report
-                issues.json        parsed list of {severity, message, focus_node, source}
-            log.txt                pipeline progress_callback log
-            config_snapshot.json   resolved Config minus API keys
-            equipment_snapshot.yaml
-            ground_truth_snapshot.yaml
-            error.txt              present only when something failed
-
-The JSONL is the analysis primitive — `plot_results.py` and `aggregate.py` read
-it. The per-experiment subfolders give you something to point at when a row
-looks weird ("which prompt produced this output?").
+Writes Testing/Generation_Tests/results/<run_id>/ containing manifest.json,
+results.jsonl (one row per experiment), and a per-experiment folder with the
+prompts, generated AAS, SHACL data/report, log and config snapshots.
 
 Usage:
-    python -m evaluation.run_eval --equipment ca18clc12bpm1 --provider claude \\
-        --model claude-opus-4-5-20251101 --ablation full \\
-        --run-id paper-quickcheck-2026-04-25
+    python -m Testing.Generation_Tests.Test_Scripts.run_eval \\
+        --equipment filling_module --provider claude --model claude-sonnet-4-6 \\
+        --run-id my-run
 
-    python -m evaluation.run_eval --matrix evaluation/matrix.yaml \\
-        --run-id paper-fullsweep-2026-04-25
+    python -m Testing.Generation_Tests.Test_Scripts.run_eval \\
+        --matrix Testing/Generation_Tests/Test_Matrix/matrix.yaml --run-id my-sweep
 """
 from __future__ import annotations
 
@@ -146,9 +123,7 @@ def _config_snapshot(cfg: Config) -> dict:
     raw = dataclasses.asdict(cfg)
     if raw.get("api_key"):
         raw["api_key"] = "<redacted>"
-    # provider_api_keys holds every configured provider's key (not just the
-    # active one) — redact every non-empty value, not just a fixed set of
-    # legacy per-provider field names that no longer exist on Config.
+    # provider_api_keys holds every configured provider's key, not just the active one.
     if isinstance(raw.get("provider_api_keys"), dict):
         raw["provider_api_keys"] = {
             name: ("<redacted>" if value else value)
@@ -308,10 +283,7 @@ def _run_one(
     )
     cfg = _apply_ablation(cfg, ablation)
 
-    # ------ ground-truth reference AAS ------
-    # Built once per experiment, from the same cfg used for the real run, so
-    # coverage scoring diffs the generated AAS against something the pipeline
-    # could actually produce rather than a hand-maintained rubric.
+    # Ground-truth reference AAS, built once from the same cfg as the real run.
     reference_doc = _build_reference_aas(ground_truth, cfg)
     required_paths = list(ground_truth.get("required_paths") or [])
     must_not_contain = list(ground_truth.get("must_not_contain") or [])

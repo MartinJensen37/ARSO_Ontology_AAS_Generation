@@ -196,18 +196,10 @@ def _extract_issues(report_graph: Graph) -> list[dict]:
     return issues
 
 
-# ---------------------------------------------------------------------------
-# Issue -> UI field label.
-#
-# Maps a keyword found in an ontology class/property local name (e.g.
-# "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel") to the
-# submodel/section it concerns, for the UI's validation panel. Shared by
-# Guidance.ontology_guidance_engine and /api/validate. Replaces two
-# hand-maintained regex tables that matched English sentence fragments from
-# an older set of shape messages and had silently stopped matching anything;
-# this keyword lookup instead follows the stable "arso:hasXSubmodel" naming
-# convention, so it doesn't need updating when a submodel is added.
-# ---------------------------------------------------------------------------
+# Issue -> UI field label. Maps a keyword in an ontology class/property local
+# name (e.g. "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel") to the
+# submodel it concerns. Follows the stable "arso:hasXSubmodel" convention, so
+# adding a submodel needs no change here.
 
 _FIELD_KEYWORDS: list[tuple[str, str]] = [
     ("DigitalNameplate", "DigitalNameplate"),
@@ -378,10 +370,8 @@ def run_shacl(json_text: str, tmp_dir: Path) -> tuple[bool, list[dict], list[dic
         conforms, report_graph, _report_text = pyshacl.validate(
             data_graph,
             shacl_graph=shapes,
-            # inference="none": the serializer emits both the AAS class and the
-            # cssx subclass directly, so no rdfs subClassOf chasing is needed.
-            # Enabling rdfs inference triggers ~1200 spurious "abstract class -
-            # use a subclass" violations from the AAS SHACL spec.
+            # rdfs inference would add ~1200 spurious "abstract class" violations;
+            # the serializer already emits both AAS and cssx classes directly.
             inference="none",
             advanced=True,
             allow_warnings=True,

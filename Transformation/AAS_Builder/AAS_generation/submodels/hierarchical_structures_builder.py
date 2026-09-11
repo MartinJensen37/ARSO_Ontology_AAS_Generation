@@ -26,27 +26,19 @@ class HierarchicalStructuresSubmodelBuilder:
         self.element_factory = element_factory
     
     def build(self, system_id: str, config: Dict) -> model.Submodel:
-        """
-        Create the HierarchicalStructures submodel.
-        
-        Simplified config format:
-            HierarchicalStructures:
-                Archetype: 'OneUp'  # or 'OneDown'
-                IsPartOf:  # or HasPart for OneDown - dict format
-                    systemName:
-                        globalAssetId: 'required-unique-id'
-                        systemId: 'optional-config-key'  # defaults to systemName + 'AAS'
-        
-        Auto-derives:
-            - aasId from systemName
-            - submodelId from systemId (defaults to systemName + 'AAS')
-        
+        """Create the HierarchicalStructures submodel.
+
+        aasId is derived from each entry's systemName and submodelId from its
+        systemId, which defaults to systemName + 'AAS'.
+
         Args:
-            system_id: Unique identifier for the system
-            config: Configuration dictionary containing HierarchicalStructures section
-            
+            system_id: Unique identifier for the system.
+            config: Config dict; reads 'HierarchicalStructures' with an Archetype
+                ('OneUp' | 'OneDown' | 'Full') and an IsPartOf / HasPart mapping of
+                systemName -> {globalAssetId, systemId}.
+
         Returns:
-            HierarchicalStructures submodel instance
+            HierarchicalStructures submodel instance.
         """
         hs_config = config.get('HierarchicalStructures', {}) or {}
         if not isinstance(hs_config, dict):
@@ -101,9 +93,7 @@ class HierarchicalStructuresSubmodelBuilder:
         is_part_of = hs_config.get('IsPartOf', {})
         has_part = hs_config.get('HasPart', {})
 
-        # Determine which (dict, relationship_prefix) groups to process based on
-        # archetype. Valid archetype values are 'OneUp', 'OneDown', 'Full' --
-        # exactly the ontology's ArcheType owl:oneOf enum (hierarchical-structures.ttl).
+        # Archetype enum ('OneUp'/'OneDown'/'Full') mirrors hierarchical-structures.ttl.
         groups: list[tuple[Dict, str]] = []
         if archetype in ('OneUp', 'Full'):
             groups.append((is_part_of if isinstance(is_part_of, dict) else {}, "IsPartOf"))
@@ -173,9 +163,7 @@ class HierarchicalStructuresSubmodelBuilder:
         """
         node_statements = []
         
-        # Create SameAs reference if submodel ID is provided
-        # AASd-125 compliant: First key is AasIdentifiable (SUBMODEL),
-        # subsequent keys are FragmentKeys (ENTITY)
+        # AASd-125: first key is AasIdentifiable (SUBMODEL), rest are FragmentKeys.
         if submodel_id:
             same_as_reference = model.ModelReference(
                 (

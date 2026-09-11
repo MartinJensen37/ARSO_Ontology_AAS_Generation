@@ -1,11 +1,7 @@
 """POST /api/profile-to-aas
 
-Builds a full AAS JSON from a "profile" document (the same intermediate shape
-Transformation/AAS_Builder/AAS_builder.py::profile_document_to_aas_json takes)
-and validates the result in one round trip. This is the single canonical path
-for turning a profile into AAS JSON -- used by the LLM generation pipeline
-(via profile_document_to_aas_json directly, in-process) and now by the UI
-canvas (via this endpoint), so both stay on exactly the same builder code.
+Builds a full AAS JSON from a profile document and validates it in one round
+trip. The canonical profile -> AAS path, shared with the generation pipeline.
 """
 from __future__ import annotations
 

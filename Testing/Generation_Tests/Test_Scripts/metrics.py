@@ -148,11 +148,8 @@ def coverage_metrics(
                 if tuple(path) in actual_index:
                     mand_present += 1
 
-            # Value-substring check runs over every element in the reference
-            # profile that carries a real value (required or optional) --
-            # richer than the old sparse expected_value_contains annotations,
-            # since the reference AAS always has a real value for every field
-            # its profile defines.
+            # Value-substring check covers every reference element with a value,
+            # required or optional.
             expected_value = _extract_value_text(ref_elem)
             if not expected_value:
                 continue
@@ -225,14 +222,8 @@ def cross_reference_metrics(aas_doc: dict) -> dict[str, Any]:
             if len(path) >= 2 and path[-2].lower() == "actions":
                 aid_actions.add(path[-1])
 
-    # Individual skills sit one level below the submodel's "Skills" container:
-    # Skills (Submodel) -> Skills [SMC] -> {skill_name} [SMC]. The sibling
-    # Interfaces/Errors containers are always present and always empty.
-    # This previously matched len(path) == 1, which selected those three
-    # containers instead of the skills themselves, so skill_total counted 3,
-    # skill_linked stayed 0, and both this metric and
-    # capability_realizedby_skill (which compares against skill_idshorts)
-    # reported 0.0 even for a fully correct AAS.
+    # Skills sit two levels down: Skills (Submodel) -> Skills [SMC] -> <name> [SMC];
+    # the sibling Interfaces/Errors containers are always present and empty.
     skills = sms.get("Skills")
     skill_total = skill_linked = 0
     skill_idshorts: set[str] = set()

@@ -1,17 +1,11 @@
-"""aggregate.py — JSONL of experiments → derived metrics ready for plotting.
+"""Experiment JSONL -> derived metrics for plotting. Pure stdlib, no plotting deps.
 
-Reads `evaluation/results/<run_id>/results.jsonl` (or any merged file) and
-produces:
-  - `aggregate.csv`        flat table with one row per experiment + cost/tokens
-  - `derived.json`         per-(provider, model, ablation, equipment) means and stddevs
-  - `improvement.json`     `improvement_with_feedback` and `improvement_with_templates`
-                           computed by joining ablation cells
-
-This module has zero plotting dependencies — `plot_results.py` consumes the
-outputs here. Pure stdlib for portability.
+Writes aggregate.csv (one row per experiment plus cost/tokens), derived.json
+(per-provider/model/ablation/equipment means and stddevs) and improvement.json
+(improvement_with_feedback / improvement_with_templates across ablation cells).
 
 Usage:
-    python -m evaluation.aggregate <results.jsonl> [--out-dir <dir>]
+    python -m Testing.Generation_Tests.Test_Scripts.aggregate <results.jsonl> [--out-dir <dir>]
 """
 from __future__ import annotations
 

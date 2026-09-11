@@ -1,29 +1,14 @@
-"""plot_results.py — generate the key evaluation plots from a results JSONL
-and the derived aggregates produced by aggregate.py.
+"""Evaluation plots from a results JSONL plus aggregate.py's derived stats.
 
-Plots produced (each saved as PNG + PDF in the output dir):
-
-  1. conformance_bars.png        first-pass vs final SHACL conformance per
-                                 (provider+model, ablation), grouped bars,
-                                 error bars from per-equipment variance.
-
-  2. semanticid_stack.png        stacked bar — IDTA-aligned vs exact_match
-                                 vs missing — per (provider+model, ablation).
-                                 Shows whether the framework gets close-to-IDTA
-                                 or just template-echo.
-
-  3. convergence_hist.png        histogram of `attempts` values per ablation.
-                                 Bimodal at 1 and max_attempts means feedback
-                                 helps the medium-difficulty cases but not the
-                                 hard ones.
-
-If matplotlib is unavailable, the script writes a `_plot_data_<name>.json` for
-each plot so the user can render with another tool.
+Each plot is written as PNG + PDF: conformance_bars (first-pass vs final SHACL
+conformance), semanticid_stack (IDTA-aligned vs exact_match vs missing) and
+convergence_hist (attempts per ablation). Without matplotlib, each plot's data
+is dumped as `_plot_data_<name>.json` instead.
 
 Usage:
-    python -m evaluation.plot_results <results.jsonl> [--out-dir <dir>]
+    python -m Testing.Generation_Tests.Test_Scripts.plot_results <results.jsonl> [--out-dir <dir>]
 
-If `aggregate.py` hasn't been run yet, this script invokes it first.
+Runs aggregate.py first if its output is missing.
 """
 from __future__ import annotations
 

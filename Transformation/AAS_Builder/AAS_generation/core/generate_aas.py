@@ -429,13 +429,9 @@ class AASGenerator:
             # "[VERIFY: ...]" string instead of an object; treat as absent.
             capabilities_cfg = {}
 
-        # Fill in missing semantic_id (and realizedBy when unambiguous: the
-        # capability's own name matches an existing skill) on whatever
-        # capabilities are already present. Deliberately does NOT invent a
-        # realizedBy target otherwise, and does NOT generate new capability
-        # entries for uncovered skills -- that gap is caught as a SHACL
-        # violation (arso:SkillMustBeRealizedByCapabilityShape) and flows
-        # back to the LLM via the normal retry-with-feedback loop instead.
+        # Fill in missing semantic_id, and realizedBy only when the capability
+        # name matches an existing skill. Uncovered skills are left to surface as
+        # a SHACL violation and flow back through the retry loop.
         for cap_name, cap_data in list(capabilities_cfg.items()):
             if not isinstance(cap_data, dict):
                 cap_data = {}
@@ -459,12 +455,8 @@ class AASGenerator:
                     cap_name,
                 )
 
-        # ── Ontology-driven hints: run SHACL on the post-fix config ───────────
-        # All hint-type suggestions come from the actual SHACL shapes, evaluated
-        # against a real (best-effort) AAS RDF projection of this config -- the
-        # same projection final validation uses -- so hints can never disagree
-        # with what generation will ultimately enforce. No constraint logic is
-        # duplicated here.
+        # Ontology-driven hints: SHACL on the post-fix config, using the same RDF
+        # projection as final validation, so hints can't disagree with it.
         try:
             from Guidance.ontology_guidance_engine import check_aas_dict
             preview_store = self._build_object_store()

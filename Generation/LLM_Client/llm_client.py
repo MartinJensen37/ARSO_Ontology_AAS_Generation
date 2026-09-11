@@ -1,14 +1,9 @@
-"""
-LLM client wrapper around:
-- Any OpenAI-compatible chat-completions endpoint (Groq, OpenRouter, ...) via
-  the OpenAI Python SDK — see OPENAI_COMPATIBLE_BASE_URLS below. Adding a new
-  provider of this kind needs one entry there and a config.yaml section; no
-  other code changes.
-- Gemini via Google GenAI Python SDK (native multimodal PDF input)
-- Claude Code CLI via `claude -p`
+"""Provider-agnostic LLM client for the generation pipeline.
 
-Keeps the same interface for the generation pipeline, including model-cycling
-on rate limits and provider-specific response parsing.
+Supports any OpenAI-compatible chat-completions endpoint (see
+OPENAI_COMPATIBLE_BASE_URLS), Gemini via the Google GenAI SDK (native PDF
+input), and the Claude Code CLI via `claude -p`. Handles model-cycling on rate
+limits and provider-specific response parsing behind one interface.
 """
 from __future__ import annotations
 
@@ -32,27 +27,15 @@ OPENAI_COMPATIBLE_MIN_OUTPUT_TOKENS = 256
 OPENAI_COMPATIBLE_MAX_OUTPUT_TOKENS = 2048
 DEBUG_IO_ENV = "GEN_DEBUG_IO"
 
-# Providers with a genuinely tight per-minute *token* budget (not just
-# requests-per-minute) that requires proactively shrinking max_tokens based
-# on estimated input size, or the provider's own 429 can arrive after the
-# request is already committed. Currently just Groq's free tier (~7000
-# TPM) -- this is an external hard rate limit, not a self-imposed cap, so it
-# stays even though other providers no longer get a max_tokens value at all
-# (see call_llm below). Do not add a provider here without a concrete, known
-# TPM figure: an overly small budget silently starves the response to empty
-# content instead of erroring, which pipeline.py cannot distinguish from
-# "provider is momentarily returning nothing" and will retry forever within
-# a single attempt.
+# Providers with a hard per-minute *token* budget, needing max_tokens shrunk
+# ahead of the request. Only add a provider here with a known TPM figure -- too
+# small a budget silently yields empty content instead of an error.
 _OPENAI_COMPATIBLE_TPM_SAFETY_BUDGET: dict[str, int] = {
     "groq": 7000,
 }
 
-# Every OpenAI-compatible chat-completions provider the generation pipeline
-# can use, keyed by the `provider` name used in config.yaml / the API. All of
-# these share one implementation below (same request/response shape, same
-# OpenAI SDK) — to add a new one (e.g. Together, Fireworks, DeepInfra, a raw
-# OpenAI key), add its base_url here and a matching api_keys/models section
-# in config.yaml. No other code changes needed.
+# Every OpenAI-compatible provider, keyed by the `provider` name in config.yaml.
+# Adding one needs only a base_url here plus api_keys/models in config.yaml.
 OPENAI_COMPATIBLE_BASE_URLS: dict[str, str] = {
     "groq":       "https://api.groq.com/openai/v1",
     "openrouter": "https://openrouter.ai/api/v1",
@@ -285,15 +268,17 @@ def _run_claude_cli(
 ) -> tuple[str, bool]:
     """Invoke the Claude Code CLI in print mode.
 
-    The conversation goes via **stdin** instead of via a file the CLI has to
-    Read — this avoids the CLI emitting tool_use blocks during this call.
-    Without `--allowedTools Read`, the CLI cannot perform any tool use, so the
-    Anthropic API request it builds has no `tool_use` content blocks and the
-    "tool_use ids must be unique" 400 cannot occur.
+    Sends the conversation via stdin rather than a file, so the CLI needs no
+    tool use and cannot emit duplicate tool_use blocks.
 
-    The system prompt is still passed via `--append-system-prompt-file` which
-    is a CLI flag (the CLI reads the file before sending the request — no
-    in-conversation tool use involved).
+    Args:
+        model_name: Model id passed to `claude --model`.
+        system_instruction: Appended via --append-system-prompt-file.
+        conversation_text: Prompt piped to the CLI on stdin.
+        max_output_tokens: Optional output cap; uncapped if None.
+
+    Returns:
+        (response_text, rate_limited)
     """
     with tempfile.TemporaryDirectory(prefix="claude-llm-client-") as tmp:
         tmp_dir = Path(tmp)
@@ -499,10 +484,7 @@ def call_llm(
                 choice = response.choices[0]
                 content = choice.message.content or ""
                 if not content and choice.finish_reason == "length":
-                    # Only reachable for providers that still get a computed
-                    # max_tokens (currently just Groq's TPM-limited budget) --
-                    # everyone else sends no cap at all, so the model's own
-                    # absolute ceiling would have to be hit for this to fire.
+                    # Only Groq gets a computed max_tokens; others send no cap.
                     print(
                         f"\n  Note: hit max_tokens={output_tokens} before any content was "
                         "emitted (finish_reason=length) -- likely a reasoning model that "

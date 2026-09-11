@@ -12,12 +12,10 @@ from Generation.Context_Builder.Parsing.text_parsing import extract_outer_json_o
 
 
 def _check_required_fields(normalized: dict[str, Any]) -> list[str]:
-    """Return errors for fields that the builder would otherwise silently patch.
+    """Return errors for fields the builder would otherwise silently patch.
 
-    The builder's _apply_ontology_guidance mutates the profile in-place to
-    insert default semantic_id / realizedBy values. This hides missing fields
-    from the LLM retry loop and can make non-conforming outputs appear to pass
-    SHACL. We surface them here as explicit validation errors instead.
+    _apply_ontology_guidance inserts default semantic_id / realizedBy values
+    in-place, which would hide missing fields from the LLM retry loop.
     """
     errors: list[str] = []
     root = next(iter(normalized.values()), {}) if normalized else {}

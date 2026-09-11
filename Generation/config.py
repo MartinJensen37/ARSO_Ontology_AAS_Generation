@@ -24,15 +24,12 @@ _DEFAULT_ONTOLOGIES = [
     Path("Ontology/ARSO/ARSO_AAS.ttl"),
 ]
 
-# Providers with a non-OpenAI-compatible transport (their own SDK / CLI).
-# Anything else is assumed to be an OpenAI-compatible provider — see
-# OPENAI_COMPATIBLE_BASE_URLS in llm_client.py — and needs no entry here.
+# Providers with their own SDK/CLI transport; everything else is assumed
+# OpenAI-compatible (see OPENAI_COMPATIBLE_BASE_URLS in llm_client.py).
 _KNOWN_NON_OPENAI_PROVIDERS = frozenset({"gemini", "claude"})
 
-# provider name -> the key used under `api_keys:` in config.yaml, for
-# providers whose YAML key doesn't match the provider name for historical/
-# branding reasons. Anything not listed here uses the provider name itself
-# (e.g. "groq" -> api_keys.groq, "openrouter" -> api_keys.openrouter).
+# provider name -> `api_keys:` key in config.yaml, where the two differ.
+# Unlisted providers use the provider name itself.
 _API_KEY_YAML_KEY: dict[str, str] = {"gemini": "google_ai_studio", "claude": "anthropic"}
 
 # Add project root to sys.path so sibling top-level packages can be imported.
@@ -83,11 +80,8 @@ class Config:
     shacl_shapes: list[Path]
     ontology_paths: list[Path]
 
-    # Every configured provider's model list / API key, keyed by provider
-    # name (matching config.yaml's `models:` section and `provider` field).
-    # Kept for reference so a CLI/API provider override can switch cleanly
-    # without reloading config.yaml. Adding a new provider needs no change
-    # here — just a config.yaml entry (see _api_key_for above).
+    # Every configured provider's models / API key, keyed by provider name, so a
+    # CLI or API provider override can switch without reloading config.yaml.
     provider_models: dict[str, list[str]] = field(default_factory=dict)
     provider_api_keys: dict[str, str] = field(default_factory=dict)
 

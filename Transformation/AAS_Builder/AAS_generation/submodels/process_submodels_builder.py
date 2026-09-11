@@ -82,26 +82,14 @@ class ProcessInformationSubmodelBuilder:
 
 
 class RequiredCapabilitiesSubmodelBuilder:
-    """Builder for RequiredCapabilities submodel.
+    """Builder for the RequiredCapabilities submodel.
 
-    Creates a submodel where capabilities are grouped by type (semantic name).
-    Each capability type is a SubmodelElementCollection containing:
-    - Description: What this capability type does in the process
-    - References: SubmodelElementCollection of ReferenceElements to asset-capabilities
+    Groups capabilities by type; each type is an SMC holding a Description and a
+    References SMC of ReferenceElements to asset capabilities, so several assets
+    can provide the same capability type.
 
-    This structure allows multiple assets to provide the same capability type.
-    Parameters and requirements are specified in the Product AAS and embedded in the Policy.
-
-    Supports two config formats:
-    1. New simplified format (uses AAS ID):
-        resources:
-            resource_name: aas_id  # e.g., https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS
-
-    2. Legacy explicit format:
-        references:
-            resource_name:
-                submodel_id: "..."
-                capability_path: ["CapabilitySet", "Container", "Capability"]
+    Accepts either the simplified `resources: {name: aas_id}` form or the legacy
+    explicit `references: {name: {submodel_id, capability_path}}` form.
     """
 
     SEMANTIC_ID = "https://smartproductionlab.aau.dk/submodels/RequiredCapabilities/1/0"
@@ -120,21 +108,15 @@ class RequiredCapabilitiesSubmodelBuilder:
         self.element_factory = element_factory
 
     def build(self, system_id: str, config: Dict) -> Optional[model.Submodel]:
-        """Build RequiredCapabilities submodel from config.
+        """Build the RequiredCapabilities submodel from config.
 
-        Expected config format (new simplified):
-            RequiredCapabilities:
-                Loading:
-                    semantic_id: "https://smartproductionlab.aau.dk/Capability/Loading"
-                    description: "Load container onto shuttle"
-                    resources:
-                        imaLoadingSystem: "https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS"
-                MoveToPosition:
-                    semantic_id: "https://smartproductionlab.aau.dk/Capability/MoveToPosition"
-                    description: "Movement capability for product transport"
-                    resources:
-                        planarShuttle1: "https://smartproductionlab.aau.dk/aas/planarShuttle1AAS"
-                        planarShuttle2: "https://smartproductionlab.aau.dk/aas/planarShuttle2AAS"
+        Args:
+            system_id: Unique identifier for the system.
+            config: Config dict; reads the 'RequiredCapabilities' section, mapping
+                each capability name to {semantic_id, description, resources}.
+
+        Returns:
+            RequiredCapabilities submodel, or None if no capabilities are configured.
         """
         capabilities = config.get('RequiredCapabilities', {})
         if not capabilities:
@@ -221,23 +203,15 @@ class RequiredCapabilitiesSubmodelBuilder:
         aas_id: str,
         capability_name: str
     ) -> Optional[model.ReferenceElement]:
-        """Build ReferenceElement by deriving capability reference from AAS ID.
-
-        Extracts idShort from AAS ID and constructs standardized capability path.
-
-        Example:
-            AAS ID: https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS
-            → idShort: imaLoadingSystemAAS
-            → submodel_id: {base_url}/submodels/instances/imaLoadingSystemAAS/OfferedCapabilityDescription
-            → capability_path: ["CapabilitySet", "LoadingContainer", "Loading"]
+        """Build a ReferenceElement by deriving the capability path from an AAS ID.
 
         Args:
-            resource_name: Name of the resource (used as id_short)
-            aas_id: The AAS ID URL (e.g., https://smartproductionlab.aau.dk/aas/imaLoadingSystemAAS)
-            capability_name: Name of the capability (e.g., "Loading", "MoveToPosition")
+            resource_name: Resource name, used as id_short.
+            aas_id: AAS ID URL, e.g. https://.../aas/imaLoadingSystemAAS
+            capability_name: Capability name, e.g. "Loading".
 
         Returns:
-            ReferenceElement pointing to the capability, or None if parsing fails
+            ReferenceElement pointing at the capability, or None if parsing fails.
         """
         # Extract idShort from AAS ID (last segment after /aas/)
         id_short = self._extract_id_short_from_aas_id(aas_id)
@@ -256,17 +230,13 @@ class RequiredCapabilitiesSubmodelBuilder:
         return self._build_reference_element(resource_name, submodel_id, capability_path)
 
     def _extract_id_short_from_aas_id(self, aas_id: str) -> Optional[str]:
-        """Extract idShort from AAS ID URL.
-
-        The AAS ID URL typically contains the system name (e.g., imaLoadingSystem),
-        but the idShort convention appends 'AAS' suffix (e.g., imaLoadingSystemAAS).
-        Submodel IDs use the idShort pattern, not the AAS ID path segment.
+        """Extract idShort from an AAS ID URL.
 
         Args:
-            aas_id: AAS ID URL (e.g., https://smartproductionlab.aau.dk/aas/imaLoadingSystem)
+            aas_id: AAS ID URL, e.g. https://.../aas/imaLoadingSystem
 
         Returns:
-            idShort (e.g., imaLoadingSystemAAS), or None if parsing fails
+            idShort with the conventional 'AAS' suffix, or None if parsing fails.
         """
         if not aas_id:
             return None

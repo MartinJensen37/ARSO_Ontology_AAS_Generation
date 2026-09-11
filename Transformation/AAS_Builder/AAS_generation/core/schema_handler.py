@@ -149,20 +149,18 @@ class SchemaHandler:
         return properties
 
     def extract_operation_variables(self, schema: Dict, include_inherited: bool = True) -> Dict[str, Dict]:
-        """
-        Extract operation variables from a JSON schema.
+        """Extract operation variables from a JSON schema.
 
-        Recursively unpacks arrays with prefixItems (tuples) into individual named fields.
-        For example: Position[x, y, theta] → X, Y, Theta
-        Uses 'title' property from prefixItems for field names (without parent prefix).
+        Arrays with prefixItems are unpacked into individually named fields using
+        each item's 'title' (e.g. Position[x, y, theta] -> X, Y, Theta).
 
         Args:
-            schema: The JSON schema dictionary
-            include_inherited: Whether to include properties from referenced schemas
+            schema: The JSON schema dictionary.
+            include_inherited: Include properties from referenced schemas. Default True.
 
         Returns:
-            Dictionary of variable name -> {type, description, array_info}
-            array_info contains: {parent_field, item_field, is_array_item, index}
+            Dict of variable name -> {type, description, array_info}, where array_info
+            is {parent_field, item_field, is_array_item, index}.
         """
         # Get all properties
         properties = self.extract_properties(schema, include_inherited)
@@ -176,9 +174,7 @@ class SchemaHandler:
                 # Check for prefixItems (tuple-like arrays)
                 prefix_items = prop_def.get('prefixItems')
                 if prefix_items:
-                    # Unpack tuple array into individual fields using titles
-                    # Use the item title directly (e.g., "X") not prefixed (e.g., "Position_X")
-                    # This matches the MQTT schema field names for automatic mapping
+                    # Use the item title directly (e.g. "X"), matching MQTT field names.
                     for idx, item_def in enumerate(prefix_items):
                         item_title = item_def.get('title', f'Item{idx}')
                         var_name = item_title  # Use title directly, no prefix
