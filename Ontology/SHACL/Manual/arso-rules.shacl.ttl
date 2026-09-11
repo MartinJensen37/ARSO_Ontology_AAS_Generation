@@ -5,7 +5,107 @@
 @prefix aas:   <https://admin-shell.io/aas/3/1/> .
 @prefix arso:  <https://w3id.org/2025/arso#> .
 
-# Manual SHACL rules for non-OWL constraints that still need graph traversal or warning checks.
+# Manual SHACL rules for constraints the owl2shacl ruleset cannot produce.
+#################################################################
+# CONDITIONAL SUBMODEL DEPENDENCIES
+#
+# A -> B expressed as the standard  not-A or B  idiom. These work without a
+# reasoner because arso:hasXSubmodel is materialised as a direct edge by
+# Transformation/AAS_to_RDF/aas_to_rdf.py.
+#################################################################
+
+arso:SkillsImplyAidShape
+  a sh:NodeShape ;
+  rdfs:label "A Skills submodel requires an AID submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasSkillsSubmodel ; sh:maxCount 0 ]
+    [ sh:path arso:hasAIDSubmodel    ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has a Skills submodel but no AID submodel. Skills are invoked through AID interfaces, so an AID submodel is required." .
+
+arso:OperationalDataImpliesAidShape
+  a sh:NodeShape ;
+  rdfs:label "An OperationalData submodel requires an AID submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasOperationalDataSubmodel ; sh:maxCount 0 ]
+    [ sh:path arso:hasAIDSubmodel             ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has an OperationalData submodel but no AID submodel. OperationalData variables bind to AID properties, so an AID submodel is required." .
+
+arso:ParametersImplyAidShape
+  a sh:NodeShape ;
+  rdfs:label "A Parameters submodel requires an AID submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasParametersSubmodel ; sh:maxCount 0 ]
+    [ sh:path arso:hasAIDSubmodel        ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has a Parameters submodel but no AID submodel. Parameters bind to AID properties, so an AID submodel is required." .
+
+arso:CapabilitiesImplySkillsShape
+  a sh:NodeShape ;
+  rdfs:label "A Capabilities submodel requires a Skills submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasCapabilitiesSubmodel ; sh:maxCount 0 ]
+    [ sh:path arso:hasSkillsSubmodel       ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has a Capabilities submodel but no Skills submodel. A Capability is realized by Skills, so a Skills submodel is required." .
+
+arso:SkillsImplyCapabilitiesShape
+  a sh:NodeShape ;
+  rdfs:label "A Skills submodel requires a Capabilities submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasSkillsSubmodel       ; sh:maxCount 0 ]
+    [ sh:path arso:hasCapabilitiesSubmodel ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has a Skills submodel but no Capabilities submodel. Every Skill must be realized by a Capability, so a Capabilities submodel is required." .
+
+
+#################################################################
+# VALUE ENUMERATIONS AND DISJUNCTIONS
+#################################################################
+
+# owl:oneOf ("Full" "OneDown" "OneUp") on arso:ArcheTypeProperty is not
+# translated by owl2shacl, so the enum is enforced here instead.
+arso:ArcheTypeValueShape
+  a sh:NodeShape ;
+  rdfs:label "ArcheType must be one of Full, OneDown, OneUp" ;
+  sh:targetClass arso:ArcheTypeProperty ;
+  sh:property [
+    sh:path <https://admin-shell.io/aas/3/1/Property/value> ;
+    # Explicitly ^^xsd:string: the RDF projection emits Property/value as an
+    # xsd:string-typed literal, and rdflib does not treat a plain Turtle
+    # literal as equal to an xsd:string-typed one, so a bare "Full" here
+    # matches nothing and the shape fires on valid values.
+    sh:in ( "Full"^^xsd:string "OneDown"^^xsd:string "OneUp"^^xsd:string ) ;
+    sh:message "HierarchicalStructures ArcheType must be exactly 'Full', 'OneDown' or 'OneUp'." ;
+  ] .
+
+# A Forms SMC must carry an address, but which property that is depends on the
+# protocol: href (MQTT/HTTP), opc_node_id (OPC-UA), modv_address (Modbus).
+# A disjunction, so not expressible as an OWL restriction the ruleset can use.
+arso:FormsAddressingShape
+  a sh:NodeShape ;
+  rdfs:label "A Forms SMC must carry a protocol address" ;
+  sh:targetClass arso:FormsSMC ;
+  sh:or (
+    [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      sh:qualifiedValueShape [ sh:class arso:HrefProperty ]        ; sh:qualifiedMinCount 1 ]
+    [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      sh:qualifiedValueShape [ sh:class arso:UavNodeIdProperty ]   ; sh:qualifiedMinCount 1 ]
+    [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      sh:qualifiedValueShape [ sh:class arso:ModvAddressProperty ] ; sh:qualifiedMinCount 1 ]
+  ) ;
+  sh:message "This Forms SMC has no protocol address: expected href (MQTT/HTTP), opc_node_id (OPC-UA) or modv_address (Modbus)." .
+
+
+#################################################################
+# CROSS-SUBMODEL REFERENCE RESOLUTION (SPARQL -- see category 1 above)
+#################################################################
 
 # Skill interface references must resolve to an InterfaceSMC in the same AAS.
 
@@ -78,11 +178,6 @@ arso:RealizedByRefTargetShape
       }
     """ ;
   ] .
-
-# Every Skill must be targeted by at least one Capability's realizedBy
-# (many-to-one is fine; this is not a 1:1 check). Deliberately not
-# auto-fixed in the builder -- a missing link is a real gap that should
-# surface back to whoever/whatever produced the profile, not get patched.
 
 arso:SkillMustBeRealizedByCapabilityShape
   a sh:NodeShape ;

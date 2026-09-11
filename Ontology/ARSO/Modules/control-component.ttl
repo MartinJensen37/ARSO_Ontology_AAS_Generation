@@ -130,10 +130,13 @@ arso:CCErrorsSMC rdf:type owl:Class ;
 
 arso:ErrorSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:CCErrorsSMC ;
   rdfs:comment "SMC {error_name} — a named error entry, if populated." .
 
 arso:ErrorCodeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ErrorSMC ;
+  arso:idShort "ErrorCode" ;
   rdfs:comment "Property ErrorCode (xs:integer) — numeric error code identifying this error." .
 
 

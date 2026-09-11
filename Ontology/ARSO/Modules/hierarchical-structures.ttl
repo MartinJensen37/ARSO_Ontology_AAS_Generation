@@ -62,7 +62,7 @@ arso:NodeEntity rdf:type owl:Class ;
 arso:ArcheTypeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
   arso:semanticId "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0" ;
-  rdfs:comment "Property ArcheType (xs:string) — hierarchy archetype: 'Full', 'OneDown', or 'OneUp'. Value constraint enforced via SPARQL SHACL." .
+  rdfs:comment "Property ArcheType (xs:string) — hierarchy archetype: 'Full', 'OneDown', or 'OneUp'. The value enumeration is enforced by arso:ArcheTypeValueShape in arso-rules.shacl.ttl, NOT by the owl:oneOf restriction below: the owl2shacl ruleset does not translate owl:oneOf into sh:in (verified -- zero sh:in in the generated shapes), so the restriction alone is inert." .
 
 # OWL constraints to allow owl->shacl conversion for ArcheType and SelfManaged entities
 arso:ArcheTypeProperty rdfs:subClassOf [

@@ -166,39 +166,62 @@ arso:InteractionMetadataSMC rdf:type owl:Class ;
 
 arso:PropertiesSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:InteractionMetadataSMC ;
+  arso:idShort "properties" ;
   rdfs:comment "SMC properties — container for PropertyDefinition SMCs (WoT PropertyAffordances)." .
 
 arso:ActionsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:InteractionMetadataSMC ;
+  arso:idShort "actions" ;
   rdfs:comment "SMC actions — container for ActionDefinition SMCs (WoT ActionAffordances)." .
 
 arso:EventsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:InteractionMetadataSMC ;
+  arso:idShort "events" ;
   rdfs:comment "SMC events — container for EventDefinition SMCs (WoT EventAffordances)." .
 
+# The three affordance-entry classes carry arso:parentClass with no
+# arso:idShort: affordance names are free-form (whatever the asset calls its
+# actions/properties/events), so they are identified purely by position --
+# any SMC child of the corresponding container.
 arso:PropertyDefinitionSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {prop_name} — a PropertyAffordance (readable/observable/writable data point). Must have a forms SMC." .
+  arso:parentClass arso:PropertiesSMC ;
+  rdfs:comment "SMC {prop_name} — a PropertyAffordance (readable/observable/writable data point). Must have a Forms SMC." .
 
 arso:ActionDefinitionSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {action_name} — an ActionAffordance (invokable operation). Must have a forms SMC." .
+  arso:parentClass arso:ActionsSMC ;
+  rdfs:comment "SMC {action_name} — an ActionAffordance (invokable operation). Must have a Forms SMC." .
 
 arso:EventDefinitionSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC {event_name} — an EventAffordance (subscribable notification). Must have a forms SMC." .
+  arso:parentClass arso:EventsSMC ;
+  rdfs:comment "SMC {event_name} — an EventAffordance (subscribable notification). Must have a Forms SMC." .
 
 
 #################################################################
 # ELEMENT TYPES — Forms (protocol binding)
 #################################################################
 
+# idShort is "Forms", not the WoT spec's lowercase "forms" -- that is what
+# asset_interfaces_builder.py actually emits, and typing has to match the
+# document, not the spec. Three parentClass values because a Forms SMC hangs
+# off any of the three affordance kinds.
 arso:FormsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  rdfs:comment "SMC forms — protocol binding for an interaction affordance. Must contain href." .
+  arso:parentClass arso:ActionDefinitionSMC ,
+                   arso:PropertyDefinitionSMC ,
+                   arso:EventDefinitionSMC ;
+  arso:idShort "Forms" ;
+  rdfs:comment "SMC Forms — protocol binding for an interaction affordance. Must contain href." .
 
 arso:HrefProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:FormsSMC ;
+  arso:idShort "href" ;
   rdfs:comment "Property href (xs:string) — target URI for this form." .
 
 # HTTP binding
@@ -213,6 +236,8 @@ arso:ModvFunctionProperty rdf:type owl:Class ;
 
 arso:ModvAddressProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:FormsSMC ;
+  arso:idShort "modv_address" ;
   rdfs:comment "Property modv_address (xs:unsignedShort) — Modbus register address." .
 
 arso:ModvQuantityProperty rdf:type owl:Class ;
@@ -273,6 +298,8 @@ arso:UavUserIdentityTokenProperty rdf:type owl:Class ;
 # OPC UA binding — Forms properties
 arso:UavNodeIdProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:FormsSMC ;
+  arso:idShort "opc_node_id" ;
   rdfs:comment "Property opc_node_id (xs:string) — full OPC UA NodeId string, e.g. 'ns=1;s=PlungerSet80/Methods/Start'. Used in Forms SMC for actions and properties." .
 
 arso:UavNamespaceProperty rdf:type owl:Class ;
@@ -286,10 +313,14 @@ arso:UavNamespaceProperty rdf:type owl:Class ;
 
 arso:ExternalDescriptorSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:InterfaceSMC ;
+  arso:idShort "ExternalDescriptor" ;
   rdfs:comment "SMC ExternalDescriptor — container for File references to external TD documents." .
 
+# No idShort: the File entries are named per document.
 arso:ExternalDescriptorFile rdf:type owl:Class ;
   rdfs:subClassOf aas:File ;
+  arso:parentClass arso:ExternalDescriptorSMC ;
   rdfs:comment "File within ExternalDescriptor — path to an external TD document." .
 
 
@@ -363,11 +394,6 @@ arso:EventDefinitionSMC rdfs:subClassOf [
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
   owl:someValuesFrom arso:FormsSMC ] .
 
-# Each forms SMC must contain href (mandatory)
-arso:FormsSMC rdfs:subClassOf [
-  rdf:type owl:Restriction ;
-  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-  owl:someValuesFrom arso:HrefProperty ] .
 
 # ExternalDescriptor must contain at least one File
 arso:ExternalDescriptorSMC rdfs:subClassOf [
