@@ -10,6 +10,8 @@ The framework is centred on the **AAS Resource Structure Ontology (ARSO)**, whic
 
 Authoring a high-quality AAS by hand requires knowing the AAS metamodel, the relevant IDTA submodel templates, the equipment documentation, and the asset's communication interfaces.
 
+![Target use case: generating AAS instances from equipment documentation.](images/use-case.png)
+
 Rather than asking an LLM for a complete AAS JSON document, this framework has it produce a compact **AAS profile** holding only the asset-specific facts. The profile is then normalised, expanded into full AAS JSON by deterministic builders, projected to RDF, and validated against ontology-derived SHACL shapes. This keeps the LLM task small and makes the output easy to validate and correct.
 
 | Layer | Path | Role |
@@ -118,7 +120,6 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │           ├── metrics.py              Coverage, cross-reference and conformance scoring
 │           ├── aggregate.py            results.jsonl → aggregate.csv + derived.json
 │           ├── plot_results.py         Evaluation plots (PNG + PDF)
-│           ├── effort_check.py         Sanity-checks a run's effort/cost figures
 │           └── generate_linfill120_mqtt_pdf.py   Regenerates an interface-spec fixture
 │
 ├── ui/                                 AAS editor frontend (React + TypeScript + Vite)
@@ -137,7 +138,7 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │   │       │                           DigitalNameplate, HierarchicalStructures,
 │   │       │                           OperationalData, Parameters, Skills)
 │   │       └── shared/                 GuidancePanel, SemanticIdInput, AdvField,
-│   │                                   SubmodelAdvancedPanel, AdvancedContext
+│   │                                   AdvancedContext
 │   ├── vite.config.ts                  Dev proxy /api → backend, polling watcher
 │   ├── Dockerfile, package.json, tsconfig*.json, eslint.config.js
 │   └── README.md                       UI-specific documentation
@@ -239,6 +240,8 @@ Adding an OpenAI-compatible provider needs only a `base_url` in `OPENAI_COMPATIB
 
 **Editor:** open the frontend, build or import a profile on the canvas, and validation runs live as you edit. "Generate with AI" drafts submodels from an uploaded datasheet.
 
+![The AAS canvas editor, with live SHACL validation.](images/ui_editor.png)
+
 **API:**
 
 ```bash
@@ -303,6 +306,8 @@ Results land in `Testing/Generation_Tests/results/<run-id>/`: `results.jsonl` (o
 ---
 
 ## Ontology
+
+![The ARSO ontology and its submodel modules.](images/ARSO_Ontology.png)
 
 `Ontology/ARSO/Modules/` holds one `.ttl` per submodel. Each class declares how it is identified in an AAS JSON document through `arso:semanticId` / `arso:idShort` / `arso:parentClass` / `arso:transitiveParentClass` annotations. Both `Transformation/AAS_to_RDF/aas_to_rdf.py` and the shape generator read these directly, so extending a submodel with an element that follows the convention needs no Python changes.
 
