@@ -44,6 +44,16 @@ arso:ParametersImplyAidShape
   ) ;
   sh:message "This AAS has a Parameters submodel but no AID submodel. Parameters bind to AID properties, so an AID submodel is required." .
 
+arso:AIMCImpliesAidShape
+  a sh:NodeShape ;
+  rdfs:label "An AIMC submodel requires an AID submodel" ;
+  sh:targetClass aas:AssetAdministrationShell ;
+  sh:or (
+    [ sh:path arso:hasAIMCSubmodel ; sh:maxCount 0 ]
+    [ sh:path arso:hasAIDSubmodel  ; sh:minCount 1 ]
+  ) ;
+  sh:message "This AAS has an AIMC submodel but no AID submodel. AIMC maps AID properties, so an AID submodel is required." .
+
 arso:CapabilitiesImplySkillsShape
   a sh:NodeShape ;
   rdfs:label "A Capabilities submodel requires a Skills submodel" ;
@@ -112,7 +122,7 @@ arso:FormsAddressingShape
 arso:SkillInterfaceRefTargetShape
   a sh:NodeShape ;
   rdfs:label "SkillInterfaceRef must target an InterfaceSMC in the same AAS's AID submodel" ;
-  sh:targetClass arso:CCInterfaceReferenceRef ;
+  sh:targetClass arso:SkillInterfaceReferenceRef ;
   sh:sparql [
     a sh:SPARQLConstraint ;
     sh:message "arso:SkillInterfaceRef points at no AID Interface in the same AAS, or AID submodel is missing." ;
@@ -365,6 +375,75 @@ arso:ParameterInterfaceRefTargetShape
                 <https://w3id.org/2025/arso#hasParametersSubmodel>          ?paramsSm .
         ?paramsSm
                 (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+          ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
+          ?aidSm  (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                  ?propsContainer .
+          ?propsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "properties"^^xsd:string .
+          ?propsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?prop .
+          ?prop   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+      }
+    """ ;
+  ] .
+
+
+#################################################################
+# AIMC (IDTA 02027) REFERENCE RESOLUTION
+#################################################################
+
+# A MappingConfiguration's InterfaceReference must name an AID interface.
+
+arso:AIMCInterfaceRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "AIMC InterfaceReference must resolve to an existing AID interface" ;
+  sh:targetClass arso:AIMCInterfaceReferenceRef ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "An AIMC MappingConfiguration's InterfaceReference points at no AID interface in the same AAS, or the AID submodel is missing." ;
+    sh:select """
+      SELECT $this WHERE {
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasAIMCSubmodel>                ?aimcSm .
+        ?aimcSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
+                $this .
+
+        FILTER NOT EXISTS {
+          $this <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
+          ?ref  <https://admin-shell.io/aas/3/1/Reference/keys>          ?key .
+          ?key  <https://admin-shell.io/aas/3/1/Key/value>               ?targetIdShort .
+
+          ?shell  <https://w3id.org/2025/arso#hasAIDSubmodel>          ?aidSm .
+          ?aidSm  <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ?iface .
+          ?iface  <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+      }
+    """ ;
+  ] .
+
+# A Source must name an existing AID property -- never an action or event.
+# Sinks are not checked: IDTA 02027 lets them target any submodel element.
+
+arso:AIMCSourceRefTargetShape
+  a sh:NodeShape ;
+  rdfs:label "AIMC Source must resolve to an existing AID property" ;
+  sh:targetClass arso:SourceRef ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "An AIMC Source reference points at no AID property in the same AAS, or the AID submodel is missing." ;
+    sh:select """
+      SELECT $this WHERE {
+        ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+                <https://w3id.org/2025/arso#hasAIMCSubmodel>                ?aimcSm .
+        ?aimcSm
+                (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
                 $this .
 
         FILTER NOT EXISTS {

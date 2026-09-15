@@ -198,14 +198,16 @@ def _extract_issues(report_graph: Graph) -> list[dict]:
 
 # Issue -> UI field label. Maps a keyword in an ontology class/property local
 # name (e.g. "DigitalNameplate" in "arso:hasDigitalNameplateSubmodel") to the
-# submodel it concerns. Follows the stable "arso:hasXSubmodel" convention, so
-# adding a submodel needs no change here.
+# submodel it concerns. First match wins, so specific keywords go first.
 
 _FIELD_KEYWORDS: list[tuple[str, str]] = [
     ("DigitalNameplate", "DigitalNameplate"),
     ("Nameplate", "DigitalNameplate"),
     ("HierarchicalStructures", "HierarchicalStructures"),
     ("EntryNode", "HierarchicalStructures"),
+    # Before "Interface": AssetInterfacesMappingConfiguration contains it.
+    ("AIMC", "AIMC"),
+    ("MappingConfiguration", "AIMC"),
     ("AID", "AID"),
     ("Interface", "AID"),
     ("Endpoint", "AID"),
