@@ -9,6 +9,8 @@ export const DIGITAL_NAMEPLATE_SUBMODEL  = 'https://admin-shell.io/idta/nameplat
 export const HIERARCHICAL_STRUCTURES     = 'https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel';
 export const OPERATIONAL_DATA_SUBMODEL   = 'https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel';
 export const PARAMETERS_SUBMODEL         = 'https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel';
+export const TECHNICAL_DATA_SUBMODEL     = '0173-1#01-AHX837#002';
+export const AIMC_SUBMODEL               = 'https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/Submodel';
 
 // ── IDTA HierarchicalStructures element semantic IDs ─────────────────────────
 export const HIERARCHICAL_ARCHETYPE     = 'https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0';
@@ -31,9 +33,9 @@ export const WOT_EVENT_AFFORDANCE       = 'https://www.w3.org/2019/wot/td#EventA
 // ── W3C WoT supplemental protocol URIs ───────────────────────────────────────
 export const WOT_TD                     = 'https://www.w3.org/2019/wot/td';
 export const WOT_INTERACTION_AFFORDANCE = 'https://www.w3.org/2019/wot/td#InteractionAffordance';
-export const MQTT_PROTOCOL              = 'http://www.w3.org/2011/mqtt';
-export const HTTP_PROTOCOL              = 'https://www.w3.org/2019/wot/http';
-export const MODBUS_PROTOCOL            = 'https://www.w3.org/2019/wot/modbus';
+export const MQTT_PROTOCOL              = 'https://www.w3.org/2019/wot/td/v1/binding/mqtt';
+export const HTTP_PROTOCOL              = 'https://www.w3.org/2019/wot/td/v1/binding/http';
+export const MODBUS_PROTOCOL            = 'https://www.w3.org/2019/wot/td/v1/binding/modbus';
 
 // ── Custom submodel semantic IDs ──────────────────────────────────────────────
 export const SKILLS_SUBMODEL            = 'https://admin-shell.io/idta/ControlComponentType/1/0';

@@ -15,48 +15,18 @@ export interface BuildAasResult {
 }
 
 export type AASType = 'Resource' | 'Product' | 'Process';
-export type SubmodelKey =
-  | 'Nameplate'
-  | 'AID'
-  | 'Skills'
-  | 'Capabilities'
-  | 'Variables'
-  | 'Parameters'
-  | 'HierarchicalStructures';
+// Submodel keys and their per-key tables live in submodelRegistry.ts.
+export type { SubmodelKey } from './submodelRegistry';
+export {
+  ALL_SUBMODELS,
+  REQUIRED_SUBMODELS,
+  SUBMODEL_FIELD_PREFIXES,
+  SUBMODEL_YAML_KEYS,
+} from './submodelRegistry';
+import type { SubmodelKey } from './submodelRegistry';
+import { REQUIRED_SUBMODELS, SUBMODEL_YAML_KEYS } from './submodelRegistry';
 
 export type SubmodelTab = SubmodelKey;
-
-export const REQUIRED_SUBMODELS: SubmodelKey[] = ['Nameplate', 'HierarchicalStructures'];
-
-export const ALL_SUBMODELS: SubmodelKey[] = [
-  'Nameplate',
-  'HierarchicalStructures',
-  'AID',
-  'Skills',
-  'Capabilities',
-  'Variables',
-  'Parameters',
-];
-
-export const SUBMODEL_FIELD_PREFIXES: Record<SubmodelKey, string[]> = {
-  Nameplate: ['DigitalNameplate'],
-  HierarchicalStructures: ['HierarchicalStructures'],
-  AID: ['AID'],
-  Skills: ['Skills'],
-  Capabilities: ['Capabilities'],
-  Variables: ['Variables'],
-  Parameters: ['Parameters'],
-};
-
-export const SUBMODEL_YAML_KEYS: Record<SubmodelKey, string> = {
-  Nameplate: 'DigitalNameplate',
-  HierarchicalStructures: 'HierarchicalStructures',
-  AID: 'AID',
-  Skills: 'Skills',
-  Capabilities: 'Capabilities',
-  Variables: 'Variables',
-  Parameters: 'Parameters',
-};
 
 // ── Per-AAS state ─────────────────────────────────────────────────────────────
 

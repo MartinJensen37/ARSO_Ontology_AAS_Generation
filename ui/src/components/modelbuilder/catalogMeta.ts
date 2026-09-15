@@ -1,4 +1,4 @@
-import type { SubmodelKey } from '../../store/useAppStore';
+import { ALL_SUBMODELS, SUBMODEL_REGISTRY, type SubmodelKey } from '../../store/submodelRegistry';
 
 export interface SubmodelMeta {
   icon: string;
@@ -7,47 +7,10 @@ export interface SubmodelMeta {
   color: string;
 }
 
-export const SUBMODEL_META: Record<SubmodelKey, SubmodelMeta> = {
-  Nameplate: {
-    icon: 'SM',
-    label: 'DigitalNameplate',
-    description: 'Manufacturer, serial number, product URI',
-    color: '#38bdf8',
-  },
-  HierarchicalStructures: {
-    icon: 'SM',
-    label: 'BillOfMaterials',
-    description: 'BOM — IsPartOf / HasPart relationships',
-    color: '#34d399',
-  },
-  AID: {
-    icon: 'SM',
-    label: 'AssetInterfaceDescription',
-    description: 'MQTT/HTTP endpoint + interaction metadata',
-    color: '#a78bfa',
-  },
-  Skills: {
-    icon: 'SM',
-    label: 'Skills',
-    description: 'Executable capabilities of this resource',
-    color: '#fb923c',
-  },
-  Capabilities: {
-    icon: 'SM',
-    label: 'Capabilities',
-    description: 'Semantic capability declarations',
-    color: '#f472b6',
-  },
-  Variables: {
-    icon: 'SM',
-    label: 'OperationalData',
-    description: 'Runtime variable semantic IDs',
-    color: '#fbbf24',
-  },
-  Parameters: {
-    icon: 'SM',
-    label: 'Parameters',
-    description: 'Configuration parameters with units',
-    color: '#94a3b8',
-  },
-};
+// Derived from the UI submodel registry.
+export const SUBMODEL_META = Object.fromEntries(
+  ALL_SUBMODELS.map((key) => {
+    const spec = SUBMODEL_REGISTRY[key];
+    return [key, { icon: 'SM', label: spec.label, description: spec.description, color: spec.color }];
+  }),
+) as Record<SubmodelKey, SubmodelMeta>;

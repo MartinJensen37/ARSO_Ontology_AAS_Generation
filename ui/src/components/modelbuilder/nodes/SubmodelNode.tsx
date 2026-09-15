@@ -8,12 +8,6 @@ import type { ValidationIssue } from '../../../types/resourceaas';
 // Stable empty array — prevents infinite re-render from `?? []` in Zustand selectors
 const EMPTY_ISSUES: ValidationIssue[] = [];
 
-// SubmodelKey values that don't match the backend's issue.field naming —
-// see the comment at fieldPrefix below.
-const SUBMODEL_KEY_TO_FIELD_PREFIX: Partial<Record<SubmodelKey, string>> = {
-  Nameplate: 'DigitalNameplate',
-  Variables: 'OperationalData',
-};
 import type {
   ResourceAASProfile,
   SystemConfig,
@@ -24,8 +18,11 @@ import type {
   Variable,
   Parameter,
   HierarchicalStructures,
+  TechnicalData,
+  AIMCInterfaceMapping,
 } from '../../../types/resourceaas';
 import { SUBMODEL_META } from '../catalogMeta';
+import { SUBMODEL_REGISTRY } from '../../../store/submodelRegistry';
 
 export interface SubmodelNodeData {
   submodelKey: SubmodelKey;
@@ -39,7 +36,8 @@ export interface SubmodelNodeData {
 type HandleType =
   | 'source'  // right handle only  — outgoing reference (HasPart, Capabilities, Variables, Parameters)
   | 'target'  // left handle only   — incoming reference (IsPartOf, AID, Nameplate)
-  | 'both';   // left + right       — bidirectional (Skills — receives realizedBy, references AID)
+  | 'both'    // left + right       — bidirectional (Skills — receives realizedBy, references AID)
+  | 'none';   // no handles         — display-only row
 
 interface PropRow {
   id: string;
@@ -178,6 +176,33 @@ function getRows(
       ];
     }
 
+    case 'TechnicalData': {
+      const td = cfg.TechnicalData as TechnicalData | undefined;
+      if (!td) return [];
+      const sections = Object.keys(td.TechnicalProperties ?? {});
+      const classes = td.ProductClassifications ?? [];
+      // Grid row 2: at most 3 rows so the node clears row 3.
+      return [
+        { id: 'td-article', label: 'Article no.', value: td.GeneralInformation?.ManufacturerArticleNumber || '—', handleType: 'none' as HandleType },
+        { id: 'td-class', label: 'Classification', value: classes[0]?.ProductClassId ?? '—', handleType: 'none' as HandleType },
+        { id: 'td-sections', label: 'Properties', value: sections.length ? sections.join(', ') : '—', handleType: 'none' as HandleType },
+      ];
+    }
+
+    case 'AIMC': {
+      const aimc = cfg.AIMC as Record<string, AIMCInterfaceMapping> | undefined;
+      if (!aimc) return [];
+      return Object.entries(aimc).slice(0, 3).map(([iface, entry]) => {
+        const n = entry?.Mappings?.length ?? 0;
+        return {
+          id: `aimc-${iface}`,
+          label: iface,
+          value: n ? `${n} mapping${n !== 1 ? 's' : ''}` : '—',
+          handleType: 'none' as HandleType,
+        };
+      });
+    }
+
     default:
       return [];
   }
@@ -205,9 +230,8 @@ export const SubmodelNode = memo(function SubmodelNode({ id, data, selected }: N
   const parsedProfile = ownState?.parsedProfile ?? globalParsedProfile;
   const identitySystemId = ownState?.identitySystemId ?? globalIdentitySystemId;
 
-  // issue.field uses ontology-style submodel names, which differ from the UI's
-  // SubmodelKey for two keys (see validator.py's _FIELD_KEYWORDS).
-  const fieldPrefix = SUBMODEL_KEY_TO_FIELD_PREFIX[submodelKey] ?? submodelKey;
+  // Backend issue.field prefix (validator.py _FIELD_KEYWORDS).
+  const fieldPrefix = SUBMODEL_REGISTRY[submodelKey].fieldPrefix;
   const violationCount = nodeIssues.filter(
     (i) => i.severity === 'Violation' && i.field?.startsWith(fieldPrefix)
   ).length;

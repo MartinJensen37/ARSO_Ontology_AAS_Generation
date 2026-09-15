@@ -23,8 +23,52 @@ export interface SystemConfig {
   HierarchicalStructures?: HierarchicalStructures;
   Capabilities?: Record<string, Capability>;
   Skills?: Record<string, Skill>;
+  TechnicalData?: TechnicalData;
+  AIMC?: Record<string, AIMCInterfaceMapping>;
   /** Per-submodel AAS id/semanticId overrides. Key = SubmodelKey (e.g. 'Skills'). */
   _meta?: Record<string, { id?: string; semanticId?: string }>;
+}
+
+// ── TechnicalData (IDTA 02003) ───────────────────────────────────────────────
+
+export interface TechnicalClassification {
+  ClassificationSystem?: string;
+  ClassificationSystemVersion?: string;
+  ProductClassId?: string;
+  ProductClassCodedName?: string;
+}
+
+/** Datasheet value: plain string, a {min,max} range, or a nested section. */
+export type TechnicalValue = string | { min?: string; max?: string } | { [name: string]: TechnicalValue };
+
+export interface TechnicalData {
+  GeneralInformation?: {
+    ManufacturerName?: string;
+    ManufacturerProductDesignation?: string;
+    ManufacturerArticleNumber?: string;
+    ManufacturerOrderCode?: string;
+  };
+  ProductClassifications?: TechnicalClassification[];
+  /** Section name -> property name -> value. */
+  TechnicalProperties?: Record<string, Record<string, TechnicalValue>>;
+  FurtherInformation?: { TextStatement?: string | string[]; ValidDate?: string };
+}
+
+// ── AIMC (IDTA 02027) ────────────────────────────────────────────────────────
+
+export interface AIMCMapping {
+  /** AID property name under InteractionMetadata.properties. */
+  source: string;
+  /** OperationalData or Parameters entry name. */
+  sink: string;
+  sinkSubmodel?: 'OperationalData' | 'Parameters';
+  pollingInterval?: string | number;
+}
+
+/** One AID interface's mappings, keyed by interface name in the profile. */
+export interface AIMCInterfaceMapping {
+  DefaultPollingInterval?: string | number;
+  Mappings?: AIMCMapping[];
 }
 
 // ── Submodel form-state types ─────────────────────────────────────────────────
