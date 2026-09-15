@@ -10,7 +10,6 @@ The framework is centred on the **AAS Resource Structure Ontology (ARSO)**, whic
 
 Authoring a high-quality AAS by hand requires knowing the AAS metamodel, the relevant IDTA submodel templates, the equipment documentation, and the asset's communication interfaces.
 
-![Target use case: generating AAS instances from equipment documentation.](images/use-case.png)
 
 Rather than asking an LLM for a complete AAS JSON document, this framework has it produce a compact **AAS profile** holding only the asset-specific facts. The profile is then normalised, expanded into full AAS JSON by deterministic builders, projected to RDF, and validated against ontology-derived SHACL shapes. This keeps the LLM task small and makes the output easy to validate and correct.
 
@@ -24,6 +23,8 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 ![Simplified architecture for the generation pipeline.](images/architecture.png)
 
 ## Demonstration Video
+The system has been tested on multiple pieces of equipment namely a filling and a stoppering module for filling and sealing primary packaging in aseptic production. The two modules can be seen in the Figure below:
+![Target use case: generating AAS instances from equipment documentation.](images/use-case.png)
 
 [Ontology_grounded_AAS_gen_720p.webm](https://github.com/user-attachments/assets/57838bc5-169b-48e5-b690-b0683bc1d920)
 
