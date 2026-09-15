@@ -1,136 +1,145 @@
-# Submodel Template: Capabilities
+# Submodel Template: Capabilities (IDTA 02020)
 
 - **idShort**: `Capabilities`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/Capabilities`
-- **semanticId**: `https://admin-shell.io/idta/CapabilityDescription/1/0` (ExternalReference)
+- **semanticId**: `https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0` (ExternalReference)
 - **kind**: `Instance`
-- **administration**: `{"version": "1", "revision": "1"}`
+- **administration**: `{"version": "1", "revision": "0"}`
 
 ## Purpose
 
-Declares the semantic capabilities of this resource — what it CAN do (at a higher abstraction level
-than Skills). Each Capability is a formal declaration that MUST be realized by a Skill.
+What the resource can do, one level above Skills — e.g. Capability `Filling`, realized by
+Skill `Start`.
 
-## DEPENDENCY RULES (Critical)
+## Dependency Rules (Critical)
 
-- Capabilities MUST be accompanied by Skills submodel (mutually required).
-- Each Capability's `SemanticId` Property value MUST start with `https://smartproductionlab.aau.dk/`.
-- Each Capability MUST have a `realizedBy` SubmodelElementList pointing to a Skill (SHACL violation otherwise).
-- One Capability can reference one or more Skills via the `realizedBy` list.
+- Capabilities requires Skills; Skills requires Capabilities.
+- Every Skill must be realized by at least one Capability. One Capability may be realized by
+  several Skills.
+- Each Capability's semanticId must start with `https://smartproductionlab.aau.dk/`.
+- Each `realizedBy` relationship's `second` reference must resolve to a Skill in this AAS.
 
 ## Structure
 
-The submodel has ONE top-level element: `CapabilitySet` SubmodelElementCollection.
-Inside `CapabilitySet`, each capability is its own SubmodelElementCollection.
-
-Each capability SubmodelElementCollection contains:
-1. `SemanticId` Property — URI starting with `https://smartproductionlab.aau.dk/capabilities/...`
-2. `Capability` element — formal AAS Capability model type
-3. `realizedBy` SubmodelElementList — list of RelationshipElements pointing to Skills
-
-## realizedBy Structure
-
-```json
-{
-  "modelType": "SubmodelElementList",
-  "idShort": "realizedBy",
-  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"}]},
-  "orderRelevant": true,
-  "typeValueListElement": "RelationshipElement",
-  "value": [
-    {
-      "modelType": "RelationshipElement",
-      "idShort": "{skillName}",
-      "first": {
-        "type": "ModelReference",
-        "keys": [
-          {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/Capabilities"},
-          {"type": "SubmodelElementCollection", "value": "CapabilitySet"},
-          {"type": "SubmodelElementCollection", "value": "{capabilityName}"}
-        ]
-      },
-      "second": {
-        "type": "ModelReference",
-        "keys": [
-          {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/Skills"},
-          {"type": "SubmodelElementCollection", "value": "{skillName}"}
-        ]
-      }
-    }
-  ]
-}
 ```
+Capabilities (Submodel)
+  └─ CapabilitySet [SMC]
+       └─ {Name}Container [SMC]                        one per capability
+            ├─ SemanticId [Property, xs:string]       capability URI
+            ├─ {Name} [Capability]                    semanticId = capability URI
+            └─ realizedBy [SML of RelationshipElement]
+                 └─ (no idShort)  first -> this container, second -> [Skills submodel, {SkillName}]
+```
+
+| Element | semanticId |
+|---|---|
+| `CapabilitySet` | `https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0` |
+| `{Name}Container` | `https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0` |
+| `realizedBy` | `https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0` |
+
+The ontology also accepts the IDTA 02020 ids
+`https://admin-shell.io/idta/CapabilityDescription/CapabilitySet/1/0` and
+`.../CapabilityContainer/1/0`. Elements inside a SubmodelElementList carry no idShort (AASd-120).
 
 ## JSON Template
 
 ```json
 {
+  "idShort": "Capabilities",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/Capabilities",
-  "idShort": "Capabilities",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/CapabilityDescription/1/0"}]
+    "keys": [
+      {
+        "type": "GlobalReference",
+        "value": "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0"
+      }
+    ]
   },
-  "administration": {"version": "1", "revision": "1"},
   "submodelElements": [
     {
-      "modelType": "SubmodelElementCollection",
       "idShort": "CapabilitySet",
+      "modelType": "SubmodelElementCollection",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"}]
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"
+          }
+        ]
       },
       "value": [
         {
+          "idShort": "FillingContainer",
           "modelType": "SubmodelElementCollection",
-          "idShort": "Dispensing",
           "semanticId": {
             "type": "ExternalReference",
-            "keys": [{"type": "GlobalReference", "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"}]
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+              }
+            ]
           },
           "value": [
             {
-              "modelType": "Property",
               "idShort": "SemanticId",
-              "valueType": "xs:string",
-              "value": "https://smartproductionlab.aau.dk/capabilities/Dispensing"
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/Capability/Filling",
+              "valueType": "xs:string"
             },
             {
+              "idShort": "Filling",
               "modelType": "Capability",
-              "idShort": "Dispensing",
               "semanticId": {
                 "type": "ExternalReference",
-                "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/capabilities/Dispensing"}]
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/Capability/Filling"
+                  }
+                ]
               }
             },
             {
-              "modelType": "SubmodelElementList",
               "idShort": "realizedBy",
+              "modelType": "SubmodelElementList",
               "semanticId": {
                 "type": "ExternalReference",
-                "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"}]
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0"
+                  }
+                ]
               },
               "orderRelevant": true,
               "typeValueListElement": "RelationshipElement",
               "value": [
                 {
                   "modelType": "RelationshipElement",
-                  "idShort": "Dispense",
                   "first": {
                     "type": "ModelReference",
                     "keys": [
-                      {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/Capabilities"},
+                      {
+                        "type": "Submodel",
+                        "value": "{base_url}/submodels/instances/{systemId}/Capabilities"
+                      },
                       {"type": "SubmodelElementCollection", "value": "CapabilitySet"},
-                      {"type": "SubmodelElementCollection", "value": "Dispensing"}
+                      {"type": "SubmodelElementCollection", "value": "FillingContainer"}
                     ]
                   },
                   "second": {
                     "type": "ModelReference",
                     "keys": [
-                      {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/Skills"},
-                      {"type": "SubmodelElementCollection", "value": "Dispense"}
+                      {
+                        "type": "Submodel",
+                        "value": "{base_url}/submodels/instances/{systemId}/Skills"
+                      },
+                      {"type": "SubmodelElementCollection", "value": "Start"}
                     ]
                   }
                 }
@@ -146,7 +155,6 @@ Each capability SubmodelElementCollection contains:
 
 ## Notes
 
-- Capabilities are higher-level than Skills: e.g. Capability = "Dispensing", Skill = "Dispense".
-- The number of Capabilities can equal the number of Skills, or one Capability can cover multiple Skills.
-- Each Capability's `realizedBy` RelationshipElement `idShort` must match the Skill's `idShort` in the Skills submodel.
-- The `second` key path in the RelationshipElement must point to the EXACT path in the Skills submodel.
+- The container idShort is the capability name plus `Container`; the `Capability` element uses
+  the bare name.
+- Use the lab convention `https://smartproductionlab.aau.dk/Capability/{Name}` for the URI.

@@ -11,9 +11,9 @@ uncertainty_rules: |
   - Use [VERIFY: ...] ONLY when genuinely unsure AND the field is mandatory.
   - For OPTIONAL fields whose value is not present in the spec sheet,
     OMIT the field entirely from the JSON. Do not emit a [VERIFY: ...] placeholder.
-    Examples of optional Nameplate fields: DateOfManufacture, YearOfConstruction,
-    HardwareVersion, SoftwareVersion, FirmwareVersion, CountryOfOrigin,
-    ManufacturerProductFamily, BatchNumber, URIOfTheProduct.
+    Examples of optional Nameplate fields: SerialNumber, DateOfManufacture,
+    YearOfConstruction, HardwareVersion, SoftwareVersion, CountryOfOrigin,
+    ManufacturerProductFamily, ManufacturerArticleNumber, URIOfTheProduct.
   - NEVER use [VERIFY: ...] in identifier/reference fields: idShort, id, globalAssetId, keys[].value, semanticId keys.
   - idShort values MUST contain only letters, digits, and underscore.
   - When unsure about identifier-like values, generate a stable AAS-safe token instead of a placeholder.

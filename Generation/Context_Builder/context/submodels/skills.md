@@ -1,102 +1,133 @@
-# Submodel Template: Skills
+# Submodel Template: Skills (IDTA 02015 Control Component, flattened)
 
 - **idShort**: `Skills`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/Skills`
-- **semanticId**: `https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel` (ExternalReference)
+- **semanticId**: `https://admin-shell.io/idta/ControlComponentType/1/0` (ExternalReference)
 - **kind**: `Instance`
-- **administration**: `{"version": "1", "revision": "1"}`
+- **administration**: `{"version": "1", "revision": "0"}`
 
 ## Purpose
 
-Describes the executable skills (functions/operations) that this resource can perform.
-Each skill is a `SubmodelElementCollection` containing a `SemanticId` Property and an `Operation` element.
+The executable operations this resource offers. Each skill wraps one AAS `Operation` that is
+invoked through one AID action.
 
-## DEPENDENCY RULES (Critical)
+## Dependency Rules (Critical)
 
-- Skills MUST be accompanied by Capabilities submodel (mutually required).
-- Skills MUST be accompanied by AID submodel (required for interface linkage).
-- Each Skill's `SemanticId` Property value MUST start with `https://smartproductionlab.aau.dk/`.
+- Skills requires AID and Capabilities; Capabilities requires Skills.
+- Every skill must be realized by at least one Capability.
+- Every skill's `InterfaceReference` must point at an existing AID action.
+- Skill semanticIds must start with `https://smartproductionlab.aau.dk/`.
 
-## Per-Skill Structure
+## Structure
 
-Each skill is a `SubmodelElementCollection` at the top level with:
-- `idShort`: the skill name (e.g. `"Dispense"`, `"PickItem"`)
-- `value`: array containing:
-  1. `SemanticId` Property — URI starting with `https://smartproductionlab.aau.dk/skills/...`
-  2. `Operation` element — the executable AAS operation
-
-## Operation Element
-
-The `Operation` has:
-- `idShort`: same as the skill name
-- `semanticId`: ExternalReference to the same URI as the SemanticId Property
-- `qualifiers`: optional array for invocation delegation and call type
-- `inputVariables`: optional array of `{value: Property}` objects
-- `outputVariables`: optional array of `{value: Property}` objects
-- `inoutputVariables`: optional array of `{value: Property}` objects
-
-## Qualifier Types
-
-```json
-{"type": "invocationDelegation", "valueType": "xs:string", "value": "<mqtt-topic-or-http-endpoint>", "kind": "ConceptQualifier"}
-{"type": "synchronous", "valueType": "xs:boolean", "value": "true", "kind": "ConceptQualifier"}
-{"type": "asynchronous", "valueType": "xs:boolean", "value": "true", "kind": "ConceptQualifier"}
 ```
+Skills (Submodel)
+  ├─ Interfaces [SMC]          always present, empty
+  ├─ Skills [SMC]
+  │    └─ {SkillName} [SMC]
+  │         ├─ SemanticId [Property, xs:string]      https://smartproductionlab.aau.dk/skills/{SkillName}
+  │         ├─ {SkillName} [Operation]              semanticId = the same URI
+  │         ├─ InterfaceReference [ReferenceElement] -> AID/{Interface}/InteractionMetadata/actions/{Action}
+  │         └─ StateMachine [Property]              asynchronous skills only
+  └─ Errors [SMC]              always present, empty
+```
+
+`Interfaces`, `Skills` and `Errors` are each mandatory, exactly once.
+
+## Operation
+
+- `qualifiers`:
+  - `invocationDelegation` (`xs:string`): `{delegation_base_url}/operations/{systemId}/{SkillName}`
+  - `Synchronous` (`xs:boolean`) for request/response actions, or `OneWay` (`xs:boolean`, `true`)
+    when the AID action has neither an output schema nor a `response` topic
+- `inputVariables` / `outputVariables` are derived from the AID action's `input` / `output` JSON
+  Schema; omit them when the action has none.
+- Asynchronous skills (`Synchronous` false) also get a `StateMachine` Property, polled for
+  `IDLE` / `RUNNING` / `SUCCESS` / `FAILURE`.
 
 ## JSON Template
 
 ```json
 {
+  "idShort": "Skills",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/Skills",
-  "idShort": "Skills",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel"}]
+    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/ControlComponentType/1/0"}]
   },
-  "administration": {"version": "1", "revision": "1"},
   "submodelElements": [
+    {"idShort": "Interfaces", "modelType": "SubmodelElementCollection"},
     {
+      "idShort": "Skills",
       "modelType": "SubmodelElementCollection",
-      "idShort": "Dispense",
       "value": [
         {
-          "modelType": "Property",
-          "idShort": "SemanticId",
-          "valueType": "xs:string",
-          "value": "https://smartproductionlab.aau.dk/skills/Dispense"
-        },
-        {
-          "modelType": "Operation",
-          "idShort": "Dispense",
-          "semanticId": {
-            "type": "ExternalReference",
-            "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/skills/Dispense"}]
-          },
-          "qualifiers": [
-            {"type": "invocationDelegation", "valueType": "xs:string", "value": "mqtt://broker.example.com/device/skills/dispense", "kind": "ConceptQualifier"},
-            {"type": "synchronous", "valueType": "xs:boolean", "value": "true", "kind": "ConceptQualifier"}
-          ],
-          "inputVariables": [
-            {"value": {"modelType": "Property", "idShort": "volume", "valueType": "xs:double", "description": [{"language": "en", "text": "Volume in mL"}]}},
-            {"value": {"modelType": "Property", "idShort": "targetContainer", "valueType": "xs:string"}}
-          ],
-          "outputVariables": [
-            {"value": {"modelType": "Property", "idShort": "dispensedVolume", "valueType": "xs:double"}},
-            {"value": {"modelType": "Property", "idShort": "success", "valueType": "xs:boolean"}}
+          "idShort": "Start",
+          "description": [{"language": "en", "text": "Skill: Start"}],
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "SemanticId",
+              "modelType": "Property",
+              "value": "https://smartproductionlab.aau.dk/skills/Start",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "Start",
+              "description": [{"language": "en", "text": "Operation to invoke Start fill cycle action"}],
+              "modelType": "Operation",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://smartproductionlab.aau.dk/skills/Start"
+                  }
+                ]
+              },
+              "qualifiers": [
+                {
+                  "value": "http://registration-service:8087/operations/{systemId}/Start",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:string",
+                  "type": "invocationDelegation"
+                },
+                {
+                  "value": "true",
+                  "kind": "ConceptQualifier",
+                  "valueType": "xs:boolean",
+                  "type": "Synchronous"
+                }
+              ]
+            },
+            {
+              "idShort": "InterfaceReference",
+              "description": [{"language": "en", "text": "Reference to Start action interface"}],
+              "modelType": "ReferenceElement",
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/AID"},
+                  {"type": "SubmodelElementCollection", "value": "InterfaceMQTT"},
+                  {"type": "SubmodelElementCollection", "value": "InteractionMetadata"},
+                  {"type": "SubmodelElementCollection", "value": "actions"},
+                  {"type": "SubmodelElementCollection", "value": "Start"}
+                ]
+              }
+            }
           ]
         }
       ]
-    }
+    },
+    {"idShort": "Errors", "modelType": "SubmodelElementCollection"}
   ]
 }
 ```
 
 ## Notes
 
-- Extract skill names from the spec sheet's function list, operation modes, or capabilities section.
-- Use descriptive PascalCase names: `PickItem`, `Dispense`, `MoveToPosition`, `SetParameter`.
-- The `invocationDelegation` qualifier value should be the MQTT topic or HTTP endpoint if known from the spec sheet, otherwise leave it empty or omit the qualifier.
-- Each skill here MUST have a corresponding Capability in the Capabilities submodel with a `realizedBy` link.
-- Each skill here MUST have a corresponding action entry in the AID submodel's InteractionMetadata.actions.
+- Take skill names from the command list or the NodeSet's `<UAMethod>` BrowseNames, in
+  PascalCase (`Start`, `Home`, `MoveToPosition`).
+- Name each skill after its AID action; the `InterfaceReference` ends at that action's idShort.

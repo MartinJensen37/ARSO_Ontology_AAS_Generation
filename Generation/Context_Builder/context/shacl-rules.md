@@ -1,85 +1,80 @@
 # SHACL Validation Rules — Human-Readable Summary
 
-The generated AAS JSON is validated by pyshacl against three shape files:
-- `shacl/manual/aas-shacl-schema.ttl` — AAS v3.1 metamodel constraints
-- `shacl/generated/shapes.generated.shacl.ttl` — ARSO domain shapes (auto-derived from ARSO_AAS.ttl)
-- `shacl/manual/arso-rules.shacl.ttl` — manual SPARQL cross-submodel rules
+The AAS is projected to RDF and validated with pyshacl against three shape files:
 
-All rules below are checked; violations are fed back as corrective context for the next attempt.
+- `Ontology/SHACL/Manual/aas-shacl-schema.ttl` — AAS v3.1 metamodel constraints
+- `Ontology/SHACL/Generated/shapes.generated.shacl.ttl` — domain shapes derived from the ARSO
+  modules' OWL restrictions
+- `Ontology/SHACL/Manual/arso-rules.shacl.ttl` — hand-written rules OWL cannot express
+
+Every violation is fed back as corrective context for the next attempt.
 
 ---
 
 ## Mandatory Submodels
 
-- **[VIOLATION]** `DigitalNameplate` submodel MUST be present (minCount 1).
-- **[VIOLATION]** `HierarchicalStructures` submodel MUST be present (minCount 1).
+- **[VIOLATION]** DigitalNameplate: exactly one.
+- **[VIOLATION]** HierarchicalStructures: exactly one.
+- **[VIOLATION]** Every other submodel: at most one.
 
----
+## Submodel Dependencies (arso-rules)
 
-## Submodel Dependency Rules (R5–R8, arso-rules.shacl.ttl)
+- **[VIOLATION]** Skills → AID
+- **[VIOLATION]** OperationalData → AID
+- **[VIOLATION]** Parameters → AID
+- **[VIOLATION]** AIMC → AID
+- **[VIOLATION]** Capabilities → Skills, and Skills → Capabilities
 
-These fire on `aas:AssetAdministrationShell` and rely on typed-link properties
-(`arso:hasSkillsSubmodel`, `arso:hasAIDSubmodel`, etc.) emitted by the RDF converter.
+## Cross-Submodel References (arso-rules, SPARQL)
 
-- **R5 [VIOLATION]** Skills present → AID (`AssetInterfacesDescription`) MUST also be present.
-- **R6 [VIOLATION]** OperationalData present → AID MUST also be present.
-- **R7 [VIOLATION]** Parameters present → AID MUST also be present.
-- **R8a [VIOLATION]** Capabilities present → Skills MUST also be present.
-- **R8b [VIOLATION]** Skills present → Capabilities MUST also be present.
+- **[VIOLATION]** A Skill's `InterfaceReference` must resolve to an AID interface, and one of its
+  keys must name an action under `actions`.
+- **[VIOLATION]** Every Skill must be realized by at least one Capability.
+- **[VIOLATION]** A Capability `realizedBy` relationship's `second` must resolve to a Skill.
+- **[VIOLATION]** An OperationalData or Parameters `InterfaceReference` must resolve to an AID property.
+- **[VIOLATION]** An AIMC `InterfaceReference` must resolve to an AID interface, and each AIMC
+  `Source` to an AID property.
 
----
+## Values and Patterns (arso-rules)
 
-## Cross-Submodel Reference Rules (R1–R2, arso-rules.shacl.ttl)
+- **[VIOLATION]** `ArcheType` is exactly `Full`, `OneDown` or `OneUp`.
+- **[VIOLATION]** Every AID `Forms` collection has `href`, `opc_node_id` or `modv_address`.
+- **[VIOLATION]** These semanticIds start with `https://smartproductionlab.aau.dk/`: Skill
+  Operation, Capability element, OperationalData variable, Parameter entry.
+- **[WARNING]** An `EntryNode` with no statements.
 
-- **R1 [VIOLATION]** A `SkillInterfaceRef` ReferenceElement inside the Skills submodel MUST resolve
-  to an `arso:InterfaceSMC` in the same AAS's AID submodel.
-- **R2 [VIOLATION]** A `RealizedByRef` ReferenceElement inside the Capabilities submodel MUST
-  resolve to a Skill SMC in the same AAS's Skills submodel.
+## Domain Structure (ARSO module restrictions)
 
----
+- **DigitalNameplate**: `URIOfTheProduct`, `ManufacturerName`, `ManufacturerProductDesignation`,
+  `ContactInformation` (with `Street`, `ZipCode`, `CityTown`, `NationalCode`),
+  `OrderCodeOfManufacturer`.
+- **HierarchicalStructures**: exactly one `ArcheType` and one `EntryNode`; the `EntryNode` holds
+  at least one Node.
+- **AID**: at least one interface, each with `title` and `EndpointMetadata`; `EndpointMetadata`
+  has `base`, `security` and `securityDefinitions`; every affordance has `Forms`.
+- **Skills**: exactly one each of `Interfaces`, `Skills` and `Errors`; each skill has `SemanticId`,
+  an Operation and `InterfaceReference`.
+- **Capabilities**: at least one `CapabilitySet` holding at least one container with a Capability.
+- **TechnicalData**: exactly one `GeneralInformation` with the four manufacturer fields.
+- **AIMC**: exactly one `MappingConfigurations`; each configuration has `Sources` and `Sinks`; each
+  Source and Sink has its reference and its id.
 
-## BOM / HierarchicalStructures Rules
+These are enforced as of the last regeneration of the generated shapes
+(`python Transformation/Generate_Shapes/generate_shapes.py`).
 
-- **R3 [VIOLATION]** A BOM Entity with `entityType: SelfManagedEntity` MUST have a `globalAssetId`.
-- **R4 [VIOLATION]** The `ArcheType` Property value MUST be exactly `"Full"`, `"OneDown"`, or `"OneUp"`.
-- **R9 [WARNING]** If an EntryNode exists but has no statements (empty BOM), a warning is raised.
+## Format Check (profile validation, not SHACL)
 
----
-
-## Domain Shape Constraints (shapes.generated.shacl.ttl)
-
-Generated from ARSO_AAS.ttl via OWL→SHACL. Key checks:
-
-- Each `DigitalNameplate` submodel MUST contain `ManufacturerName` (MultiLanguageProperty),
-  `ManufacturerProductDesignation`, `ContactInformation` SMC, and `OrderCodeOfManufacturer`.
-- The `ContactInformation` SMC MUST contain `Street`, `ZipCode`, `CityTown`, and `NationalCode` properties.
-- Each `Capabilities` submodel MUST contain at least one `arso:CapabilityContainerSMC`,
-  which in turn MUST contain at least one `arso:CapabilityElement` (a `Capability` model type).
-- Each AID submodel MUST contain at least one `Interface` SMC in its `submodelElements`.
-- Each `Interface` SMC MUST contain `EndpointMetadata` and `InteractionMetadata` child SMCs.
-
----
-
-## Semantic / Value Rules (aas-shacl-schema.ttl)
-
-- **[VIOLATION]** `YearOfConstruction` value must match pattern `^[0-9]{4}$` (e.g. `"2023"`).
-- **[VIOLATION]** `DateOfManufacture` value must match pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`.
-- **[VIOLATION]** Each Skill's `SemanticId` Property value MUST start with
-  `https://smartproductionlab.aau.dk/` or `http://smartproductionlab.aau.dk/`.
-- **[VIOLATION]** Each Capability's `SemanticId` Property value MUST start with
-  `https://smartproductionlab.aau.dk/` or `http://smartproductionlab.aau.dk/`.
+- `DateOfManufacture` must match `YYYY-MM-DD`.
 
 ---
 
 ## Quick Checklist Before Outputting
 
-- [ ] `DigitalNameplate` submodel present with `ManufacturerName` (MLP), `ManufacturerProductDesignation` (MLP), `ContactInformation` SMC (with Street, ZipCode, CityTown, NationalCode), and `OrderCodeOfManufacturer`
-- [ ] `HierarchicalStructures` submodel present with `ArcheType` property (`"OneUp"` / `"OneDown"` / `"Full"`) and an `EntryNode` Entity
-- [ ] If Skills → Capabilities also present (R8)
-- [ ] If Capabilities → Skills also present (R8a)
-- [ ] If Skills / OperationalData / Parameters → AID also present (R5–R7)
-- [ ] All Capability `SemanticId` Property values start with `https://smartproductionlab.aau.dk/`
-- [ ] All Skill `SemanticId` Property values start with `https://smartproductionlab.aau.dk/`
-- [ ] AID has at least one `Interface` SMC in `submodelElements`
-- [ ] All submodel IDs are referenced in the shell's `submodels` array
-- [ ] `ArcheType` value is exactly `"Full"`, `"OneDown"`, or `"OneUp"` (no other strings)
+- [ ] DigitalNameplate and HierarchicalStructures present, with every mandatory element
+- [ ] `ArcheType` is `OneUp`, `OneDown` or `Full`
+- [ ] AID present if Skills, OperationalData, Parameters or AIMC is
+- [ ] Skills and Capabilities both present or both absent
+- [ ] Every Skill references an AID action and is realized by a Capability
+- [ ] OperationalData, Parameters and AIMC sources reference AID **properties**
+- [ ] Lab semanticIds start with `https://smartproductionlab.aau.dk/`
+- [ ] Every submodel id is referenced from the shell's `submodels` array

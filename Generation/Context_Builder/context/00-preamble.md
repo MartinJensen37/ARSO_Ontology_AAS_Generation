@@ -1,279 +1,240 @@
-﻿# ResourceAAS Generation Context â€” Preamble (v2 â€” IDTA-aligned)
+# ResourceAAS Generation Context — Preamble
 
-You are generating an **Asset Administration Shell (AAS) JSON document** conforming to the AAS
-Part 2 v3.1 specification and the **ARSO_AAS** ontology (which imports the official AAS v3.1
-metamodel and adds domain-specific subclasses for our submodels).
+You generate an **Asset Administration Shell (AAS)** for one resource, conforming to AAS Part 2
+v3.1 and the **ARSO** ontology (the official AAS v3.1 metamodel plus domain subclasses for these
+submodels). The per-submodel sections that follow give each submodel's exact structure.
 
-## Mandatory semanticIds (canonical — matches ARSO_AAS.ttl and the AAS builder)
+## Mandatory semanticIds
 
-Every submodel and every mandatory submodel element MUST include a `semanticId` whose key value
-is **exactly one of the IRIs below**. The RDF converter (`aas_to_rdf.py`) uses these to assign
-the correct ARSO subclass to each node; a wrong or missing ID causes domain constraints to be
-skipped.
+The RDF converter (`aas_to_rdf.py`) types each node by its semanticId. A wrong or missing id
+silently skips that node's domain constraints.
 
-**Submodel-level (set on each Submodel's `semanticId`):**
+**Submodels:**
 
-| Submodel idShort         | semanticId IRI |
+| Submodel idShort | semanticId |
 |---|---|
-| `DigitalNameplate`       | `https://admin-shell.io/idta/nameplate/3/0/Nameplate` |
+| `DigitalNameplate` | `https://admin-shell.io/idta/nameplate/3/0/Nameplate` |
 | `HierarchicalStructures` | `https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel` |
-| `AID`                    | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel` |
-| `Capabilities`           | `https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0` |
-| `Skills`                 | `https://admin-shell.io/idta/ControlComponentType/1/0` |
-| `OperationalData`        | `https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel` |
-| `Parameters`             | `https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel` |
+| `AID` | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel` |
+| `Skills` | `https://admin-shell.io/idta/ControlComponentType/1/0` |
+| `Capabilities` | `https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0` |
+| `OperationalData` | `https://smartproductionlab.aau.dk/ARSO/OperationalData/1/0/Submodel` |
+| `Parameters` | `https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel` |
+| `TechnicalData` | `0173-1#01-AHX837#002` |
+| `AssetInterfacesMappingConfiguration` | `https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/Submodel` |
 
-**Submodel-element-level (mandatory SMEs — set on each SME's `semanticId`):**
+**Mandatory submodel elements:**
 
-| SME idShort                       | semanticId IRI |
+| Element | semanticId |
 |---|---|
-| `ManufacturerName`                | `0112/2///61987#ABA565#009` |
-| `ManufacturerProductDesignation`  | `0112/2///61987#ABA567#009` |
-| `ContactInformation`              | `https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation` |
-| `OrderCodeOfManufacturer`         | `0112/2///61987#ABA950#008` |
-| `ArcheType`                       | `https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0` |
-| `EntryNode`                       | `https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0` |
-| `Interface` (in AID)              | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface` |
-| `EndpointMetadata`                | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata` |
-| `InteractionMetadata`             | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata` |
+| `URIOfTheProduct` | `0112/2///61987#ABN590#002` |
+| `ManufacturerName` | `0112/2///61987#ABA565#009` |
+| `ManufacturerProductDesignation` | `0112/2///61987#ABA567#009` |
+| `ContactInformation` | `https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation` |
+| `OrderCodeOfManufacturer` | `0112/2///61987#ABA950#008` |
+| `ArcheType` | `https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0` |
+| `EntryNode` | `https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0` |
+| AID interface | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface` |
+| `EndpointMetadata` | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata` |
+| `InteractionMetadata` | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata` |
 
 `semanticId` JSON shape:
 
 ```json
 "semanticId": {
   "type": "ExternalReference",
-  "keys": [{"type": "GlobalReference", "value": "<IRI from table above>"}]
+  "keys": [{"type": "GlobalReference", "value": "<IRI from the tables above>"}]
 }
 ```
-
-Use this exact structure â€” `type: ExternalReference` at the reference level and
-`type: GlobalReference` inside each key.
 
 ---
 
 ## CRITICAL OUTPUT RULE
 
-**Output ONLY a single valid JSON object â€” no prose, no markdown code fences, no explanations
-before or after. The first character of your response MUST be `{`.**
+**Output ONLY a single valid JSON object — no prose, no markdown code fences, no explanations.
+The first character of your response MUST be `{`.**
 
 ## Handling unknown values
 
-For **mandatory** fields where the spec sheet genuinely lacks the value, use `[VERIFY: reason]` as a placeholder — e.g. `"ManufacturerName": "[VERIFY: not stated in datasheet]"`.
+- **Mandatory** field missing from the source material: use `[VERIFY: reason]`, e.g.
+  `"ManufacturerName": "[VERIFY: not stated in datasheet]"` — unless the per-field guidance marks
+  that field optional, in which case omit it.
+- **Optional** field missing from the source material: omit it. Never put `[VERIFY: ...]` on an
+  optional field.
+- Never put `[VERIFY: ...]` in identifiers or references: `idShort`, `id`, `globalAssetId`,
+  reference key values, semanticIds.
 
-For **optional** fields, OMIT the field entirely from the JSON when the value is not in the spec — do NOT use `[VERIFY: ...]` on optional fields.
-
-Optional Nameplate fields (omit if unknown):
-`DateOfManufacture`, `YearOfConstruction`, `HardwareVersion`, `SoftwareVersion`,
-`FirmwareVersion`, `CountryOfOrigin`, `ManufacturerProductFamily`, `BatchNumber`,
-`URIOfTheProduct`, `ManufacturerArticleNumber`.
-
-Format constraint when present: `DateOfManufacture` must be `YYYY-MM-DD` (xsd:date).
-`YearOfConstruction` must be exactly `YYYY` (4 digits).
+Optional DigitalNameplate fields: `SerialNumber`, `ManufacturerProductFamily`,
+`ManufacturerArticleNumber`, `YearOfConstruction` (`YYYY`), `DateOfManufacture` (`YYYY-MM-DD`),
+`HardwareVersion`, `SoftwareVersion`, `CountryOfOrigin`. `URIOfTheProduct` is mandatory but is
+derived as `{base_url}/assets/{systemId}` when the datasheet gives none.
 
 ---
 
-## Top-Level JSON Envelope
-
-The document MUST follow exactly this envelope structure:
+## Top-Level JSON Envelope (full AAS output)
 
 ```json
 {
   "assetAdministrationShells": [ <one AAS shell object> ],
-  "submodels": [ <array of Submodel objects â€” one per selected submodel> ],
+  "submodels": [ <one Submodel object per selected submodel> ],
   "conceptDescriptions": []
 }
 ```
 
-### Shell Object Structure
+### Shell Object
 
 ```json
 {
   "modelType": "AssetAdministrationShell",
   "id": "{base_url}/aas/{systemId}",
-  "idShort": "{systemId}_AAS",
+  "idShort": "{systemId}",
   "assetInformation": {
     "assetKind": "Instance",
-    "globalAssetId": "{base_url}/assets/{systemId}"
+    "globalAssetId": "{base_url}/assets/{assetName}"
   },
   "submodels": [
-    {
-      "type": "ModelReference",
-      "keys": [{ "type": "Submodel", "value": "<submodel-id>" }]
-    }
+    {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "<submodel id>"}]}
   ]
 }
 ```
 
-- **`id`**: use the pattern `{base_url}/aas/{systemId}` â€” derive `systemId` from the asset name
-  (no spaces, camelCase or PascalCase)
-- **`idShort`**: `{systemId}_AAS`
-- **`globalAssetId`**: `{base_url}/assets/{systemId}`
-- The `submodels` array in the shell MUST reference EVERY submodel in the `submodels` array by id
+- `systemId` is the asset name in PascalCase with an `AAS` suffix, e.g. `LinFill120AAS`.
+- The shell's `submodels` array references every submodel in the document by id.
 
 ---
 
-## Submodel ID Convention
+## Submodel IDs
 
-Every submodel id follows:
-```
-{base_url}/submodels/instances/{systemId}/{idShort}
-```
+Every submodel id is `{base_url}/submodels/instances/{systemId}/{segment}`:
 
-Example for base_url = `https://smartproductionlab.aau.dk`, systemId = `MyRobot`:
-- DigitalNameplate â†’ `https://smartproductionlab.aau.dk/submodels/instances/MyRobot/DigitalNameplate`
-- Skills â†’ `https://smartproductionlab.aau.dk/submodels/instances/MyRobot/Skills`
-- OperationalData â†’ `https://smartproductionlab.aau.dk/submodels/instances/MyRobot/OperationalData`
+| Submodel idShort | `{segment}` |
+|---|---|
+| `DigitalNameplate` | `Nameplate` |
+| `HierarchicalStructures` | `HierarchicalStructures` |
+| `AID` | `AID` |
+| `Skills` | `Skills` |
+| `Capabilities` | `Capabilities` |
+| `OperationalData` | `OperationalData` |
+| `Parameters` | `Parameters` |
+| `TechnicalData` | `TechnicalData` |
+| `AssetInterfacesMappingConfiguration` | `AssetInterfacesMappingConfiguration` |
 
----
-
-## Mandatory Submodels â€” ALWAYS Required
-
-**DigitalNameplate** and **HierarchicalStructures** MUST always be present, even if not explicitly
-listed. They are required by the SHACL core shape for all ResourceAAS instances.
-
----
-
-## Submodel Dependency Rules â€” ENFORCE STRICTLY
-
-These rules are validated by SHACL and will cause violations if broken:
-
-1. **Skills â†” Capabilities are mutually required**: If Skills is present â†’ Capabilities MUST be
-   present. If Capabilities is present â†’ Skills MUST be present.
-
-2. **AID required when Skills/OperationalData/Parameters exist**: If any of Skills, OperationalData,
-   or Parameters are present â†’ AID submodel MUST be present.
-
-3. **Skills require AID interface link**: Each Skill MUST be accessible through a SkillInterface
-   that is linked to a ResourceInterface in the AID submodel.
-
-4. **Each Skill gets exactly one SkillInterface**: Validate that each skill has exactly one
-   `accessibleThrough` relation.
-
-5. **AID requires at least one ResourceInterface**: If AID exists, at least one interface must be
-   present in the InteractionMetadata.
-
-6. **Capabilities must link to Skills via realizedBy**: Each Capability MUST have a `realizedBy`
-   SubmodelElementList containing a RelationshipElement pointing to the corresponding Skill.
-
-7. **Semantic IDs must use the smartproductionlab.aau.dk base**: The `SemanticId` Property inside
-   each Skill SMC and each Capability SMC MUST be a URI starting with
-   `https://smartproductionlab.aau.dk/` (or `http://smartproductionlab.aau.dk/`).
-
-8. **SerialNumber and ManufacturerName are mandatory in DigitalNameplate**.
-
-9. **YearOfConstruction format**: exactly 4 digits `YYYY` (e.g. `"2023"`).
-
-10. **DateOfManufacture format**: `YYYY-MM-DD` (e.g. `"2023-01-15"`).
+The one mismatch: the DigitalNameplate submodel's id ends in `Nameplate`.
 
 ---
 
-## Submodel Element Types Reference
+## Mandatory Submodels
+
+`DigitalNameplate` and `HierarchicalStructures` are always present, exactly once, whether or not
+they were requested. Every other submodel appears at most once.
+
+## Submodel Dependency Rules — enforced by SHACL
+
+1. Skills and Capabilities require each other.
+2. Skills, OperationalData, Parameters and AIMC each require AID.
+3. AID contains at least one interface.
+4. Every Skill's `InterfaceReference` names an AID action, and every Skill is realized by at least
+   one Capability.
+5. Every Capability `realizedBy` relationship's `second` reference resolves to a Skill.
+6. OperationalData and Parameters `InterfaceReference`s, and AIMC `Source`s, name an AID
+   **property** — never an action or event. An AIMC `InterfaceReference` names an AID interface.
+7. Skill Operation, Capability, OperationalData variable and Parameter semanticIds start with
+   `https://smartproductionlab.aau.dk/`.
+8. Every AID `Forms` collection carries an address: `href`, `opc_node_id` or `modv_address`.
+9. `ArcheType` is exactly `OneUp`, `OneDown` or `Full`.
+10. DigitalNameplate holds `URIOfTheProduct`, `ManufacturerName`, `ManufacturerProductDesignation`,
+    `ContactInformation` (with `Street`, `ZipCode`, `CityTown`, `NationalCode`) and
+    `OrderCodeOfManufacturer`.
+
+---
+
+## Submodel Element Types
 
 | modelType | Required fields | Notes |
 |---|---|---|
-| `Property` | `idShort`, `valueType`, `value` | valueType: `xs:string`, `xs:anyURI`, `xs:boolean`, `xs:integer`, etc. |
-| `MultiLanguageProperty` | `idShort`, `value` | `value` is array of `{language, text}` |
-| `SubmodelElementCollection` | `idShort`, `value` | `value` is array of child elements |
-| `SubmodelElementList` | `idShort`, `typeValueListElement`, `value` | ordered list of same-type elements |
-| `Entity` | `idShort`, `entityType`, `statements` | `entityType`: `SelfManagedEntity` or `CoManagedEntity` |
-| `RelationshipElement` | `idShort`, `first`, `second` | each is a ModelReference |
-| `ReferenceElement` | `idShort`, `value` | value is a ModelReference |
-| `Capability` | `idShort` | formal AAS Capability model type |
-| `Operation` | `idShort` | may have `inputVariables`, `outputVariables`, `inoutputVariables` |
-| `File` | `idShort`, `contentType`, `value` | value is a URI |
+| `Property` | `idShort`, `valueType`, `value` | `xs:string`, `xs:boolean`, `xs:double`, `xs:date`, ... |
+| `MultiLanguageProperty` | `idShort`, `value` | `value` is an array of `{language, text}` |
+| `Range` | `idShort`, `valueType`, `min`, `max` | |
+| `File` | `idShort`, `contentType`, `value` | `value` is a URI |
+| `Blob` | `idShort`, `contentType` | |
+| `SubmodelElementCollection` | `idShort`, `value` | `value` is an array of child elements |
+| `SubmodelElementList` | `idShort`, `typeValueListElement`, `value` | children carry **no** `idShort` (AASd-120) |
+| `Entity` | `idShort`, `entityType`, `statements` | a `SelfManagedEntity` needs a `globalAssetId` |
+| `RelationshipElement` | `idShort`, `first`, `second` | each a ModelReference |
+| `ReferenceElement` | `idShort`, `value` | `value` is a ModelReference |
+| `Capability` | `idShort` | |
+| `Operation` | `idShort` | optional `inputVariables`, `outputVariables`, `inoutputVariables` |
 
 ### Reference Types
 
-**ExternalReference** (for semanticId, supplementalSemanticIds):
+**ExternalReference** — for `semanticId` and `supplementalSemanticIds`:
+
 ```json
-{
-  "type": "ExternalReference",
-  "keys": [{ "type": "GlobalReference", "value": "<URI>" }]
-}
+{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "<URI>"}]}
 ```
 
-**ModelReference** (for first/second in RelationshipElement, value in ReferenceElement):
+**ModelReference** — for `first` / `second` and a ReferenceElement's `value`. The first key is
+always the submodel; the rest walk down by idShort:
+
 ```json
 {
   "type": "ModelReference",
   "keys": [
-    { "type": "Submodel", "value": "<submodel-id>" },
-    { "type": "SubmodelElementCollection", "value": "<idShort>" }
+    {"type": "Submodel", "value": "<submodel id>"},
+    {"type": "SubmodelElementCollection", "value": "<idShort>"}
   ]
 }
 ```
 
 ---
 
-## Additional Semantic IDs (AID / HS / WoT)
+## Semantic URI Conventions
 
-| Purpose | URI |
+Lab-owned semanticIds live under `https://smartproductionlab.aau.dk/`:
+
+| Element | Pattern |
 |---|---|
-| AID Interface SMC | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface` |
-| AID EndpointMetadata SMC | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata` |
-| AID InteractionMetadata SMC | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata` |
-| AID InterfaceReference property | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference` |
-| HS ArcheType | `https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0` |
-| HS EntryNode | `https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0` |
-| HS Node | `https://admin-shell.io/idta/HierarchicalStructures/Node/1/0` |
-| HS HasPart relationship | `https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0` |
-| HS IsPartOf relationship | `https://admin-shell.io/idta/HierarchicalStructures/IsPartOf/1/0` |
-| HS SameAs | `https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0` |
-| Capability element | `https://admin-shell.io/idta/CapabilityDescription/Capability/1/0` |
-| Capability realizedBy list | `https://admin-shell.io/idta/CapabilityDescription/CapabilityRealizedBy/1/0` |
-| WoT Thing Description | `https://www.w3.org/2019/wot/td` |
-| WoT PropertyAffordance | `https://www.w3.org/2019/wot/td#PropertyAffordance` |
-| WoT ActionAffordance | `https://www.w3.org/2019/wot/td#ActionAffordance` |
-| WoT InteractionAffordance | `https://www.w3.org/2019/wot/td#InteractionAffordance` |
-| MQTT protocol binding | `https://www.w3.org/2019/wot/td/v1/binding/mqtt` |
-| OPC UA protocol binding | `http://opcfoundation.org/UA/WoT-Binding/` |
-| HTTP protocol binding | `https://www.w3.org/2019/wot/td/v1/binding/http` |
-| WoT Thing Description base | `https://www.w3.org/2019/wot/td/v1` |
+| Skill (`SemanticId` Property and Operation) | `https://smartproductionlab.aau.dk/skills/{SkillName}` |
+| Capability | `https://smartproductionlab.aau.dk/Capability/{CapabilityName}` |
+| OperationalData variable | `https://smartproductionlab.aau.dk/variables/{VariableName}` |
+| Parameter | `https://smartproductionlab.aau.dk/parameters/{ParameterName}` |
 
 ---
 
 ## Input Document Types — How to Read Each
 
-The specification context may include several documents. Use each one as follows:
-
 ### Lifecycle / Datasheet PDF
-General product documentation. Extract:
-- **DigitalNameplate**: manufacturer name, product designation, serial number format, article number, year of construction, certifications
-- **HierarchicalStructures**: parent line/system references (if mentioned)
-- **OperationalData**: runtime variables, sensor values, cycle times mentioned in the operating section
-- **General context** for Skills and Capabilities (state machine descriptions, operating modes)
+
+- **DigitalNameplate**: manufacturer, address, product designation, order code, serial number,
+  year of construction.
+- **TechnicalData**: the specification table — ratings, dimensions, operating ranges.
+- **HierarchicalStructures**: the parent line or system, if mentioned.
+- **OperationalData**: runtime values from the operating section.
+- Context for Skills and Capabilities: operating modes and the state machine.
 
 ### OPC UA NodeSet XML (`kind: opcua`)
-Formal machine-readable OPC UA address space. This is the authoritative source for:
-- **AID `InterfaceOPCUA`**: derive `namespace_uri` from the first `<Uri>` in `<NamespaceUris>` that is NOT the OPC UA base (`http://opcfoundation.org/UA/`). Use `namespace_index: "1"` for application nodes.
-- **Skills**: each `<UAMethod>` with `ns=1` is a callable skill. Use the `BrowseName` as the skill name. Derive the `href` Forms field as `ns=1;i={NodeId}` or `ns=1;s={BrowseName}`.
-- **OperationalData / AID properties**: each `<UAVariable>` with `ns=1` that represents a readable state or measurement maps to a property affordance in the AID and an entry in OperationalData.
-- **`EndpointMetadata`**: set `base` to `opc.tcp://{hostname}:{port}` (default port 4840 if not specified), `protocol: "OPC UA"`, `encoding: "TCP Binary"`. Derive security mode and policy from the NodeSet `<SecurityMode>` elements or set to `None` / `Basic256Sha256` if not specified.
-- **`InteractionMetadata` node IDs**: use `ns=1;i={numericId}` or `ns=1;s={stringId}` format.
+
+The authoritative source for an OPC UA asset:
+
+- **AID `InterfaceOPCUA`**: `namespace_uri` is the first `<NamespaceUris>` entry that is not
+  `http://opcfoundation.org/UA/`; `namespace_index` is `"1"`; `base` is
+  `opc.tcp://{hostname}:{port}` (port 4840 if unstated); take security mode and policy from the
+  NodeSet, else `None` / `Basic256Sha256`.
+- **Skills / AID actions**: each `<UAMethod>` in `ns=1` is a skill named by its BrowseName. Its
+  Forms carry `opc_node_id` (`ns=1;i={NodeId}`) and `opc_namespace`.
+- **AID properties / OperationalData**: each `<UAVariable>` in `ns=1` holding a readable state or
+  measurement becomes an AID property and an OperationalData variable.
 
 ### MQTT Interface Specification PDF (`kind: mqtt-spec`)
-Documents the MQTT topic structure and command interface. Extract:
-- **AID `InterfaceMQTT`**: broker `base` URL (use `mqtt://broker.example.com` as placeholder if not given), `contentType: "application/json"`
-- **Skills / AID actions**: each command topic entry (e.g. START, STOP, HOME, RESET) maps to one Skill and one Action affordance. Use the command topic path as `href`.
-- **AID properties**: each published data topic maps to a property affordance. Set `op: "observeproperty"` and populate `mqv_retain` and `mqv_qos` from the spec.
-- **OperationalData**: published data values (cycle time, weight, state) map to OperationalData variables.
+
+- **AID `InterfaceMQTT`**: the broker `base` (use `mqtt://broker:1883` if unstated) and `contentType`.
+- **Skills / AID actions**: each command is one skill and one action. Its Forms `href` is the
+  command topic; a separate reply topic goes under `response.href`.
+- **AID properties**: each published data topic becomes a property with that topic as `href`.
+- **OperationalData / AIMC**: published values (state, weight, cycle time) become variables, and
+  AIMC maps each property to its variable.
 
 ### BOM / Line Description PDF (`kind: bom`)
-Bill of Materials or line structure document. Use for:
-- **HierarchicalStructures**: the line, cell, or station hierarchy. The BOM's top-level system is the `EntryNode`; listed components become child `Node` entities linked with `HasPart` relationships.
-- Each BOM component should reference its `globalAssetId` if available; use `[VERIFY: globalAssetId]` otherwise.
-- Match component names/part numbers from the BOM to populate `idShort` and entity descriptions.
 
----
-
-## Skill SemanticId URI Convention
-
-Skill SemanticId values (the `Property` named `SemanticId` inside each Skill SMC, and the
-`semanticId` on the Operation element) MUST start with `https://smartproductionlab.aau.dk/`.
-
-Example: `https://smartproductionlab.aau.dk/skills/Dispense`
-
-Capability SemanticId values follow the same pattern:
-Example: `https://smartproductionlab.aau.dk/capabilities/Dispensing`
-
-
+- **HierarchicalStructures**: the station's parent line (`IsPartOf`) and its components
+  (`HasPart`), each with a `globalAssetId` where one is given.

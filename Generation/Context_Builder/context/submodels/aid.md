@@ -1,211 +1,356 @@
-# Submodel Template: AID (Asset Interfaces Description)
+# Submodel Template: AID (Asset Interfaces Description, IDTA 02017)
 
 - **idShort**: `AID`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/AID`
-- **semanticId**: `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel` (ExternalReference)
+- **semanticId**: `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel` (ExternalReference; the ontology also accepts IDTA 02017-1-1's `.../1/1/Submodel`)
 - **kind**: `Instance`
-- **administration**: `{"version": "1", "revision": "1"}`
+- **administration**: `{"version": "1", "revision": "0"}`
 
 ## Purpose
 
-Describes the communication interfaces of the resource using the W3C Web of Things (WoT) Thing Description structure. Each interface (MQTT, OPC UA, HTTP, MODBUS) is a SubmodelElementCollection. Choose the interface type based on the equipment's communication protocol — see the preamble section "Input Document Types" for how to derive AID content from NodeSet XML, MQTT spec sheets, and other input documents.
+The resource's communication interfaces, as W3C Web of Things (WoT) Thing Descriptions: one
+SubmodelElementCollection per interface (MQTT, OPC UA, HTTP, Modbus). The preamble's "Input
+Document Types" explains how to derive it from NodeSet XML and MQTT specifications.
 
-## DEPENDENCY RULES (Critical)
+## Dependency Rules (Critical)
 
-- AID is required if Skills, OperationalData, or Parameters are present.
-- AID must have at least one Interface (ResourceInterface) — SHACL violation if empty.
-- Each interface must contain an `InteractionMetadata` SMC with at least one affordance (property, action, or event).
-- Each Skill in the Skills submodel must be represented as an Action affordance in the AID.
+- AID is required whenever Skills, OperationalData, Parameters or AIMC is present.
+- AID contains at least one interface.
+- Every Skill's `InterfaceReference` names an action under `InteractionMetadata/actions`.
+- OperationalData, Parameters and AIMC sources name a property under
+  `InteractionMetadata/properties` — never an action or event.
+- Every `Forms` collection carries an address: `href` (MQTT/HTTP/Modbus) or `opc_node_id` (OPC UA).
 
 ## Interface Structure
 
-Each Interface SMC:
-- `idShort`: interface name — `InterfaceMQTT`, `InterfaceOPCUA`, or `InterfaceHTTP` depending on the equipment's protocol
-- `semanticId`: `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface`
-- `supplementalSemanticIds`: protocol-specific (see Protocol Supplemental Semantic IDs table below)
-- `value`: array containing:
-  1. `title` Property (optional)
-  2. `EndpointMetadata` SMC — base URL and content type this url can also be hostnames like fillingmodule.local and so on.
-  3. `InteractionMetadata` SMC — properties, actions, events
-
-## InteractionMetadata Structure
-
-```json
-{
-  "modelType": "SubmodelElementCollection",
-  "idShort": "InteractionMetadata",
-  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"}]},
-  "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"}]}],
-  "value": [
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "properties",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"}]},
-      "value": [ ... property SMCs ... ]
-    },
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "actions",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#ActionAffordance"}]},
-      "value": [ ... action SMCs ... ]
-    }
-  ]
-}
+```
+Interface{Protocol} [SMC]
+  ├─ title [Property]
+  ├─ EndpointMetadata [SMC]
+  │    ├─ protocol-specific endpoint fields (table below)
+  │    ├─ securityDefinitions [SMC] └─ nosec_sc [SMC] └─ scheme = "nosec"
+  │    └─ security [SML] └─ "nosec_sc"
+  └─ InteractionMetadata [SMC]
+       ├─ actions [SMC]    └─ {Action} [SMC]:   Key, Title, Synchronous, Forms
+       ├─ properties [SMC] └─ {Property} [SMC]: Key, Title, Forms
+       └─ events [SMC]     └─ {Event} [SMC]:    Key, Title, Forms
 ```
 
-## Property Affordance SMC
+| Element | semanticId | supplementalSemanticIds |
+|---|---|---|
+| Interface | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface` | protocol binding, `https://www.w3.org/2019/wot/td` |
+| `EndpointMetadata` | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata` | — |
+| `InteractionMetadata` | `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata` | `https://www.w3.org/2019/wot/td#InteractionAffordance` |
+| `properties` | `https://www.w3.org/2019/wot/td#PropertyAffordance` | — |
+| `actions` | `https://www.w3.org/2019/wot/td#ActionAffordance` | — |
+| `events` | `https://www.w3.org/2019/wot/td#EventAffordance` | — |
+
+| Protocol | Interface idShort | Binding supplementalSemanticId |
+|---|---|---|
+| MQTT | `InterfaceMQTT` | `https://www.w3.org/2019/wot/td/v1/binding/mqtt` |
+| OPC UA | `InterfaceOPCUA` | `http://opcfoundation.org/UA/WoT-Binding/` |
+| HTTP | `InterfaceHTTP` | `https://www.w3.org/2019/wot/td/v1/binding/http` |
+| Modbus | `InterfaceMODBUS` | `https://www.w3.org/2019/wot/td/v1/binding/modbus` |
+
+`securityDefinitions` and `security` are always emitted with the `nosec` scheme; IDTA requires both.
+
+## Endpoint and Forms fields per protocol
+
+| Protocol | EndpointMetadata | Forms |
+|---|---|---|
+| MQTT | `base` (e.g. `mqtt://broker:1883`), `contentType` | `href` (topic), `contentType`, optional `response` SMC with the reply topic's `href` and `contentType` |
+| HTTP | `base`, `contentType` | `href` (path), `contentType`, `htv_methodName` |
+| Modbus | `base`, `contentType`, optional `modv_mostSignificantByte` / `modv_mostSignificantWord` | `href` (register address), `modv_function`, `modv_entity` |
+| OPC UA | `protocol`, `encoding`, `base` (`opc.tcp://{hostname}:4840`), `port`, `security_mode`, `security_policy`, `namespace_uri`, `namespace_index` | `opc_node_id` (e.g. `ns=1;i=4010`), `opc_namespace` |
+
+Forms fields are passed through as given, so only include those the source material states.
+Actions also carry `Synchronous` (`"true"` / `"false"`). All values are `xs:string`.
+
+## JSON Template (MQTT)
 
 ```json
 {
-  "modelType": "SubmodelElementCollection",
-  "idShort": "{propertyKey}",
-  "value": [
-    {"modelType": "Property", "idShort": "Key", "valueType": "xs:string", "value": "{propertyKey}"},
-    {"modelType": "Property", "idShort": "Title", "valueType": "xs:string", "value": "Human-readable title"},
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "Forms",
-      "value": [
-        {"modelType": "Property", "idShort": "href", "valueType": "xs:string", "value": "device/topic/path"},
-        {"modelType": "Property", "idShort": "op", "valueType": "xs:string", "value": "observeproperty"},
-        {"modelType": "Property", "idShort": "mqv_retain", "valueType": "xs:string", "value": "false"}
-      ]
-    }
-  ]
-}
-```
-
-## Action Affordance SMC (one per Skill)
-
-```json
-{
-  "modelType": "SubmodelElementCollection",
-  "idShort": "{skillName}",
-  "value": [
-    {"modelType": "Property", "idShort": "Key", "valueType": "xs:string", "value": "{skillName}"},
-    {"modelType": "Property", "idShort": "Title", "valueType": "xs:string", "value": "Human-readable title"},
-    {"modelType": "Property", "idShort": "Synchronous", "valueType": "xs:boolean", "value": "true"},
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "Forms",
-      "value": [
-        {"modelType": "Property", "idShort": "href", "valueType": "xs:string", "value": "device/skills/skillname"},
-        {"modelType": "Property", "idShort": "op", "valueType": "xs:string", "value": "invokeaction"},
-        {"modelType": "Property", "idShort": "contentType", "valueType": "xs:string", "value": "application/json"}
-      ]
-    }
-  ]
-}
-```
-
-## Protocol Supplemental Semantic IDs
-
-| Protocol | idShort for interface | supplementalSemanticIds values |
-|---|---|---|
-| MQTT | `InterfaceMQTT` | `["https://www.w3.org/2019/wot/td/v1/binding/mqtt", "https://www.w3.org/2019/wot/td/v1"]` |
-| HTTP | `InterfaceHTTP` | `["https://www.w3.org/2019/wot/td/v1/binding/http", "https://www.w3.org/2019/wot/td/v1"]` |
-| OPC UA | `InterfaceOPCUA` | `["http://opcfoundation.org/UA/WoT-Binding/", "https://www.w3.org/2019/wot/td/v1"]` |
-| MODBUS | `InterfaceMODBUS` | `["https://www.w3.org/2019/wot/td/v1/binding/modbus", "https://www.w3.org/2019/wot/td/v1"]` |
-
-## MQTT-Specific Forms Fields
-
-| idShort | valueType | Description |
-|---|---|---|
-| `href` | `xs:string` | MQTT topic (e.g. `"device/sensors/temperature"`) |
-| `op` | `xs:string` | `"observeproperty"` for subscribe, `"invokeaction"` for publish |
-| `mqv_retain` | `xs:string` | `"true"` or `"false"` |
-| `mqv_controlPacket` | `xs:string` | MQTT packet type |
-| `mqv_qos` | `xs:string` | `"0"`, `"1"`, or `"2"` |
-
-## OPC UA EndpointMetadata Fields
-
-For OPC UA interfaces use `InterfaceOPCUA` as the SMC idShort. The `EndpointMetadata` SMC contains transport-layer binding properties (not MQTT-style `base`/`contentType`):
-
-| idShort | valueType | Description |
-|---|---|---|
-| `protocol` | `xs:string` | Transport protocol, e.g. `"OPC UA"` |
-| `encoding` | `xs:string` | Encoding, typically `"TCP Binary"` |
-| `base` | `xs:anyURI` | OPC UA endpoint URL, e.g. `"opc.tcp://hostname:4840"` |
-| `port` | `xs:string` | Port number, typically `"4840"` |
-| `security_mode` | `xs:string` | Security mode: `"None"`, `"Sign"`, or `"SignAndEncrypt"` |
-| `security_policy` | `xs:string` | Security policy URI, e.g. `"Basic256Sha256"` |
-| `namespace_uri` | `xs:string` | OPC UA application namespace URI from the NodeSet |
-| `namespace_index` | `xs:string` | Namespace index for application nodes, typically `"1"` |
-
-## OPC UA Action Forms Fields
-
-For OPC UA actions (Skills), the Forms SMC uses node identifiers:
-
-| idShort | valueType | Description |
-|---|---|---|
-| `href` | `xs:string` | OPC UA method node ID, e.g. `"ns=1;s=PlungerSet80/Methods/Start"` |
-| `op` | `xs:string` | `"invokeaction"` |
-| `opc_node_id` | `xs:string` | Full node ID string |
-| `opc_namespace` | `xs:string` | Namespace index |
-
-## OPC UA Property Forms Fields
-
-For OPC UA properties (OperationalData), the Forms SMC uses:
-
-| idShort | valueType | Description |
-|---|---|---|
-| `href` | `xs:string` | OPC UA variable node ID, e.g. `"ns=1;s=PlungerSet80/Variables/State"` |
-| `op` | `xs:string` | `"readproperty"` or `"observeproperty"` |
-| `opc_node_id` | `xs:string` | Full node ID string |
-
-## JSON Template (MQTT interface)
-
-```json
-{
+  "idShort": "AID",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/AID",
-  "idShort": "AID",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"}]
+    "keys": [
+      {
+        "type": "GlobalReference",
+        "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"
+      }
+    ]
   },
-  "administration": {"version": "1", "revision": "1"},
   "submodelElements": [
     {
-      "modelType": "SubmodelElementCollection",
       "idShort": "InterfaceMQTT",
+      "modelType": "SubmodelElementCollection",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"}]
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+          }
+        ]
       },
       "supplementalSemanticIds": [
-        {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1/binding/mqtt"}]},
-        {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1"}]}
+        {
+          "type": "ExternalReference",
+          "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1/binding/mqtt"}]
+        },
+        {
+          "type": "ExternalReference",
+          "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td"}]
+        }
       ],
       "value": [
-        {"modelType": "Property", "idShort": "title", "valueType": "xs:string", "value": "MQTT Interface"},
         {
-          "modelType": "SubmodelElementCollection",
+          "idShort": "title",
+          "modelType": "Property",
+          "value": "EX-100 MQTT Interface",
+          "valueType": "xs:string"
+        },
+        {
           "idShort": "EndpointMetadata",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"}]},
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+              }
+            ]
+          },
           "value": [
-            {"modelType": "Property", "idShort": "base", "valueType": "xs:anyURI", "value": "mqtt://broker.example.com"},
-            {"modelType": "Property", "idShort": "contentType", "valueType": "xs:string", "value": "application/json"}
+            {
+              "idShort": "base",
+              "modelType": "Property",
+              "value": "mqtt://broker:1883",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "contentType",
+              "modelType": "Property",
+              "value": "application/json",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "securityDefinitions",
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "nosec_sc",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "scheme",
+                      "modelType": "Property",
+                      "value": "nosec",
+                      "valueType": "xs:string"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "idShort": "security",
+              "modelType": "SubmodelElementList",
+              "orderRelevant": true,
+              "typeValueListElement": "Property",
+              "valueTypeListElement": "xs:string",
+              "value": [{"modelType": "Property", "value": "nosec_sc", "valueType": "xs:string"}]
+            }
           ]
         },
         {
-          "modelType": "SubmodelElementCollection",
           "idShort": "InteractionMetadata",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"}]},
-          "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"}]}],
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+              }
+            ]
+          },
+          "supplementalSemanticIds": [
+            {
+              "type": "ExternalReference",
+              "keys": [
+                {
+                  "type": "GlobalReference",
+                  "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"
+                }
+              ]
+            }
+          ],
           "value": [
             {
+              "idShort": "actions",
               "modelType": "SubmodelElementCollection",
-              "idShort": "properties",
-              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"}]},
-              "value": []
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://www.w3.org/2019/wot/td#ActionAffordance"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "Start",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "Key",
+                      "modelType": "Property",
+                      "value": "start",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Title",
+                      "modelType": "Property",
+                      "value": "Start fill cycle",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Synchronous",
+                      "modelType": "Property",
+                      "value": "true",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Forms",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "href",
+                          "modelType": "Property",
+                          "value": "CMD/Start",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "contentType",
+                          "modelType": "Property",
+                          "value": "application/json",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "response",
+                          "modelType": "SubmodelElementCollection",
+                          "value": [
+                            {
+                              "idShort": "href",
+                              "modelType": "Property",
+                              "value": "DATA/Start",
+                              "valueType": "xs:string"
+                            },
+                            {
+                              "idShort": "contentType",
+                              "modelType": "Property",
+                              "value": "application/json",
+                              "valueType": "xs:string"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
+              "idShort": "properties",
               "modelType": "SubmodelElementCollection",
-              "idShort": "actions",
-              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#ActionAffordance"}]},
-              "value": []
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "State",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "Key",
+                      "modelType": "Property",
+                      "value": "state",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Title",
+                      "modelType": "Property",
+                      "value": "Operational state",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Forms",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "href",
+                          "modelType": "Property",
+                          "value": "DATA/State",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "contentType",
+                          "modelType": "Property",
+                          "value": "application/json",
+                          "valueType": "xs:string"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "idShort": "FillVolume",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "Key",
+                      "modelType": "Property",
+                      "value": "fillVolume",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Title",
+                      "modelType": "Property",
+                      "value": "Target fill volume",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "Forms",
+                      "modelType": "SubmodelElementCollection",
+                      "value": [
+                        {
+                          "idShort": "href",
+                          "modelType": "Property",
+                          "value": "CMD/FillVolume",
+                          "valueType": "xs:string"
+                        },
+                        {
+                          "idShort": "contentType",
+                          "modelType": "Property",
+                          "value": "application/json",
+                          "valueType": "xs:string"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -219,50 +364,249 @@ For OPC UA properties (OperationalData), the Forms SMC uses:
 
 ```json
 {
-  "modelType": "SubmodelElementCollection",
   "idShort": "InterfaceOPCUA",
+  "modelType": "SubmodelElementCollection",
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"}]
+    "keys": [
+      {
+        "type": "GlobalReference",
+        "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Interface"
+      }
+    ]
   },
   "supplementalSemanticIds": [
-    {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "http://opcfoundation.org/UA/WoT-Binding/"}]},
-    {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td/v1"}]}
+    {
+      "type": "ExternalReference",
+      "keys": [{"type": "GlobalReference", "value": "http://opcfoundation.org/UA/WoT-Binding/"}]
+    },
+    {
+      "type": "ExternalReference",
+      "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td"}]
+    }
   ],
   "value": [
-    {"modelType": "Property", "idShort": "title", "valueType": "xs:string", "value": "OPC UA Interface"},
     {
-      "modelType": "SubmodelElementCollection",
+      "idShort": "title",
+      "modelType": "Property",
+      "value": "PlungerSet-80 OPC UA Interface",
+      "valueType": "xs:string"
+    },
+    {
       "idShort": "EndpointMetadata",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"}]},
+      "modelType": "SubmodelElementCollection",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata"
+          }
+        ]
+      },
       "value": [
-        {"modelType": "Property", "idShort": "protocol", "valueType": "xs:string", "value": "OPC UA"},
-        {"modelType": "Property", "idShort": "encoding", "valueType": "xs:string", "value": "TCP Binary"},
-        {"modelType": "Property", "idShort": "base", "valueType": "xs:anyURI", "value": "opc.tcp://{hostname}:4840"},
-        {"modelType": "Property", "idShort": "port", "valueType": "xs:string", "value": "4840"},
-        {"modelType": "Property", "idShort": "security_mode", "valueType": "xs:string", "value": "SignAndEncrypt"},
-        {"modelType": "Property", "idShort": "security_policy", "valueType": "xs:string", "value": "Basic256Sha256"},
-        {"modelType": "Property", "idShort": "namespace_uri", "valueType": "xs:string", "value": "http://example.com/UA/{AssetName}/"},
-        {"modelType": "Property", "idShort": "namespace_index", "valueType": "xs:string", "value": "1"}
+        {
+          "idShort": "protocol",
+          "modelType": "Property",
+          "value": "OPC UA",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "encoding",
+          "modelType": "Property",
+          "value": "TCP Binary",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "base",
+          "modelType": "Property",
+          "value": "opc.tcp://{hostname}:4840",
+          "valueType": "xs:string"
+        },
+        {"idShort": "port", "modelType": "Property", "value": "4840", "valueType": "xs:string"},
+        {
+          "idShort": "security_mode",
+          "modelType": "Property",
+          "value": "SignAndEncrypt",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "security_policy",
+          "modelType": "Property",
+          "value": "Basic256Sha256",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "namespace_uri",
+          "modelType": "Property",
+          "value": "http://elara-automation.de/UA/PlungerSet80/",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "namespace_index",
+          "modelType": "Property",
+          "value": "1",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "securityDefinitions",
+          "modelType": "SubmodelElementCollection",
+          "value": [
+            {
+              "idShort": "nosec_sc",
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "scheme",
+                  "modelType": "Property",
+                  "value": "nosec",
+                  "valueType": "xs:string"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "idShort": "security",
+          "modelType": "SubmodelElementList",
+          "orderRelevant": true,
+          "typeValueListElement": "Property",
+          "valueTypeListElement": "xs:string",
+          "value": [{"modelType": "Property", "value": "nosec_sc", "valueType": "xs:string"}]
+        }
       ]
     },
     {
-      "modelType": "SubmodelElementCollection",
       "idShort": "InteractionMetadata",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"}]},
-      "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"}]}],
+      "modelType": "SubmodelElementCollection",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata"
+          }
+        ]
+      },
+      "supplementalSemanticIds": [
+        {
+          "type": "ExternalReference",
+          "keys": [
+            {
+              "type": "GlobalReference",
+              "value": "https://www.w3.org/2019/wot/td#InteractionAffordance"
+            }
+          ]
+        }
+      ],
       "value": [
         {
+          "idShort": "actions",
           "modelType": "SubmodelElementCollection",
-          "idShort": "properties",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"}]},
-          "value": []
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://www.w3.org/2019/wot/td#ActionAffordance"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "Start",
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "Key",
+                  "modelType": "Property",
+                  "value": "start",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Title",
+                  "modelType": "Property",
+                  "value": "Start stoppering cycle",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Synchronous",
+                  "modelType": "Property",
+                  "value": "true",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Forms",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "opc_node_id",
+                      "modelType": "Property",
+                      "value": "ns=1;i=4010",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "opc_namespace",
+                      "modelType": "Property",
+                      "value": "1",
+                      "valueType": "xs:string"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
+          "idShort": "properties",
           "modelType": "SubmodelElementCollection",
-          "idShort": "actions",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://www.w3.org/2019/wot/td#ActionAffordance"}]},
-          "value": []
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://www.w3.org/2019/wot/td#PropertyAffordance"
+              }
+            ]
+          },
+          "value": [
+            {
+              "idShort": "State",
+              "modelType": "SubmodelElementCollection",
+              "value": [
+                {
+                  "idShort": "Key",
+                  "modelType": "Property",
+                  "value": "state",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Title",
+                  "modelType": "Property",
+                  "value": "Operational state (IDLE/RUNNING/ERROR/HOMING)",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "Forms",
+                  "modelType": "SubmodelElementCollection",
+                  "value": [
+                    {
+                      "idShort": "opc_node_id",
+                      "modelType": "Property",
+                      "value": "ns=1;i=3010",
+                      "valueType": "xs:string"
+                    },
+                    {
+                      "idShort": "opc_namespace",
+                      "modelType": "Property",
+                      "value": "1",
+                      "valueType": "xs:string"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -272,11 +616,9 @@ For OPC UA properties (OperationalData), the Forms SMC uses:
 
 ## Notes
 
-- Choose the interface type based on the equipment's communication protocol:
-  - MQTT → `InterfaceMQTT` with MQTT broker URL as `base` (e.g. `mqtt://broker.example.com`)
-  - OPC UA → `InterfaceOPCUA` with OPC UA endpoint URL (e.g. `opc.tcp://hostname:4840`) and full `EndpointMetadata` fields including `namespace_uri` and `security_mode` from the NodeSet
-  - HTTP/REST → `InterfaceHTTP`
-- The `EndpointMetadata` SMC **must** be present and carry the semanticId `https://admin-shell.io/idta/AssetInterfacesDescription/1/0/EndpointMetadata` — it is required by SHACL validation.
-- Add one Action entry per Skill defined in the Skills submodel.
-- Add Property entries for each runtime variable (from OperationalData) if interface details are available.
-- For OPC UA, derive the `namespace_uri` from the `<NamespaceUri>` element in the NodeSet XML; derive node IDs from `<UAMethod>` and `<UAVariable>` elements.
+- Pick the interface by the equipment's protocol; an asset may expose several.
+- Add one action per Skill, and one property per value that OperationalData, Parameters or AIMC reads.
+- For OPC UA, take `namespace_uri` from the NodeSet's `<NamespaceUris>` and node ids from
+  `<UAMethod>` / `<UAVariable>`.
+- The OPC UA endpoint fields and `opc_*` form fields are this pipeline's convention, not IDTA
+  02017's `uav_*` terms.

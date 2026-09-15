@@ -4,59 +4,82 @@
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/Parameters`
 - **semanticId**: `https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel` (ExternalReference)
 - **kind**: `Instance`
-- **administration**: `{"version": "1", "revision": "1"}`
+- **administration**: `{"version": "1", "revision": "0"}`
 
 ## Purpose
 
-Declares the configuration parameters of this resource — static or semi-static values that control
-its operating behavior (e.g. max speed, tolerance thresholds, calibration offsets).
+Values an operator writes to the resource — setpoints, thresholds, recipe values. Each parameter
+binds to the AID property it is written through.
 
-## DEPENDENCY RULE
+## Dependency Rules
 
-- Parameters requires AID submodel to also be present.
+- Parameters requires AID.
+- Every parameter's `InterfaceReference` must name an AID **property** — never an action or event.
+- A parameter's semanticId, when set, must start with `https://smartproductionlab.aau.dk/`.
 
-## Per-Parameter Structure
+## Structure
 
-Each parameter is a `SubmodelElementCollection` at the top level containing:
-- `ParameterValue` Property — the current or default value as a string
-- `Unit` Property (optional) — the unit of measurement
+```
+Parameters (Submodel)
+  └─ {ParameterName} [SMC]                      semanticId: https://smartproductionlab.aau.dk/parameters/{ParameterName}
+       ├─ InterfaceReference [ReferenceElement] -> AID/{Interface}/InteractionMetadata/properties/{Property}
+       └─ one Property per field of that property's input schema, when it has one
+```
 
 ## JSON Template
 
 ```json
 {
+  "idShort": "Parameters",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/Parameters",
-  "idShort": "Parameters",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel"}]
+    "keys": [
+      {
+        "type": "GlobalReference",
+        "value": "https://smartproductionlab.aau.dk/ARSO/Parameters/1/0/Submodel"
+      }
+    ]
   },
-  "administration": {"version": "1", "revision": "1"},
   "submodelElements": [
     {
+      "idShort": "FillVolume",
       "modelType": "SubmodelElementCollection",
-      "idShort": "MaxSpeed",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://smartproductionlab.aau.dk/parameters/FillVolume"
+          }
+        ]
+      },
       "value": [
-        {"modelType": "Property", "idShort": "ParameterValue", "valueType": "xs:string", "value": "500"},
-        {"modelType": "Property", "idShort": "Unit", "valueType": "xs:string", "value": "rpm"}
-      ]
-    },
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "PositionTolerance",
-      "value": [
-        {"modelType": "Property", "idShort": "ParameterValue", "valueType": "xs:string", "value": "0.1"},
-        {"modelType": "Property", "idShort": "Unit", "valueType": "xs:string", "value": "mm"}
-      ]
-    },
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "OperatingTemperatureRange",
-      "value": [
-        {"modelType": "Property", "idShort": "ParameterValue", "valueType": "xs:string", "value": "0-50"},
-        {"modelType": "Property", "idShort": "Unit", "valueType": "xs:string", "value": "°C"}
+        {
+          "idShort": "InterfaceReference",
+          "modelType": "ReferenceElement",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InterfaceReference"
+              }
+            ]
+          },
+          "value": {
+            "type": "ModelReference",
+            "keys": [
+              {"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/AID"},
+              {"type": "SubmodelElementCollection", "value": "InterfaceMQTT"},
+              {"type": "SubmodelElementCollection", "value": "InteractionMetadata"},
+              {"type": "SubmodelElementCollection", "value": "properties"},
+              {"type": "SubmodelElementCollection", "value": "FillVolume"}
+            ]
+          }
+        }
       ]
     }
   ]
@@ -65,8 +88,5 @@ Each parameter is a `SubmodelElementCollection` at the top level containing:
 
 ## Notes
 
-- Extract parameters from the spec sheet's technical specifications, operating conditions, or configuration section.
-- Use PascalCase for parameter names: `MaxSpeed`, `MaxLoad`, `PositionTolerance`, `OperatingVoltage`.
-- If a range is specified (e.g. 0–50°C), encode as `"0-50"` in `ParameterValue` with appropriate `Unit`.
-- `ParameterValue` is always `xs:string` regardless of the actual value type.
-- If no specific parameter values are in the spec sheet, use the spec sheet's nominal operating values.
+- Take parameters from the configuration or command section, in PascalCase (`FillVolume`, `MaxSpeed`).
+- Fixed ratings such as rated voltage or an operating temperature range belong in TechnicalData.

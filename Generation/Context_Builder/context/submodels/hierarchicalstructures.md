@@ -1,116 +1,182 @@
-# Submodel Template: HierarchicalStructures
+# Submodel Template: HierarchicalStructures (IDTA 02011-1-1)
 
 - **idShort**: `HierarchicalStructures`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/HierarchicalStructures`
 - **semanticId**: `https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel` (ExternalReference)
 - **kind**: `Instance`
 - **administration**: `{"version": "1", "revision": "1"}`
-- **displayName**: `[{"language": "en", "text": "{entryNodeName}"}]`
+- **displayName**: the BoM name, e.g. `[{"language": "en", "text": "BillOfMaterials"}]`
 
 ## Purpose
 
-Describes the Bill of Materials (BoM) position of this resource within a larger system hierarchy.
-The ArcheType determines the direction of relationships:
-- `OneUp` → this resource IsPartOf another system (child knows parent)
-- `OneDown` → this resource HasPart sub-resources (parent knows children)
-- `OneUpAndOneDown` → both directions
+This resource's position in a Bill of Materials. `ArcheType` sets which relations it declares:
+
+- `OneUp` — its parent only (`IsPartOf`)
+- `OneDown` — its children only (`HasPart`)
+- `Full` — both
+
+No other value is valid; SHACL rejects anything else.
 
 ## Structure
 
-The submodel always contains exactly 2 top-level elements:
-1. `ArcheType` Property — the hierarchy direction
-2. `EntryNode` Entity — the root node representing THIS resource
+```
+HierarchicalStructures (Submodel)
+  ├─ ArcheType [Property, xs:string]           "OneUp" | "OneDown" | "Full"
+  └─ EntryNode [Entity, SelfManagedEntity]     this resource
+       ├─ HasPart_{Name} | IsPartOf_{Name} [RelationshipElement]   one per related system
+       └─ {Name} [Entity]                                         one per related system
+            └─ SameAs [ReferenceElement]  -> that system's own HierarchicalStructures EntryNode
+```
 
-## EntryNode (required)
+| Element | semanticId |
+|---|---|
+| `ArcheType` | `https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0` |
+| `EntryNode` | `https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0` |
+| Child `Entity` | `https://admin-shell.io/idta/HierarchicalStructures/Node/1/0` |
+| `HasPart_{Name}` | `https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0` |
+| `IsPartOf_{Name}` | `https://admin-shell.io/idta/HierarchicalStructures/IsPartOf/1/0` |
+| `SameAs` | `https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0`, supplementalSemanticId `.../EntryNode/1/0` |
 
-The EntryNode entity represents this resource itself:
-- `idShort`: use the asset name (same as `systemId` or `entryNodeName` from spec sheet)
-- `entityType`: `SelfManagedEntity`
-- `globalAssetId`: same as the shell's `globalAssetId`
-- `semanticId`: `https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0`
-- `statements`: array of child Node entities + RelationshipElements
+- `EntryNode`: the idShort is literally `EntryNode`; its `globalAssetId` is the shell's.
+- Child entity: `SelfManagedEntity` with a `globalAssetId` when one is known, else `CoManagedEntity`.
+- RelationshipElement: `first` → `[this submodel, EntryNode]`, `second` → `[this submodel, EntryNode, {Name}]`.
+- `SameAs` → `[{base_url}/submodels/instances/{Name}AAS/HierarchicalStructures, EntryNode]`, unless the entry sets its own `systemId`.
 
-## Child Node Entities (inside EntryNode.statements)
-
-Each related resource is an Entity with:
-- `idShort`: name of the related resource
-- `entityType`: `SelfManagedEntity` (if globalAssetId known) or `CoManagedEntity`
-- `globalAssetId`: REQUIRED (SHACL violation if missing)
-- `semanticId`: `https://admin-shell.io/idta/HierarchicalStructures/Node/1/0`
-- `statements`: array containing one `ReferenceElement` named `SameAs`
-
-The `SameAs` ReferenceElement references the EntryNode of the related resource's own BoM submodel.
-
-## RelationshipElements (inside EntryNode.statements)
-
-For each child node, add a RelationshipElement:
-- `idShort`: `IsPartOf_{nodeName}` or `HasPart_{nodeName}`
-- `semanticId`: `https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0`
-- `first`: ModelReference to this submodel's EntryNode
-- `second`: ModelReference to this submodel's EntryNode → child entity
-
-## JSON Template (OneUp — IsPartOf a parent system)
+## JSON Template (OneDown, one child)
 
 ```json
 {
+  "idShort": "HierarchicalStructures",
+  "displayName": [{"language": "en", "text": "BillOfMaterials"}],
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/HierarchicalStructures",
-  "idShort": "HierarchicalStructures",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "1"},
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel"}]
+    "keys": [
+      {
+        "type": "GlobalReference",
+        "value": "https://admin-shell.io/idta/HierarchicalStructures/1/1/Submodel"
+      }
+    ]
   },
-  "administration": {"version": "1", "revision": "1"},
-  "displayName": [{"language": "en", "text": "{systemId}"}],
   "submodelElements": [
     {
-      "modelType": "Property",
       "idShort": "ArcheType",
-      "valueType": "xs:string",
-      "value": "OneUp",
+      "modelType": "Property",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"}]
-      }
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/HierarchicalStructures/ArcheType/1/0"
+          }
+        ]
+      },
+      "value": "OneDown",
+      "valueType": "xs:string"
     },
     {
+      "idShort": "EntryNode",
       "modelType": "Entity",
-      "idShort": "{systemId}",
-      "entityType": "SelfManagedEntity",
-      "globalAssetId": "{base_url}/assets/{systemId}",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"}]
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+          }
+        ]
       },
       "statements": [
         {
-          "modelType": "Entity",
-          "idShort": "ParentSystem",
-          "entityType": "SelfManagedEntity",
-          "globalAssetId": "{base_url}/assets/ParentSystem",
+          "idShort": "HasPart_ControllerModule",
+          "modelType": "RelationshipElement",
           "semanticId": {
             "type": "ExternalReference",
-            "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0"}]
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0"
+              }
+            ]
+          },
+          "first": {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "{base_url}/submodels/instances/{systemId}/HierarchicalStructures"
+              },
+              {"type": "Entity", "value": "EntryNode"}
+            ]
+          },
+          "second": {
+            "type": "ModelReference",
+            "keys": [
+              {
+                "type": "Submodel",
+                "value": "{base_url}/submodels/instances/{systemId}/HierarchicalStructures"
+              },
+              {"type": "Entity", "value": "EntryNode"},
+              {"type": "Entity", "value": "ControllerModule"}
+            ]
+          }
+        },
+        {
+          "idShort": "ControllerModule",
+          "modelType": "Entity",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0"
+              }
+            ]
           },
           "statements": [
             {
-              "modelType": "ReferenceElement",
               "idShort": "SameAs",
-              "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0"}]},
-              "supplementalSemanticIds": [{"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"}]}],
-              "value": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "{base_url}/submodels/instances/ParentSystem/HierarchicalStructures"}, {"type": "Entity", "value": "{systemId}"}]}
+              "modelType": "ReferenceElement",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/idta/HierarchicalStructures/SameAs/1/0"
+                  }
+                ]
+              },
+              "supplementalSemanticIds": [
+                {
+                  "type": "ExternalReference",
+                  "keys": [
+                    {
+                      "type": "GlobalReference",
+                      "value": "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+                    }
+                  ]
+                }
+              ],
+              "value": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "Submodel",
+                    "value": "{base_url}/submodels/instances/ControllerModuleAAS/HierarchicalStructures"
+                  },
+                  {"type": "Entity", "value": "EntryNode"}
+                ]
+              }
             }
-          ]
-        },
-        {
-          "modelType": "RelationshipElement",
-          "idShort": "IsPartOf_ParentSystem",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0"}]},
-          "first": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/HierarchicalStructures"}, {"type": "Entity", "value": "{systemId}"}]},
-          "second": {"type": "ModelReference", "keys": [{"type": "Submodel", "value": "{base_url}/submodels/instances/{systemId}/HierarchicalStructures"}, {"type": "Entity", "value": "{systemId}"}, {"type": "Entity", "value": "ParentSystem"}]}
+          ],
+          "entityType": "SelfManagedEntity",
+          "globalAssetId": "{base_url}/assets/ControllerModule"
         }
-      ]
+      ],
+      "entityType": "SelfManagedEntity",
+      "globalAssetId": "{base_url}/assets/ExampleAsset"
     }
   ]
 }
@@ -118,7 +184,6 @@ For each child node, add a RelationshipElement:
 
 ## Notes
 
-- If no parent/child system is described in the spec sheet, still create the EntryNode with empty
-  statements (no child nodes) — this is valid.
-- Infer the parent system name from context (e.g. "part of the filling line" → ParentSystem = "FillingLine").
-- globalAssetId for child nodes can be constructed as `{base_url}/assets/{childSystemId}`.
+- Declare at least one related system; an `EntryNode` without statements is flagged.
+- Infer the parent from context, e.g. "station 1 of the filling line" → `IsPartOf_FillingLine`.
+- Build a child's `globalAssetId` as `{base_url}/assets/{Name}` when the source gives none.

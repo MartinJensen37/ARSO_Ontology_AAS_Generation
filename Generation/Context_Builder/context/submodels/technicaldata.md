@@ -8,133 +8,291 @@
 
 ## Purpose
 
-Carries the manufacturer-declared technical properties of the asset: who made it,
-how it is classified, and its measured characteristics. Use it for values read off
-a datasheet's specification table — dimensions, ratings, throughput, tolerances.
-
-Do **not** put runtime values here. Anything the asset reports while running
-belongs in OperationalData; anything an operator sets belongs in Parameters.
+Manufacturer-declared technical data: who made the asset, how it is classified, and the values
+from its datasheet specification table — dimensions, ratings, tolerances. Runtime values belong
+in OperationalData and operator settings in Parameters.
 
 ## Structure
 
 ```
 TechnicalData (Submodel)
   ├─ GeneralInformation [SMC, 1]
-  ├─ ProductClassifications [SML, 0..*]
-  ├─ TechnicalProperties [SMC, 1]      ← free-form, see below
+  ├─ ProductClassifications [SML, 0..1]
+  │    └─ (no idShort) [SMC]          one per classification
+  ├─ TechnicalPropertyAreas [SML, 0..1]
+  │    └─ (no idShort) [SMC]
+  │         └─ {Section} [SMC]         one per datasheet group, holding its values
   └─ FurtherInformation [SMC, 0..1]
 ```
 
 ## GeneralInformation (mandatory)
 
-| idShort | modelType | valueType | Cardinality | semanticId |
-|---|---|---|---|---|
-| `ManufacturerName` | `Property` | `xs:string` | 1 | `0173-1#02-AAO677#004` |
-| `ManufacturerProductDesignation` | `MultiLanguageProperty` | — | 1 | `0173-1#02-AAW338#003` |
-| `ManufacturerArticleNumber` | `Property` | `xs:string` | 1 | `0173-1#02-AAO676#005` |
-| `ManufacturerOrderCode` | `Property` | `xs:string` | 1 | `0173-1#02-AAO227#004` |
-| `ProductImage` | `File` | — | 0..* | `0173-1#02-ABK291#002` |
+semanticId `0173-1#02-ABK161#002/0173-1#01-AHX838#002`. All four children are mandatory; any
+the datasheet omits falls back to the DigitalNameplate value.
 
-`GeneralInformation` itself carries `0173-1#02-ABK161#002/0173-1#01-AHX838#002`.
+| idShort | modelType | valueType | semanticId |
+|---|---|---|---|
+| `ManufacturerName` | `Property` | `xs:string` | `0173-1#02-AAO677#004` |
+| `ManufacturerProductDesignation` | `MultiLanguageProperty` | — | `0173-1#02-AAW338#003` |
+| `ManufacturerArticleNumber` | `Property` | `xs:string` | `0173-1#02-AAO676#005` |
+| `ManufacturerOrderCode` | `Property` | `xs:string` | `0173-1#02-AAO227#004` |
 
-Note `ManufacturerName` here is a plain `Property`, **not** a MultiLanguageProperty —
-this differs from DigitalNameplate, where the same concept is an MLP.
+`ManufacturerName` is a plain `Property` here, unlike DigitalNameplate where it is an MLP.
 
 ## ProductClassifications (optional)
 
-An SML (`0173-1#02-ABK162#002`) of classification SMCs
-(`0173-1#02-ABK162#002/0173-1#01-AHX839#002`), each:
+A SubmodelElementList `0173-1#02-ABK162#002` of collections
+`0173-1#02-ABK162#002/0173-1#01-AHX839#002`. Emit only a class the datasheet actually states.
 
-| idShort | modelType | valueType | Cardinality | semanticId |
-|---|---|---|---|---|
-| `ClassificationSystem` | `Property` | `xs:string` | 1 | `0173-1#02-ABL424#001` |
-| `ClassificationSystemVersion` | `Property` | `xs:string` | 0..1 | `0173-1#02-AAR710#003` |
-| `ProductClassId` | `Property` | `xs:string` | 1 | `0173-1#02-ABG776#003` |
-| `ProductClassCodedName` | `Property` | `xs:string` | 1 | `0173-1#02-ABK128#002` |
-| `ProductClassName` | `MultiLanguageProperty` | — | 0..1 | `0173-1#02-ABK273#002` |
+| idShort | Cardinality | semanticId |
+|---|---|---|
+| `ClassificationSystem` | 1 | `0173-1#02-ABL424#001` |
+| `ClassificationSystemVersion` | 0..1 | `0173-1#02-AAR710#003` |
+| `ProductClassId` | 1 | `0173-1#02-ABG776#003` |
+| `ProductClassCodedName` | 1 | `0173-1#02-ABK128#002` |
 
-Emit this only when the datasheet states an ECLASS or IEC CDD class. Do not invent
-a classification.
+## TechnicalPropertyAreas (optional)
 
-## TechnicalProperties (mandatory, free-form)
+A SubmodelElementList `0173-1#02-ABK163#002` holding one area collection
+`0173-1#02-ABL358#002/0173-1#01-AHX773#002`. Inside it, each datasheet group is a `{Section}`
+collection named after the group; loose values go into a `General` section.
 
-This is the one deliberately open section of the template. Its children are
-"arbitrary" elements — the datasheet's own property names, each carrying
-`https://admin-shell.io/SMT/General/Arbitrary` as semanticId when no ECLASS IRDI
-is known. Group related properties into `Section` SMCs.
+- A single value is a `Property` (`xs:string`) with its unit in the value, e.g. `"230 V AC"`.
+- A min/max pair is a `Range` (`xs:string`).
+- Sections and values carry the generic marker `https://admin-shell.io/SMT/General/Arbitrary`.
 
-Use `Property` for a single value, `Range` for a min/max pair, and
-`MultiLanguageProperty` for prose. Always put the unit in the value string
-(`"400 V"`) or in a sibling property — never guess an IRDI.
-
-```json
-{
-  "modelType": "SubmodelElementCollection",
-  "idShort": "TechnicalProperties",
-  "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#01-AHD205#001"}]},
-  "value": [
-    {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "ElectricalRatings",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/SMT/General/Arbitrary"}]},
-      "value": [
-        {"modelType": "Property", "idShort": "RatedVoltage", "valueType": "xs:string", "value": "230 V AC",
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/SMT/General/Arbitrary"}]}},
-        {"modelType": "Range", "idShort": "OperatingTemperature", "valueType": "xs:string", "min": "5", "max": "40",
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/SMT/General/Arbitrary"}]}}
-      ]
-    }
-  ]
-}
-```
+IDTA's own sample gives the area collections idShorts such as `ECLASS`, but AASd-120 forbids an
+idShort inside a list, so the pipeline nests named sections one level down instead.
 
 ## FurtherInformation (optional)
 
-SMC `0173-1#02-ABK164#002`, holding free-text statements plus a validity date:
+Collection `0173-1#02-ABK164#002` with free-text statements and a validity date:
 
-| idShort | modelType | valueType | Cardinality | semanticId |
-|---|---|---|---|---|
-| `TextStatement` | `MultiLanguageProperty` | — | 0..* | `0173-1#02-ABK134#002` |
-| `ValidDate` | `Property` | `xs:date` | 1 | `0173-1#02-ABL775#001` |
+| idShort | modelType | Cardinality | semanticId |
+|---|---|---|---|
+| `TextStatement` | `MultiLanguageProperty` | 0..* | `0173-1#02-ABK134#002` |
+| `ValidDate` | `Property` (`xs:date`) | 1 | `0173-1#02-ABL775#001` |
 
-`ValidDate` is mandatory **once FurtherInformation exists** — omit the whole SMC
-rather than emitting it without a date.
+Omit the whole collection when there is no `ValidDate`.
 
 ## JSON Template
 
 ```json
 {
+  "idShort": "TechnicalData",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/TechnicalData",
-  "idShort": "TechnicalData",
-  "kind": "Instance",
+  "administration": {"version": "2", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
     "keys": [{"type": "GlobalReference", "value": "0173-1#01-AHX837#002"}]
   },
-  "administration": {"version": "2", "revision": "0"},
   "submodelElements": [
     {
-      "modelType": "SubmodelElementCollection",
       "idShort": "GeneralInformation",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK161#002/0173-1#01-AHX838#002"}]},
+      "modelType": "SubmodelElementCollection",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK161#002/0173-1#01-AHX838#002"}]
+      },
       "value": [
-        {"modelType": "Property", "idShort": "ManufacturerName", "valueType": "xs:string", "value": "<manufacturer>",
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO677#004"}]}},
-        {"modelType": "MultiLanguageProperty", "idShort": "ManufacturerProductDesignation",
-         "value": [{"language": "en", "text": "<product designation>"}],
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAW338#003"}]}},
-        {"modelType": "Property", "idShort": "ManufacturerArticleNumber", "valueType": "xs:string", "value": "<article number>",
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO676#005"}]}},
-        {"modelType": "Property", "idShort": "ManufacturerOrderCode", "valueType": "xs:string", "value": "<order code>",
-         "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO227#004"}]}}
+        {
+          "idShort": "ManufacturerName",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO677#004"}]
+          },
+          "value": "Example Automation GmbH",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerProductDesignation",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAW338#003"}]
+          },
+          "value": [{"language": "en", "text": "EX-100 Filling Station"}]
+        },
+        {
+          "idShort": "ManufacturerArticleNumber",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO676#005"}]
+          },
+          "value": "EX-100",
+          "valueType": "xs:string"
+        },
+        {
+          "idShort": "ManufacturerOrderCode",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO227#004"}]
+          },
+          "value": "EX-100-EU",
+          "valueType": "xs:string"
+        }
       ]
     },
     {
+      "idShort": "ProductClassifications",
+      "modelType": "SubmodelElementList",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK162#002"}]
+      },
+      "orderRelevant": true,
+      "typeValueListElement": "SubmodelElementCollection",
+      "value": [
+        {
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK162#002/0173-1#01-AHX839#002"}]
+          },
+          "value": [
+            {
+              "idShort": "ClassificationSystem",
+              "modelType": "Property",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABL424#001"}]
+              },
+              "value": "ECLASS",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "ClassificationSystemVersion",
+              "modelType": "Property",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAR710#003"}]
+              },
+              "value": "12.0",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "ProductClassId",
+              "modelType": "Property",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABG776#003"}]
+              },
+              "value": "0173-1#01-AKJ975#017",
+              "valueType": "xs:string"
+            },
+            {
+              "idShort": "ProductClassCodedName",
+              "modelType": "Property",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK128#002"}]
+              },
+              "value": "27-27-03-01",
+              "valueType": "xs:string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "TechnicalPropertyAreas",
+      "modelType": "SubmodelElementList",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK163#002"}]
+      },
+      "orderRelevant": true,
+      "typeValueListElement": "SubmodelElementCollection",
+      "value": [
+        {
+          "modelType": "SubmodelElementCollection",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABL358#002/0173-1#01-AHX773#002"}]
+          },
+          "value": [
+            {
+              "idShort": "ElectricalRatings",
+              "modelType": "SubmodelElementCollection",
+              "semanticId": {
+                "type": "ExternalReference",
+                "keys": [
+                  {
+                    "type": "GlobalReference",
+                    "value": "https://admin-shell.io/SMT/General/Arbitrary"
+                  }
+                ]
+              },
+              "value": [
+                {
+                  "idShort": "RatedVoltage",
+                  "modelType": "Property",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/SMT/General/Arbitrary"
+                      }
+                    ]
+                  },
+                  "value": "230 V AC",
+                  "valueType": "xs:string"
+                },
+                {
+                  "idShort": "OperatingTemperature",
+                  "modelType": "Range",
+                  "semanticId": {
+                    "type": "ExternalReference",
+                    "keys": [
+                      {
+                        "type": "GlobalReference",
+                        "value": "https://admin-shell.io/SMT/General/Arbitrary"
+                      }
+                    ]
+                  },
+                  "valueType": "xs:string",
+                  "min": "5",
+                  "max": "40"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "idShort": "FurtherInformation",
       "modelType": "SubmodelElementCollection",
-      "idShort": "TechnicalProperties",
-      "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#01-AHD205#001"}]},
-      "value": []
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK164#002"}]
+      },
+      "value": [
+        {
+          "idShort": "TextStatement",
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABK134#002"}]
+          },
+          "value": [{"language": "en", "text": "Values at nominal load."}]
+        },
+        {
+          "idShort": "ValidDate",
+          "modelType": "Property",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-ABL775#001"}]
+          },
+          "value": "2024-06-01",
+          "valueType": "xs:date"
+        }
+      ]
     }
   ]
 }
@@ -142,13 +300,6 @@ rather than emitting it without a date.
 
 ## Notes
 
-- All four `GeneralInformation` fields are mandatory. If the datasheet gives no
-  article number or order code, reuse the model/type designation rather than
-  omitting the element — SHACL requires all four.
-- Take every `TechnicalProperties` value verbatim from the datasheet's
-  specification table. Do not derive, convert or round.
-- `ManufacturerName` and `ManufacturerProductDesignation` usually duplicate the
-  DigitalNameplate values. Keep them consistent between the two submodels.
-- Use `https://admin-shell.io/SMT/General/Arbitrary` for any property whose ECLASS
-  IRDI you do not know. Never invent an IRDI — a wrong one is worse than the
-  generic marker.
+- Copy values verbatim from the specification table, including units. Do not convert or round.
+- Never invent an ECLASS IRDI; the generic Arbitrary marker is correct when none is known.
+- Keep `ManufacturerName` and `ManufacturerProductDesignation` consistent with DigitalNameplate.

@@ -1,149 +1,170 @@
-# Submodel Template: DigitalNameplate (v2 — IDTA 02006-3)
+# Submodel Template: DigitalNameplate (IDTA 02006-3-0)
 
 - **idShort**: `DigitalNameplate`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/Nameplate`
-- **semanticId**: `https://admin-shell.io/idta/nameplate/3/0/Nameplate` (ExternalReference) — **IDTA 02006-3-0, MUST match exactly**
+- **semanticId**: `https://admin-shell.io/idta/nameplate/3/0/Nameplate` (ExternalReference)
 - **kind**: `Instance`
 - **administration**: `{"version": "1", "revision": "0"}`
 
-## Required semanticIds for mandatory child SMEs
+## Mandatory elements (SHACL violation if missing)
 
-| idShort                          | semanticId IRI |
+| idShort | modelType | valueType | semanticId |
+|---|---|---|---|
+| `URIOfTheProduct` | `Property` | `xs:string` | `0112/2///61987#ABN590#002` |
+| `ManufacturerName` | `MultiLanguageProperty` | — | `0112/2///61987#ABA565#009` |
+| `ManufacturerProductDesignation` | `MultiLanguageProperty` | — | `0112/2///61987#ABA567#009` |
+| `ContactInformation` | `SubmodelElementCollection` | — | `https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation` |
+| `OrderCodeOfManufacturer` | `Property` | `xs:string` | `0112/2///61987#ABA950#008` |
+
+`ContactInformation` must hold four MultiLanguageProperties, each mandatory:
+
+| idShort | semanticId |
 |---|---|
-| `ManufacturerName`               | `https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerName` |
-| `ManufacturerProductDesignation` | `https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerProductDesignation` |
-| `ContactInformation`             | `https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ContactInformation` |
-| `OrderCodeOfManufacturer`        | `https://admin-shell.io/zvei/nameplate/1/0/Nameplate/OrderCodeOfManufacturer` |
+| `Street` | `0173-1#02-AAO128#002` |
+| `ZipCode` | `0173-1#02-AAO129#002` |
+| `CityTown` | `0173-1#02-AAO132#002` |
+| `NationalCode` | `0173-1#02-AAO134#002` |
 
-## Required Fields (SHACL violations if missing)
+IDTA 02006-3-0 names this collection `AddressInformation`. The pipeline emits the idShort
+`ContactInformation` with the IDTA semanticId, which is what the ontology checks; the profile
+accepts either key.
 
-| idShort | modelType | valueType | Notes |
-|---|---|---|---|
-| `URIOfTheProduct` | `Property` | `xs:anyURI` | MANDATORY — unique product URI |
-| `ManufacturerName` | `MultiLanguageProperty` | — | value: `[{"language": "en", "text": "..."}]` — MANDATORY |
-| `ManufacturerProductDesignation` | `MultiLanguageProperty` | — | MANDATORY |
-| `ContactInformation` | `SubmodelElementCollection` | — | MANDATORY — MUST contain Street, ZipCode, CityTown, NationalCode (all MultiLanguageProperty with ECLASS semanticIds — see template) |
-| `OrderCodeOfManufacturer` | `Property` | `xs:string` | MANDATORY |
-| `SerialNumber` | `Property` | `xs:string` | Recommended |
+## Optional elements — omit when the datasheet does not state them
 
-## Optional Fields — OMIT if not in spec sheet (do NOT use [VERIFY: ...])
+Plain `Property` elements with `valueType: xs:string` and no semanticId. Never emit
+`[VERIFY: ...]` on any of them.
 
-| idShort | modelType | valueType | Format constraint when present |
-|---|---|---|---|
-| `ManufacturerProductFamily` | `MultiLanguageProperty` | — | Multi-language |
-| `ProductArticleNumberOfManufacturer` | `Property` | `xs:string` | — |
-| `ManufacturerProductRoot` | `MultiLanguageProperty` | — | — |
-| `ManufacturerProductType` | `Property` | `xs:string` | — |
-| `FirmwareVersion` | `Property` | `xs:string` | — |
-| `YearOfConstruction` | `Property` | `xs:string` | **Exactly 4 digits: `YYYY`**, omit if unknown |
-| `DateOfManufacture` | `Property` | `xs:string` | **Format: `YYYY-MM-DD`**, omit if unknown |
-| `HardwareVersion` | `Property` | `xs:string` | — |
-| `SoftwareVersion` | `Property` | `xs:string` | — |
-| `CountryOfOrigin` | `Property` | `xs:string` | ISO 3166-1 alpha-2 |
-
-**Rule:** if the value is not stated in the spec sheet, **omit the field** entirely. Do not
-emit `"value": "[VERIFY: ...]"` on optional fields — the validator treats that as a
-generation defect.
+| idShort | Format when present |
+|---|---|
+| `SerialNumber` | — |
+| `ManufacturerProductFamily` | — |
+| `ManufacturerArticleNumber` | — |
+| `YearOfConstruction` | exactly 4 digits, `YYYY` |
+| `DateOfManufacture` | `YYYY-MM-DD` |
+| `HardwareVersion` | — |
+| `SoftwareVersion` | — |
+| `CountryOfOrigin` | ISO 3166-1 alpha-2, e.g. `DE` |
 
 ## JSON Template
 
 ```json
 {
+  "idShort": "DigitalNameplate",
   "modelType": "Submodel",
   "id": "{base_url}/submodels/instances/{systemId}/Nameplate",
-  "idShort": "DigitalNameplate",
-  "kind": "Instance",
+  "administration": {"version": "1", "revision": "0"},
   "semanticId": {
     "type": "ExternalReference",
     "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/nameplate/3/0/Nameplate"}]
   },
-  "administration": {"version": "1", "revision": "0"},
   "submodelElements": [
     {
-      "modelType": "MultiLanguageProperty",
+      "idShort": "URIOfTheProduct",
+      "modelType": "Property",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [{"type": "GlobalReference", "value": "0112/2///61987#ABN590#002"}]
+      },
+      "value": "{base_url}/products/ex-100",
+      "valueType": "xs:string"
+    },
+    {
       "idShort": "ManufacturerName",
-      "semanticId": {
-        "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerName"}]
-      },
-      "value": [{"language": "en", "text": "<manufacturer name from spec sheet>"}]
-    },
-    {
       "modelType": "MultiLanguageProperty",
-      "idShort": "ManufacturerProductDesignation",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ManufacturerProductDesignation"}]
+        "keys": [{"type": "GlobalReference", "value": "0112/2///61987#ABA565#009"}]
       },
-      "value": [{"language": "en", "text": "<product designation>"}]
+      "value": [{"language": "en", "text": "Example Automation GmbH"}]
     },
     {
-      "modelType": "SubmodelElementCollection",
-      "idShort": "ContactInformation",
+      "idShort": "ManufacturerProductDesignation",
+      "modelType": "MultiLanguageProperty",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/ContactInformation"}]
+        "keys": [{"type": "GlobalReference", "value": "0112/2///61987#ABA567#009"}]
+      },
+      "value": [{"language": "en", "text": "EX-100 Filling Station"}]
+    },
+    {
+      "idShort": "ContactInformation",
+      "modelType": "SubmodelElementCollection",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "https://admin-shell.io/zvei/nameplate/1/0/ContactInformations/AddressInformation"
+          }
+        ]
       },
       "value": [
         {
-          "modelType": "MultiLanguageProperty",
           "idShort": "Street",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO128#002"}]},
-          "value": [{"language": "en", "text": "<street and number>"}]
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO128#002"}]
+          },
+          "value": [{"language": "en", "text": "Musterstrasse 1"}]
         },
         {
-          "modelType": "MultiLanguageProperty",
           "idShort": "ZipCode",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO129#002"}]},
-          "value": [{"language": "en", "text": "<postal code>"}]
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO129#002"}]
+          },
+          "value": [{"language": "en", "text": "70173"}]
         },
         {
-          "modelType": "MultiLanguageProperty",
           "idShort": "CityTown",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO132#002"}]},
-          "value": [{"language": "en", "text": "<city>"}]
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO132#002"}]
+          },
+          "value": [{"language": "en", "text": "Stuttgart"}]
         },
         {
-          "modelType": "MultiLanguageProperty",
           "idShort": "NationalCode",
-          "semanticId": {"type": "ExternalReference", "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO134#002"}]},
-          "value": [{"language": "en", "text": "<ISO 3166-1 alpha-2 country code, e.g. DE>"}]
+          "modelType": "MultiLanguageProperty",
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [{"type": "GlobalReference", "value": "0173-1#02-AAO134#002"}]
+          },
+          "value": [{"language": "en", "text": "DE"}]
         }
       ]
     },
     {
-      "modelType": "Property",
       "idShort": "OrderCodeOfManufacturer",
+      "modelType": "Property",
       "semanticId": {
         "type": "ExternalReference",
-        "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/OrderCodeOfManufacturer"}]
+        "keys": [{"type": "GlobalReference", "value": "0112/2///61987#ABA950#008"}]
       },
-      "valueType": "xs:string",
-      "value": "<order code>"
+      "value": "EX-100-EU",
+      "valueType": "xs:string"
     },
     {
-      "modelType": "Property",
       "idShort": "SerialNumber",
-      "valueType": "xs:string",
-      "value": "<serial number>"
+      "modelType": "Property",
+      "value": "EX-2024-001",
+      "valueType": "xs:string"
     },
     {
-      "modelType": "Property",
       "idShort": "YearOfConstruction",
-      "valueType": "xs:string",
-      "value": "2024"
+      "modelType": "Property",
+      "value": "2024",
+      "valueType": "xs:string"
     }
-    /* Omit DateOfManufacture, HardwareVersion, etc. when the spec sheet
-       doesn't state a value. Don't fill them with [VERIFY: ...] markers. */
   ]
 }
 ```
 
 ## Notes
 
-- All four mandatory child SMEs (`ManufacturerName`, `ManufacturerProductDesignation`,
-  `ContactInformation`, `OrderCodeOfManufacturer`) MUST carry the IDTA semanticId shown above.
-- Extract manufacturer name, serial/part numbers, product family, version strings from the spec sheet.
-- If only a model number is available and no explicit serial number, use the model number as `SerialNumber`.
-- `YearOfConstruction` must be exactly 4 digits — never include month or day.
-- `DateOfManufacture` must be `YYYY-MM-DD` — only include if a full date is known.
+- `URIOfTheProduct`: use the product URI from the datasheet, otherwise `{base_url}/assets/{systemId}`.
+- If only a model number is given and no serial number, use the model number as `SerialNumber`.
+- `NationalCode` is the ISO 3166-1 alpha-2 code of the manufacturer's address.
