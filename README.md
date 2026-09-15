@@ -75,9 +75,6 @@ The system has been tested on multiple pieces of equipment namely a filling and 
 │   │   └── Modules/                    aid, aimc, capabilities, control-component,
 │   │                                   hierarchical-structures, nameplate,
 │   │                                   operational-data, parameters, technical-data
-│   ├── APSO/                           Product AAS blueprint ontology (draft, not yet
-│   │   ├── APSO_AAS.ttl                wired into the pipeline)
-│   │   └── Modules/                    batch_information, bill_of_materials, bill_of_process
 │   ├── CSS/CSS-Ontology.ttl            Capability-Skill-Service ontology
 │   └── SHACL/
 │       ├── Generated/shapes.generated.shacl.ttl   Derived from the ARSO OWL restrictions
