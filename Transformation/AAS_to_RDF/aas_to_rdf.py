@@ -241,6 +241,7 @@ P_PROP_VALUE            = AAS["Property/value"]
 P_PROP_VALUE_TYPE       = AAS["Property/valueType"]
 P_MLP_VALUE             = AAS["MultiLanguageProperty/value"]
 P_RANGE_MIN             = AAS["Range/min"]
+P_RANGE_VALUE_TYPE      = AAS["Range/valueType"]
 P_RANGE_MAX             = AAS["Range/max"]
 P_FILE_VALUE            = AAS["File/value"]
 P_FILE_CONTENT_TYPE     = AAS["File/contentType"]
@@ -442,7 +443,8 @@ def _emit_range_value(g: Graph, node_uri: URIRef, node: dict) -> None:
     if value_type:
         dt = _VALUE_TYPE_TO_AAS_DATATYPE.get(str(value_type))
         if dt is not None:
-            g.add((node_uri, P_PROP_VALUE_TYPE, dt))
+            # Range has its own valueType predicate, not Property's.
+            g.add((node_uri, P_RANGE_VALUE_TYPE, dt))
             g.add((dt, RDF.type, AAS.DataTypeDefXsd))
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ...config import Config
+from Transformation.AAS_Builder.submodel_registry import SUBMODEL_SPECS
 
 CORE_PROFILE_KEYS = {
     "idShort",
@@ -16,23 +17,28 @@ CORE_PROFILE_KEYS = {
 
 
 def selected_profile_section_keys(cfg: Config) -> set[str]:
+    """Profile sections kept for the selected submodels.
+
+    A submodel is selected by its registry key, its idShort or any of its
+    profile-key aliases, all matched case-insensitively.
+
+    Args:
+        cfg: Config whose `submodels` list names the selected submodels.
+
+    Returns:
+        Set of profile section names that survive pruning.
+    """
     selected = {name.strip().lower() for name in cfg.submodels}
     allowed: set[str] = set(CORE_PROFILE_KEYS)
 
-    if "nameplate" in selected or "digitalnameplate" in selected:
-        allowed.add("DigitalNameplate")
-    if "hierarchicalstructures" in selected:
-        allowed.add("HierarchicalStructures")
-    if "aid" in selected or "assetinterfacesdescription" in selected:
-        allowed.update({"AssetInterfacesDescription", "AssetInterfaceDescription", "AID"})
-    if "operationaldata" in selected or "variables" in selected:
-        allowed.update({"OperationalData", "Variables"})
-    if "parameters" in selected:
-        allowed.add("Parameters")
-    if "capabilities" in selected:
-        allowed.add("Capabilities")
-    if "skills" in selected:
-        allowed.add("Skills")
+    for spec in SUBMODEL_SPECS:
+        aliases = {spec.key, spec.id_short, *spec.profile_keys}
+        if {a.lower() for a in aliases} & selected:
+            allowed.update(aliases)
+
+    # Legacy singular spelling the LLM sometimes emits for AID.
+    if "AssetInterfacesDescription" in allowed:
+        allowed.add("AssetInterfaceDescription")
 
     return allowed
 

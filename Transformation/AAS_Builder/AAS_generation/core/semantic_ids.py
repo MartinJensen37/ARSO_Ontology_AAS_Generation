@@ -44,10 +44,47 @@ class SemanticIdFactory:
 
     # IDTA 02020-1-0 (Capability Description)
     _CAPABILITIES_SUBMODEL = "https://admin-shell.io/idta/SubmodelTemplate/CapabilityDescription/1/0"
-    # CapabilitySet/CapabilityContainer have no IDTA-canonical element semantic IDs;
-    # these internal IDs keep backward-compat with existing generated files.
+    # IDTA 02020 does define CapabilitySet/CapabilityContainer ids; these
+    # smartfactory ones are kept for backward-compat with existing generated
+    # files. The ontology accepts either (see IDTA_CONFORMANCE.md).
     _CAPABILITY_SET       = "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0"
     _CAPABILITY_CONTAINER = "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0"
+
+    # IDTA 02003 (Technical Data)
+    _TECHNICAL_DATA_SUBMODEL   = "0173-1#01-AHX837#002"
+    _TD_GENERAL_INFORMATION    = "0173-1#02-ABK161#002/0173-1#01-AHX838#002"
+    _TD_MANUFACTURER_NAME      = "0173-1#02-AAO677#004"
+    _TD_PRODUCT_DESIGNATION    = "0173-1#02-AAW338#003"
+    _TD_ARTICLE_NUMBER         = "0173-1#02-AAO676#005"
+    _TD_ORDER_CODE             = "0173-1#02-AAO227#004"
+    _TD_PRODUCT_CLASSIFICATIONS = "0173-1#02-ABK162#002"
+    _TD_PRODUCT_CLASSIFICATION = "0173-1#02-ABK162#002/0173-1#01-AHX839#002"
+    _TD_CLASSIFICATION_SYSTEM  = "0173-1#02-ABL424#001"
+    _TD_CLASSIFICATION_VERSION = "0173-1#02-AAR710#003"
+    _TD_PRODUCT_CLASS_ID       = "0173-1#02-ABG776#003"
+    _TD_PRODUCT_CLASS_CODED    = "0173-1#02-ABK128#002"
+    _TD_PROPERTY_AREAS         = "0173-1#02-ABK163#002"
+    _TD_PROPERTY_AREA          = "0173-1#02-ABL358#002/0173-1#01-AHX773#002"
+    _TD_FURTHER_INFORMATION    = "0173-1#02-ABK164#002"
+    _TD_TEXT_STATEMENT         = "0173-1#02-ABK134#002"
+    _TD_VALID_DATE             = "0173-1#02-ABL775#001"
+    # Generic extension marker for datasheet properties with no known IRDI.
+    _TD_ARBITRARY              = "https://admin-shell.io/SMT/General/Arbitrary"
+
+    # IDTA 02027 (Asset Interfaces Mapping Configuration)
+    _AIMC_SUBMODEL             = "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/Submodel"
+    _AIMC_CONFIGURATIONS       = "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingConfigurations"
+    _AIMC_CONFIGURATION        = "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration"
+    _AIMC_DEFAULT_POLLING      = _AIMC_CONFIGURATION + "/DefaultPollingInterval"
+    _AIMC_SOURCES              = _AIMC_CONFIGURATION + "/Sources"
+    _AIMC_SOURCE               = _AIMC_CONFIGURATION + "/Source"
+    _AIMC_SOURCE_REF           = _AIMC_CONFIGURATION + "/Source/Source"
+    _AIMC_SOURCE_ID            = _AIMC_CONFIGURATION + "/Source/SourceId"
+    _AIMC_SOURCE_POLLING       = _AIMC_CONFIGURATION + "/Source/PollingInterval"
+    _AIMC_SINKS                = _AIMC_CONFIGURATION + "/Sinks"
+    _AIMC_SINK                 = _AIMC_CONFIGURATION + "/Sink"
+    _AIMC_SINK_REF             = _AIMC_CONFIGURATION + "/Sink/Sink"
+    _AIMC_SINK_ID              = _AIMC_CONFIGURATION + "/Sink/SinkId"
     # IDTA 02020 canonical for the Capability AAS element
     _CAPABILITY           = "https://admin-shell.io/idta/CapabilityDescription/Capability/1/0"
     _CAPABILITY_RELATIONS = "https://admin-shell.io/idta/CapabilityDescription/CapabilityRelations/1/0"
@@ -198,6 +235,130 @@ class SemanticIdFactory:
     @property
     def CAPABILITIES_SUBMODEL(self) -> model.ExternalReference:
         return self.create_external_reference(self._CAPABILITIES_SUBMODEL)
+
+    @property
+    def TECHNICAL_DATA_SUBMODEL(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TECHNICAL_DATA_SUBMODEL)
+
+    @property
+    def TD_GENERAL_INFORMATION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_GENERAL_INFORMATION)
+
+    @property
+    def TD_MANUFACTURER_NAME(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_MANUFACTURER_NAME)
+
+    @property
+    def TD_PRODUCT_DESIGNATION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PRODUCT_DESIGNATION)
+
+    @property
+    def TD_ARTICLE_NUMBER(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_ARTICLE_NUMBER)
+
+    @property
+    def TD_ORDER_CODE(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_ORDER_CODE)
+
+    @property
+    def TD_PRODUCT_CLASSIFICATIONS(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PRODUCT_CLASSIFICATIONS)
+
+    @property
+    def TD_PRODUCT_CLASSIFICATION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PRODUCT_CLASSIFICATION)
+
+    @property
+    def TD_CLASSIFICATION_SYSTEM(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_CLASSIFICATION_SYSTEM)
+
+    @property
+    def TD_CLASSIFICATION_VERSION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_CLASSIFICATION_VERSION)
+
+    @property
+    def TD_PRODUCT_CLASS_ID(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PRODUCT_CLASS_ID)
+
+    @property
+    def TD_PRODUCT_CLASS_CODED(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PRODUCT_CLASS_CODED)
+
+    @property
+    def TD_PROPERTY_AREAS(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PROPERTY_AREAS)
+
+    @property
+    def TD_PROPERTY_AREA(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_PROPERTY_AREA)
+
+    @property
+    def TD_FURTHER_INFORMATION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_FURTHER_INFORMATION)
+
+    @property
+    def TD_TEXT_STATEMENT(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_TEXT_STATEMENT)
+
+    @property
+    def TD_VALID_DATE(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_VALID_DATE)
+
+    @property
+    def TD_ARBITRARY(self) -> model.ExternalReference:
+        return self.create_external_reference(self._TD_ARBITRARY)
+
+    @property
+    def AIMC_SUBMODEL(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SUBMODEL)
+
+    @property
+    def AIMC_CONFIGURATIONS(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_CONFIGURATIONS)
+
+    @property
+    def AIMC_CONFIGURATION(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_CONFIGURATION)
+
+    @property
+    def AIMC_DEFAULT_POLLING(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_DEFAULT_POLLING)
+
+    @property
+    def AIMC_SOURCES(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SOURCES)
+
+    @property
+    def AIMC_SOURCE(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SOURCE)
+
+    @property
+    def AIMC_SOURCE_REF(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SOURCE_REF)
+
+    @property
+    def AIMC_SOURCE_ID(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SOURCE_ID)
+
+    @property
+    def AIMC_SOURCE_POLLING(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SOURCE_POLLING)
+
+    @property
+    def AIMC_SINKS(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SINKS)
+
+    @property
+    def AIMC_SINK(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SINK)
+
+    @property
+    def AIMC_SINK_REF(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SINK_REF)
+
+    @property
+    def AIMC_SINK_ID(self) -> model.ExternalReference:
+        return self.create_external_reference(self._AIMC_SINK_ID)
 
     @property
     def CAPABILITY_SET(self) -> model.ExternalReference:

@@ -114,6 +114,21 @@ SUBMODEL_SPECS: tuple[SubmodelSpec, ...] = (
         label="Parameters",
         description="Operator-set configuration values",
     ),
+    SubmodelSpec(
+        key="TechnicalData", ref_name="TechnicalData", id_short="TechnicalData",
+        profile_keys=("TechnicalData",),
+        builder="technical_data_builder", builder_cls="TechnicalDataSubmodelBuilder",
+        label="TechnicalData",
+        description="Datasheet properties and product classification",
+    ),
+    SubmodelSpec(
+        key="AIMC", ref_name="AssetInterfacesMappingConfiguration",
+        id_short="AssetInterfacesMappingConfiguration",
+        profile_keys=("AIMC", "AssetInterfacesMappingConfiguration"),
+        builder="aimc_builder", builder_cls="AIMCSubmodelBuilder",
+        label="InterfaceMapping",
+        description="Maps AID affordances onto other submodel elements",
+    ),
 )
 
 SPEC_BY_KEY: dict[str, SubmodelSpec] = {s.key: s for s in SUBMODEL_SPECS}
