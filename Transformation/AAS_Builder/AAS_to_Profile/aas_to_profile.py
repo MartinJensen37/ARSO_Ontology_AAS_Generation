@@ -7,7 +7,7 @@ and in-process callers.
 """
 from __future__ import annotations
 
-from ..submodel_registry import SUBMODEL_IDSHORT_TO_KEY
+from ..submodel_registry import SPEC_BY_ID_SHORT, SUBMODEL_IDSHORT_TO_KEY
 
 import json
 import re
@@ -472,6 +472,173 @@ def _derive_base_url(shell_id: str) -> str:
     return "https://smartproductionlab.aau.dk"
 
 
+
+# ── TechnicalData — mirrors technical_data_builder.py ───────────────────────
+
+def parse_technical_data(sm: AnyDict) -> AnyDict:
+    """Invert the TechnicalData submodel into its profile section.
+
+    Args:
+        sm: TechnicalData submodel JSON.
+
+    Returns:
+        Profile section with GeneralInformation / ProductClassifications /
+        TechnicalProperties / FurtherInformation, each only when present.
+    """
+    out: AnyDict = {}
+    for el in _elements(sm):
+        id_short = el.get("idShort")
+        if id_short == "GeneralInformation":
+            general = {c.get("idShort"): _text_of(c) for c in _smc_value(el)
+                       if c.get("idShort") and _text_of(c)}
+            if general:
+                out["GeneralInformation"] = general
+        elif id_short == "ProductClassifications":
+            entries = []
+            for item in _smc_value(el):
+                entry = {c.get("idShort"): _text_of(c) for c in _smc_value(item)
+                         if c.get("idShort") and _text_of(c)}
+                if entry:
+                    entries.append(entry)
+            if entries:
+                out["ProductClassifications"] = entries
+        elif id_short == "TechnicalPropertyAreas":
+            # Positional area SMCs hold the named sections.
+            sections: AnyDict = {}
+            for area in _smc_value(el):
+                for section in _smc_value(area):
+                    if section.get("idShort"):
+                        sections[section["idShort"]] = _parse_arbitrary(section)
+            if sections:
+                out["TechnicalProperties"] = sections
+        elif id_short == "FurtherInformation":
+            further: AnyDict = {}
+            statements = []
+            for child in _smc_value(el):
+                if child.get("idShort") == "TextStatement" and _text_of(child):
+                    statements.append(_text_of(child))
+                elif child.get("idShort") == "ValidDate":
+                    further["ValidDate"] = _text_of(child)
+            if statements:
+                further["TextStatement"] = statements[0] if len(statements) == 1 else statements
+            if further:
+                out["FurtherInformation"] = further
+    return out
+
+
+def _parse_arbitrary(container: AnyDict) -> AnyDict:
+    """Invert an arbitrary property tree into plain nested values."""
+    out: AnyDict = {}
+    for el in _smc_value(container):
+        name = el.get("idShort")
+        if not name:
+            continue
+        if el.get("modelType") == "SubmodelElementCollection":
+            out[name] = _parse_arbitrary(el)
+        elif el.get("modelType") == "Range":
+            out[name] = {"min": el.get("min"), "max": el.get("max")}
+        else:
+            out[name] = _text_of(el)
+    return out
+
+
+# ── AIMC — mirrors aimc_builder.py ─────────────────────────────────────────
+
+def parse_aimc(sm: AnyDict) -> AnyDict:
+    """Invert the AIMC submodel into its profile section.
+
+    Args:
+        sm: AssetInterfacesMappingConfiguration submodel JSON.
+
+    Returns:
+        Dict of AID interface name -> {DefaultPollingInterval, Mappings}, where
+        Sources and Sinks are re-paired by position.
+    """
+    out: AnyDict = {}
+    for el in _elements(sm):
+        if el.get("idShort") != "MappingConfigurations":
+            continue
+        for config in _smc_value(el):
+            iface_name = None
+            entry: AnyDict = {}
+            sources: list[AnyDict] = []
+            sinks: list[AnyDict] = []
+            for child in _smc_value(config):
+                name = child.get("idShort")
+                if name == "InterfaceReference":
+                    iface_name = _last_key(child)
+                elif name == "DefaultPollingInterval":
+                    entry["DefaultPollingInterval"] = _text_of(child)
+                elif name == "Sources":
+                    for src in _smc_value(child):
+                        fields = {c.get("idShort"): c for c in _smc_value(src)}
+                        sources.append({
+                            "source": _text_of(fields.get("SourceId")) or _last_key(fields.get("Source")),
+                            "pollingInterval": _text_of(fields.get("PollingInterval")),
+                        })
+                elif name == "Sinks":
+                    for snk in _smc_value(child):
+                        fields = {c.get("idShort"): c for c in _smc_value(snk)}
+                        sinks.append({
+                            "sink": _text_of(fields.get("SinkId")) or _last_key(fields.get("Sink")),
+                            "sinkSubmodel": _submodel_of(fields.get("Sink")),
+                        })
+            mappings = []
+            # Builder emits one Source and one Sink per mapping, in order.
+            for i, src in enumerate(sources):
+                if not src["source"]:
+                    continue
+                snk = sinks[i] if i < len(sinks) else {}
+                mapping: AnyDict = {"source": src["source"], "sink": snk.get("sink") or src["source"]}
+                if snk.get("sinkSubmodel") and snk["sinkSubmodel"] != "OperationalData":
+                    mapping["sinkSubmodel"] = snk["sinkSubmodel"]
+                if src.get("pollingInterval"):
+                    mapping["pollingInterval"] = src["pollingInterval"]
+                mappings.append(mapping)
+            if iface_name and mappings:
+                entry["Mappings"] = mappings
+                out[iface_name] = entry
+    return out
+
+
+def _text_of(el) -> str | None:
+    """Scalar text of a Property or MultiLanguageProperty, else None."""
+    if not isinstance(el, dict):
+        return None
+    value = el.get("value")
+    if isinstance(value, list):
+        return value[0].get("text") if value and isinstance(value[0], dict) else None
+    return None if value is None else str(value)
+
+
+def _last_key(ref_el) -> str | None:
+    """Last key value of a ReferenceElement's reference."""
+    value = ref_el.get("value") if isinstance(ref_el, dict) else None
+    keys = value.get("keys") if isinstance(value, dict) else None
+    return keys[-1].get("value") if keys else None
+
+
+def _submodel_of(ref_el) -> str | None:
+    """Last id segment of the submodel a ReferenceElement points into."""
+    value = ref_el.get("value") if isinstance(ref_el, dict) else None
+    keys = value.get("keys") if isinstance(value, dict) else None
+    return str(keys[0].get("value", "")).rstrip("/").split("/")[-1] if keys else None
+
+
+# idShort -> parser; each is the inverse of a builder in AAS_generation/submodels/.
+_PARSER_BY_ID_SHORT = {
+    "DigitalNameplate": parse_nameplate,
+    "HierarchicalStructures": parse_hierarchical_structures,
+    "AID": parse_aid,
+    "Skills": parse_skills,
+    "Capabilities": parse_capabilities,
+    "OperationalData": parse_operational_data,
+    "Parameters": parse_parameters,
+    "TechnicalData": parse_technical_data,
+    "AssetInterfacesMappingConfiguration": parse_aimc,
+}
+
+
 def aas_json_to_profile(json_text: str) -> AnyDict:
     """Parse full AAS environment JSON into {asset_name, base_url, selected_submodels, profile}.
 
@@ -512,20 +679,10 @@ def aas_json_to_profile(json_text: str) -> AnyDict:
         if key:
             selected_submodels.append(key)
 
-        if id_short == "DigitalNameplate":
-            system_config["DigitalNameplate"] = parse_nameplate(sm)
-        elif id_short == "HierarchicalStructures":
-            system_config["HierarchicalStructures"] = parse_hierarchical_structures(sm)
-        elif id_short == "AID":
-            system_config["AID"] = parse_aid(sm)
-        elif id_short == "Skills":
-            system_config["Skills"] = parse_skills(sm)
-        elif id_short == "Capabilities":
-            system_config["Capabilities"] = parse_capabilities(sm)
-        elif id_short == "OperationalData":
-            system_config["Variables"] = parse_operational_data(sm)
-        elif id_short == "Parameters":
-            system_config["Parameters"] = parse_parameters(sm)
+        parser = _PARSER_BY_ID_SHORT.get(id_short)
+        if parser:
+            # Canonical profile section, e.g. DigitalNameplate for Nameplate.
+            system_config[SPEC_BY_ID_SHORT[id_short].profile_keys[0]] = parser(sm)
 
     return {
         "asset_name": system_id,

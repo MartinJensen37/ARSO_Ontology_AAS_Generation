@@ -100,7 +100,7 @@ SUBMODEL_SPECS: tuple[SubmodelSpec, ...] = (
     ),
     SubmodelSpec(
         key="Variables", ref_name="OperationalData", id_short="OperationalData",
-        profile_keys=("OperationalData", "Variables"),
+        profile_keys=("Variables", "OperationalData"),
         builder="variables_builder", builder_cls="VariablesSubmodelBuilder",
         ctor="schema", build_arg="interface_properties",
         label="OperationalData",
