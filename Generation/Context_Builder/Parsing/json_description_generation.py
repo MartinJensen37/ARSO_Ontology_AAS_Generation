@@ -124,6 +124,15 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "constraints": ["string", "use known vendor naming"],
                 "source_priority": ["datasheet"],
             },
+            "URIOfTheProduct": {
+                "purpose": "Unique URI of this product (IDTA 02006 mandatory).",
+                "constraints": [
+                    "absolute URI",
+                    "OMIT if the datasheet gives none — the builder derives {base_url}/assets/{systemId}",
+                ],
+                "source_priority": ["datasheet", "vendor product page"],
+                "optional": True,
+            },
             "SerialNumber": {
                 "purpose": "Serial number in nameplate payload.",
                 "constraints": ["string", "must match shell serialNumber when available"],
@@ -138,7 +147,7 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "purpose": "Manufacturer's order code / article number for this exact product variant.",
                 "constraints": [
                     "string",
-                    "OMIT entirely if truly unknown — the builder inserts a [VERIFY: ...] placeholder, do NOT invent a value",
+                    "OMIT entirely if unknown — do NOT invent a value; the gap surfaces as a SHACL violation for a human to fix",
                 ],
                 "source_priority": ["datasheet order code / article number"],
                 "optional": True,
@@ -147,7 +156,7 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "purpose": "Manufacturer contact address (IDTA 02006 ContactInformation) — mandatory sub-object per the ontology, even though every individual field inside it is independently optional to you.",
                 "constraints": [
                     "object with keys Street, ZipCode, CityTown, NationalCode",
-                    "OMIT individual keys you don't know — the builder inserts a [VERIFY: ...] placeholder for each missing one, do NOT invent values",
+                    "OMIT individual keys you don't know — do NOT invent values; each missing key surfaces as a SHACL violation for a human to fix",
                 ],
                 "source_priority": ["datasheet manufacturer address", "vendor website"],
                 "example": {"Street": "Musterstrasse 1", "ZipCode": "70173", "CityTown": "Stuttgart", "NationalCode": "DE"},
@@ -272,7 +281,7 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
             "constraints": [
                 "Each entry is a JSON OBJECT, never a plain string or dotted path.",
                 "Each entry is keyed by a PascalCase variable name, e.g. \"State\": {...}",
-                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property under InteractionMetadata.properties (or action under .actions) that this variable reads, e.g. \"State\" - REQUIRED",
+                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property under InteractionMetadata.properties that this variable reads, e.g. \"State\" - REQUIRED. Never an action or event: those do not resolve.",
                 "'semanticId' field (exact key: semanticId, camelCase) - optional URI string, only if this variable needs its own distinct semantic identifier beyond the referenced interface property",
             ],
             "example": {"State": {"InterfaceReference": "State"}, "CycleTime": {"InterfaceReference": "CycleTime"}},
@@ -284,7 +293,7 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
             "constraints": [
                 "Each entry is a JSON OBJECT, never a plain string or dotted path.",
                 "Each entry is keyed by a PascalCase parameter name, e.g. \"Setpoint\": {...}",
-                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property/action this parameter writes to - REQUIRED",
+                "'InterfaceReference' field (exact key, PascalCase) - the idShort of the matching AID property under InteractionMetadata.properties this parameter writes to - REQUIRED. Never an action or event: those do not resolve.",
                 "'semanticId' field (exact key: semanticId, camelCase) - optional URI string, only if this parameter needs its own distinct semantic identifier",
             ],
             "example": {"Setpoint": {"InterfaceReference": "Setpoint"}},
@@ -314,6 +323,39 @@ def _assemble_profile_semantic_guide_document(cfg: Config) -> dict[str, Any]:
                 "Each entry MUST have an 'interface' field (exact key, NOT 'action') - the idShort of the matching action under InteractionMetadata.actions on WHICHEVER AID interface defines it (the builder searches every configured interface for it), e.g. \"Dispense\" - this is the action's own name, not the containing interface's name",
             ],
             "example": {"Dispense": {"semantic_id": "https://smartproductionlab.aau.dk/skills/Dispense", "interface": "Dispense"}},
+        }
+
+    if "technicaldata" in selected:
+        body["TechnicalData"] = {
+            "purpose": "Manufacturer-declared technical data from the datasheet (IDTA 02003): who made it, how it is classified, and its specification values.",
+            "constraints": [
+                "Object with up to four sections: GeneralInformation, ProductClassifications, TechnicalProperties, FurtherInformation.",
+                "GeneralInformation: ManufacturerName, ManufacturerProductDesignation, ManufacturerArticleNumber, ManufacturerOrderCode (strings). OMIT any you do not know - the builder reuses the DigitalNameplate value.",
+                "ProductClassifications: a LIST of {ClassificationSystem, ClassificationSystemVersion, ProductClassId, ProductClassCodedName}. Only include a class the datasheet actually states (e.g. ECLASS, IEC CDD) - never invent a class id.",
+                'TechnicalProperties: an OBJECT of named sections (e.g. "ElectricalRatings"), each an OBJECT of property name -> value string including its unit (e.g. "230 V AC"). Use {"min": ..., "max": ...} for a range. Copy values verbatim - do not convert or round.',
+                "FurtherInformation: {TextStatement, ValidDate}. ValidDate is YYYY-MM-DD and required once the section exists - OMIT the whole section when there is no date.",
+                "Runtime values belong in OperationalData and operator settings in Parameters, not here.",
+            ],
+            "example": {
+                "GeneralInformation": {"ManufacturerArticleNumber": "EA-LF120-230V-EU"},
+                "ProductClassifications": [{"ClassificationSystem": "ECLASS", "ClassificationSystemVersion": "12.0", "ProductClassId": "0173-1#01-AKJ975#017", "ProductClassCodedName": "27-27-03-01"}],
+                "TechnicalProperties": {"ElectricalRatings": {"RatedVoltage": "230 V AC", "OperatingTemperature": {"min": "5", "max": "40"}}},
+                "FurtherInformation": {"TextStatement": "Values at nominal load.", "ValidDate": "2024-06-01"},
+            },
+            "source_priority": ["datasheet specification table", "datasheet header"],
+        }
+
+    if "aimc" in selected or "assetinterfacesmappingconfiguration" in selected:
+        body["AIMC"] = {
+            "purpose": "Maps AID properties onto the OperationalData/Parameters entries that consume them (IDTA 02027).",
+            "constraints": [
+                "Object keyed by AID interface name (the same key used in AssetInterfacesDescription), one entry per interface that has mappings.",
+                'Each entry has "Mappings": a LIST of {"source": <AID property name>, "sink": <OperationalData or Parameters entry name>}, with optional "sinkSubmodel" ("OperationalData" default, or "Parameters") and optional "pollingInterval" (ms).',
+                "'source' MUST name an existing property under InteractionMetadata.properties - never an action or event.",
+                'Optional "DefaultPollingInterval" (ms, number) per interface.',
+                "OMIT the whole section if the source material describes no data mapping.",
+            ],
+            "example": {"InterfaceMQTT": {"DefaultPollingInterval": 1000, "Mappings": [{"source": "State", "sink": "State"}]}},
         }
 
     return guide

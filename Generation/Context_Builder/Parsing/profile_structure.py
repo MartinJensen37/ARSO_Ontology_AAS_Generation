@@ -127,6 +127,12 @@ def ensure_requested_submodel_sections(body: dict[str, Any], cfg: Config) -> Non
     if "skills" in selected and "Skills" not in body:
         body["Skills"] = {}
 
+    if "technicaldata" in selected and "TechnicalData" not in body:
+        body["TechnicalData"] = {"GeneralInformation": {}, "TechnicalProperties": {}}
+
+    if ("aimc" in selected or "assetinterfacesmappingconfiguration" in selected) and "AIMC" not in body:
+        body["AIMC"] = {}
+
 
 # Field-name aliases the LLM reaches for instead of the profile schema's key.
 # Normalized so _check_required_fields isn't tripped by naming alone.
