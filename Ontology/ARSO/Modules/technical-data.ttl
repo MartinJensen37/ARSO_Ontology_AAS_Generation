@@ -47,6 +47,7 @@
 
 arso:TechnicalDataSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
+  arso:semanticId "0173-1#01-AHX837#002" ;
   rdfs:label "Technical Data Submodel" ;
   rdfs:comment "IDTA 02003 — Technical Data for product-related information." .
 
@@ -57,42 +58,52 @@ arso:TechnicalDataSubmodel rdf:type owl:Class ;
 
 arso:TechnicalGeneralInformationSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABK161#002/0173-1#01-AHX838#002" ;
   rdfs:comment "SMC GeneralInformation — mandatory top-level container for general product information." .
 
 arso:TechnicalManufacturerNameMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "0173-1#02-AAO677#004" ;
   rdfs:comment "MLP ManufacturerName — legally valid designation of the manufacturer." .
 
 arso:TechnicalCompanyLogoFile rdf:type owl:Class ;
   rdfs:subClassOf aas:File ;
+  arso:semanticId "0173-1#02-ABI776#002" ;
   rdfs:comment "File CompanyLogo — company logo image." .
 
 arso:TechnicalManufacturerProductDesignationMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "0173-1#02-AAW338#003" ;
   rdfs:comment "MLP ManufacturerProductDesignation — short description of the product." .
 
 arso:TechnicalManufacturerArticleNumberProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-AAO676#005" ;
   rdfs:comment "Property ManufacturerArticleNumber (xs:string) — unique product identifier of the manufacturer." .
 
 arso:TechnicalManufacturerOrderCodeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-AAO227#004" ;
   rdfs:comment "Property ManufacturerOrderCode (xs:string) — unique code used for ordering." .
 
 arso:TechnicalProductImagesSML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "0173-1#02-ABM220#001" ;
   rdfs:comment "SML ProductImages — list of product images." .
 
 arso:TechnicalProductImageSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABM220#001/0173-1#01-AHY911#001" ;
   rdfs:comment "SMC ProductImage — one product image entry with file and optional note." .
 
 arso:TechnicalImageFile rdf:type owl:Class ;
   rdfs:subClassOf aas:File ;
+  arso:semanticId "0173-1#02-ABK291#002" ;
   rdfs:comment "File ImageFile — pictorial representation of the product." .
 
 arso:TechnicalImageNoteMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "0173-1#02-ABL423#001" ;
   rdfs:comment "MLP ImageNote — note or explanation about the product image." .
 
 
@@ -102,34 +113,42 @@ arso:TechnicalImageNoteMLP rdf:type owl:Class ;
 
 arso:TechnicalProductClassificationsSML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "0173-1#02-ABK162#002" ;
   rdfs:comment "SML ProductClassifications — list of product classification entries." .
 
 arso:TechnicalProductClassificationSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABK162#002/0173-1#01-AHX839#002" ;
   rdfs:comment "SMC ProductClassification — one classification record with classification system metadata." .
 
 arso:TechnicalClassificationSystemProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-ABL424#001" ;
   rdfs:comment "Property ClassificationSystem (xs:string) — classification system identifier." .
 
 arso:TechnicalClassificationSystemVersionProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-AAR710#003" ;
   rdfs:comment "Property ClassificationSystemVersion (xs:string) — version of the classification system." .
 
 arso:TechnicalClassificationSystemUrlProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/IDTA/TechnicalData/ProductClassifications/ProduktClassification/ClassificationSystemUrl/2/0" ;
   rdfs:comment "Property ClassificationSystemUrl (xs:string) — URL of the classification system." .
 
 arso:TechnicalProductClassIdProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-ABG776#003" ;
   rdfs:comment "Property ProductClassId (xs:string) — class identifier." .
 
 arso:TechnicalProductClassCodedNameProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-ABK128#002" ;
   rdfs:comment "Property ProductClassCodedName (xs:string) — coded class name." .
 
 arso:TechnicalProductClassNameProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-ABK273#002" ;
   rdfs:comment "Property ProductClassName (xs:string) — human-readable class name." .
 
 
@@ -139,10 +158,12 @@ arso:TechnicalProductClassNameProperty rdf:type owl:Class ;
 
 arso:TechnicalPropertyAreasSML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "0173-1#02-ABK163#002" ;
   rdfs:comment "SML TechnicalPropertyAreas — list of technical property area entries." .
 
 arso:TechnicalPropertyAreaSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABL358#002/0173-1#01-AHX773#002" ;
   rdfs:comment "SMC TechnicalPropertyArea — one technical property area entry." .
 
 
@@ -152,14 +173,17 @@ arso:TechnicalPropertyAreaSMC rdf:type owl:Class ;
 
 arso:TechnicalFurtherInformationSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABK164#002" ;
   rdfs:comment "SMC FurtherInformation — optional top-level container for additional notes." .
 
 arso:TechnicalTextStatementMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "0173-1#02-ABK134#002" ;
   rdfs:comment "MLP TextStatement — note or explanation about the product." .
 
 arso:TechnicalValidDateProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "0173-1#02-ABL775#001" ;
   rdfs:comment "Property ValidDate (xs:date) — validity date for the further information entry." .
 
 
@@ -169,10 +193,12 @@ arso:TechnicalValidDateProperty rdf:type owl:Class ;
 
 arso:TechnicalSpecificDescriptionsSML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "0173-1#02-ABM221#001" ;
   rdfs:comment "SML SpecificDescriptions — list of specific description entries." .
 
 arso:TechnicalSpecificDescriptionSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "0173-1#02-ABM221#001/0173-1#01-AHY912#001" ;
   rdfs:comment "SMC SpecificDescription — one specific description entry." .
 
 

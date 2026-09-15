@@ -23,6 +23,7 @@
   owl:imports <https://w3id.org/2025/arso/modules/operational-data> ;
   owl:imports <https://w3id.org/2025/arso/modules/parameters> ;
   owl:imports <https://w3id.org/2025/arso/modules/technical-data> ;
+  owl:imports <https://w3id.org/2025/arso/modules/aimc> ;
   rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.
 
   This ontology:
@@ -148,6 +149,14 @@ arso:hasParametersSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty 
   rdfs:subPropertyOf arso:hasSubmodel ;
   rdfs:range arso:ParametersSubmodel .
 
+arso:hasTechnicalDataSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:TechnicalDataSubmodel .
+
+arso:hasAIMCSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:AIMCSubmodel .
+
 
 #################################################################
 #################################################################
@@ -211,3 +220,17 @@ aas:AssetAdministrationShell rdfs:subClassOf [
   owl:onProperty arso:hasParametersSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:ParametersSubmodel ] .
+
+# At most one TechnicalData submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasTechnicalDataSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:TechnicalDataSubmodel ] .
+
+# At most one AIMC submodel
+aas:AssetAdministrationShell rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasAIMCSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:AIMCSubmodel ] .

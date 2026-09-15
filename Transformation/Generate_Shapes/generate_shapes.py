@@ -39,6 +39,7 @@ _IMPORT_CATALOG: dict[str, Path] = {
     "https://w3id.org/2025/arso/modules/operational-data": _MODULES_DIR / "operational-data.ttl",
     "https://w3id.org/2025/arso/modules/parameters": _MODULES_DIR / "parameters.ttl",
     "https://w3id.org/2025/arso/modules/technical-data": _MODULES_DIR / "technical-data.ttl",
+    "https://w3id.org/2025/arso/modules/aimc": _MODULES_DIR / "aimc.ttl",
 }
 
 

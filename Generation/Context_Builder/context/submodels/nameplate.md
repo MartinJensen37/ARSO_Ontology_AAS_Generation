@@ -2,7 +2,7 @@
 
 - **idShort**: `DigitalNameplate`
 - **Submodel ID pattern**: `{base_url}/submodels/instances/{systemId}/Nameplate`
-- **semanticId**: `https://admin-shell.io/zvei/nameplate/2/0/Nameplate` (ExternalReference) — **IDTA-aligned, MUST match exactly**
+- **semanticId**: `https://admin-shell.io/idta/nameplate/3/0/Nameplate` (ExternalReference) — **IDTA 02006-3-0, MUST match exactly**
 - **kind**: `Instance`
 - **administration**: `{"version": "1", "revision": "0"}`
 
@@ -19,6 +19,7 @@
 
 | idShort | modelType | valueType | Notes |
 |---|---|---|---|
+| `URIOfTheProduct` | `Property` | `xs:anyURI` | MANDATORY — unique product URI |
 | `ManufacturerName` | `MultiLanguageProperty` | — | value: `[{"language": "en", "text": "..."}]` — MANDATORY |
 | `ManufacturerProductDesignation` | `MultiLanguageProperty` | — | MANDATORY |
 | `ContactInformation` | `SubmodelElementCollection` | — | MANDATORY — MUST contain Street, ZipCode, CityTown, NationalCode (all MultiLanguageProperty with ECLASS semanticIds — see template) |
@@ -30,9 +31,10 @@
 | idShort | modelType | valueType | Format constraint when present |
 |---|---|---|---|
 | `ManufacturerProductFamily` | `MultiLanguageProperty` | — | Multi-language |
-| `URIOfTheProduct` | `Property` | `xs:string` | Product URI |
-| `ManufacturerArticleNumber` | `Property` | `xs:string` | — |
-| `BatchNumber` | `Property` | `xs:string` | — |
+| `ProductArticleNumberOfManufacturer` | `Property` | `xs:string` | — |
+| `ManufacturerProductRoot` | `MultiLanguageProperty` | — | — |
+| `ManufacturerProductType` | `Property` | `xs:string` | — |
+| `FirmwareVersion` | `Property` | `xs:string` | — |
 | `YearOfConstruction` | `Property` | `xs:string` | **Exactly 4 digits: `YYYY`**, omit if unknown |
 | `DateOfManufacture` | `Property` | `xs:string` | **Format: `YYYY-MM-DD`**, omit if unknown |
 | `HardwareVersion` | `Property` | `xs:string` | — |
@@ -53,7 +55,7 @@ generation defect.
   "kind": "Instance",
   "semanticId": {
     "type": "ExternalReference",
-    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/zvei/nameplate/2/0/Nameplate"}]
+    "keys": [{"type": "GlobalReference", "value": "https://admin-shell.io/idta/nameplate/3/0/Nameplate"}]
   },
   "administration": {"version": "1", "revision": "0"},
   "submodelElements": [

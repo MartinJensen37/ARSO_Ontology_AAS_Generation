@@ -1,0 +1,170 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# AIMC (Submodel) — IDTA 02027, Asset Interfaces Mapping Configuration
+#   └─ MappingConfigurations [SML, 1]
+#        └─ MappingConfiguration [SMC, 0..*]
+#             ├─ InterfaceReference [ReferenceElement, 1] — the AID interface
+#             │    this configuration maps (IDTA 02027 §InterfaceReference)
+#             ├─ DefaultPollingInterval [Property/xs:double, 0..1]
+#             ├─ Transformation [Blob, 0..1]
+#             ├─ Sources [SML, 1]
+#             │    └─ Source [SMC, 1..*]
+#             │         ├─ Source [ReferenceElement, 1] — an AID property
+#             │         ├─ SourceId [Property/xs:string, 1]
+#             │         └─ PollingInterval [Property/xs:double, 0..1]
+#             └─ Sinks [SML, 1]
+#                  └─ Sink [SMC, 1..*]
+#                       ├─ Sink [ReferenceElement, 1] — target SME
+#                       └─ SinkId [Property/xs:string, 1]
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/aimc>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Asset Interfaces Mapping Configuration (IDTA 02027).
+
+  Maps AID interface elements onto other submodel elements. Depends on AID:
+  every Source reference resolves into an AID interface's InteractionMetadata.""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:AIMCSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Asset Interfaces Mapping Configuration Submodel" ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/Submodel",
+    "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/Submodel" ;
+  rdfs:comment "IDTA 02027 — maps AID interface affordances onto other submodel elements. The 1/0 id is accepted for documents written against the earlier template." .
+
+
+#################################################################
+# ELEMENT TYPES
+#################################################################
+
+arso:MappingConfigurationsSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/1/0/MappingConfigurations" ;
+  rdfs:comment "SML MappingConfigurations — the single list holding every mapping configuration." .
+
+arso:MappingConfigurationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration" ;
+  rdfs:comment "SMC MappingConfiguration — one interface's mapping: its sources, sinks and optional transformation." .
+
+arso:AIMCInterfaceReferenceRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:parentClass arso:MappingConfigurationSMC ;
+  arso:idShort "InterfaceReference" ;
+  rdfs:comment "ReferenceElement InterfaceReference -- the AID interface SMC this configuration maps. Cross-submodel target enforced via SPARQL SHACL." .
+
+arso:DefaultPollingIntervalProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/DefaultPollingInterval" ;
+  rdfs:comment "Property DefaultPollingInterval (xs:double) — fallback polling interval in ms for sources that set none." .
+
+arso:TransformationBlob rdf:type owl:Class ;
+  rdfs:subClassOf aas:Blob ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Transformation" ;
+  rdfs:comment "Blob Transformation — optional payload transformation applied between sources and sinks." .
+
+arso:SourcesSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sources" ;
+  rdfs:comment "SML Sources — the AID elements this configuration reads from." .
+
+arso:SourceSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source" ;
+  rdfs:comment "SMC Source — one source element plus its id and optional polling interval." .
+
+arso:SourceRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source/Source" ;
+  rdfs:comment "ReferenceElement Source -- points at an AID property under .../InteractionMetadata/properties/{key}." .
+
+arso:SourceIdProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source/SourceId" ;
+  rdfs:comment "Property SourceId (xs:string) — identifier used by the transformation to address this source." .
+
+arso:SourcePollingIntervalProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source/PollingInterval" ;
+  rdfs:comment "Property PollingInterval (xs:double) — per-source override of DefaultPollingInterval." .
+
+arso:SinksSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sinks" ;
+  rdfs:comment "SML Sinks — the submodel elements this configuration writes to." .
+
+arso:SinkSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sink" ;
+  rdfs:comment "SMC Sink — one sink element plus its id." .
+
+arso:SinkRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sink/Sink" ;
+  rdfs:comment "ReferenceElement Sink -- points at the submodel element receiving the mapped value." .
+
+arso:SinkIdProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sink/SinkId" ;
+  rdfs:comment "Property SinkId (xs:string) — identifier used by the transformation to address this sink." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+# MappingConfigurations is mandatory and single (IDTA 02027: cardinality One).
+arso:AIMCSubmodel rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:MappingConfigurationsSML ] .
+
+# Each MappingConfiguration needs both a Sources and a Sinks list.
+arso:MappingConfigurationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SourcesSML ] .
+
+arso:MappingConfigurationSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SinksSML ] .
+
+# A Source carries its reference and its id; a Sink likewise.
+arso:SourceSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SourceRef ] .
+
+arso:SourceSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SourceIdProperty ] .
+
+arso:SinkSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SinkRef ] .
+
+arso:SinkSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom arso:SinkIdProperty ] .
