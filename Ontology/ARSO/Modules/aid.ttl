@@ -69,7 +69,8 @@
 arso:AIDSubmodel rdf:type owl:Class ;
   rdfs:subClassOf aas:Submodel ;
   rdfs:label "Asset Interfaces Description Submodel" ;
-  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel" ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel",
+    "https://admin-shell.io/idta/AssetInterfacesDescription/1/1/Submodel" ;
   rdfs:comment "IDTA 02017 — Asset Interfaces Description." .
 
 
@@ -84,20 +85,24 @@ arso:InterfaceSMC rdf:type owl:Class ;
 
 arso:InterfaceTitleProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#title" ;
   arso:parentClass arso:InterfaceSMC ;
   arso:idShort "title" ;
   rdfs:comment "Property title (xs:string) — human-readable name of the Interface." .
 
 arso:InterfaceCreatedProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "http://purl.org/dc/terms/created" ;
   rdfs:comment "Property created (xs:dateTime) — creation timestamp of the Interface." .
 
 arso:InterfaceModifiedProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "http://purl.org/dc/terms/modified" ;
   rdfs:comment "Property modified (xs:dateTime) — last-modified timestamp of the Interface." .
 
 arso:InterfaceSupportProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#supportContact" ;
   rdfs:comment "Property support (xs:anyURI) — URI for developer support." .
 
 
@@ -112,24 +117,28 @@ arso:EndpointMetadataSMC rdf:type owl:Class ;
 
 arso:EndpointBaseProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#baseURI" ;
   arso:parentClass arso:EndpointMetadataSMC ;
   arso:idShort "base" ;
   rdfs:comment "Property base (xs:anyURI) — base URI for all forms in this Interface." .
 
 arso:ContentTypeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/hypermedia#forContentType" ;
   arso:parentClass arso:EndpointMetadataSMC ;
   arso:idShort "contentType" ;
   rdfs:comment "Property contentType (xs:string) — default media type (e.g. application/json)." .
 
 arso:SecuritySML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#hasSecurityConfiguration" ;
   arso:parentClass arso:EndpointMetadataSMC ;
   arso:idShort "security" ;
   rdfs:comment "SML security — list of active security scheme names (xs:string) referencing securityDefinitions." .
 
 arso:SecurityDefinitionsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#definesSecurityScheme" ;
   arso:parentClass arso:EndpointMetadataSMC ;
   arso:idShort "securityDefinitions" ;
   rdfs:comment "SMC securityDefinitions — container for named security scheme SMCs." .
@@ -141,6 +150,7 @@ arso:SecuritySchemeSMC rdf:type owl:Class ;
 
 arso:SchemeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/security#SecurityScheme" ;
   arso:parentClass arso:SecuritySchemeSMC ;
   arso:idShort "scheme" ;
   rdfs:comment "Property scheme (xs:string) — security scheme type identifier (nosec, basic, apikey, bearer, psk, digest, oauth2, combo, auto)." .
@@ -148,10 +158,12 @@ arso:SchemeProperty rdf:type owl:Class ;
 # Modbus EndpointMetadata fields
 arso:ModvMostSignificantByteProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/modbus#hasMostSignificantByte" ;
   rdfs:comment "Property modv_mostSignificantByte (xs:boolean) — byte order flag for Modbus." .
 
 arso:ModvMostSignificantWordProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/modbus#hasMostSignificantWord" ;
   rdfs:comment "Property modv_mostSignificantWord (xs:boolean) — word order flag for Modbus." .
 
 
@@ -166,18 +178,21 @@ arso:InteractionMetadataSMC rdf:type owl:Class ;
 
 arso:PropertiesSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#PropertyAffordance" ;
   arso:parentClass arso:InteractionMetadataSMC ;
   arso:idShort "properties" ;
   rdfs:comment "SMC properties — container for PropertyDefinition SMCs (WoT PropertyAffordances)." .
 
 arso:ActionsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#ActionAffordance" ;
   arso:parentClass arso:InteractionMetadataSMC ;
   arso:idShort "actions" ;
   rdfs:comment "SMC actions — container for ActionDefinition SMCs (WoT ActionAffordances)." .
 
 arso:EventsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#EventAffordance" ;
   arso:parentClass arso:InteractionMetadataSMC ;
   arso:idShort "events" ;
   rdfs:comment "SMC events — container for EventDefinition SMCs (WoT EventAffordances)." .
@@ -188,6 +203,7 @@ arso:EventsSMC rdf:type owl:Class ;
 # any SMC child of the corresponding container.
 arso:PropertyDefinitionSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/PropertyDefinition" ;
   arso:parentClass arso:PropertiesSMC ;
   rdfs:comment "SMC {prop_name} — a PropertyAffordance (readable/observable/writable data point). Must have a Forms SMC." .
 
@@ -212,6 +228,7 @@ arso:EventDefinitionSMC rdf:type owl:Class ;
 # off any of the three affordance kinds.
 arso:FormsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://www.w3.org/2019/wot/td#hasForm" ;
   arso:parentClass arso:ActionDefinitionSMC ,
                    arso:PropertyDefinitionSMC ,
                    arso:EventDefinitionSMC ;
@@ -220,6 +237,7 @@ arso:FormsSMC rdf:type owl:Class ;
 
 arso:HrefProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/hypermedia#hasTarget" ;
   arso:parentClass arso:FormsSMC ;
   arso:idShort "href" ;
   rdfs:comment "Property href (xs:string) — target URI for this form." .
@@ -227,11 +245,13 @@ arso:HrefProperty rdf:type owl:Class ;
 # HTTP binding
 arso:HtvMethodNameProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2011/http#methodName" ;
   rdfs:comment "Property htv_methodName (xs:string) — HTTP method (GET, POST, PUT, DELETE, PATCH)." .
 
 # Modbus binding
 arso:ModvFunctionProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/modbus#hasFunction" ;
   rdfs:comment "Property modv_function (xs:string) — Modbus function code name." .
 
 arso:ModvAddressProperty rdf:type owl:Class ;
@@ -251,6 +271,7 @@ arso:MqvTopicProperty rdf:type owl:Class ;
 
 arso:MqvRetainProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "https://www.w3.org/2019/wot/mqtt#hasRetainFlag" ;
   rdfs:comment "Property mqv_retain (xs:boolean) — MQTT retain flag." .
 
 # OPC UA binding — EndpointMetadata properties
@@ -277,22 +298,27 @@ arso:UavNamespaceIndexProperty rdf:type owl:Class ;
 # OPC UA binding — security scheme classes (IDTA 02017-1-1 §7.4)
 arso:OPCUAChannelSecuritySchemeSMC rdf:type owl:Class ;
   rdfs:subClassOf arso:SecuritySchemeSMC ;
+  arso:semanticId "http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityChannelScheme" ;
   rdfs:comment "SMC opcua_channel_sc — OPC UA channel security scheme. semanticId: http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityChannelScheme" .
 
 arso:UavSecurityModeProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "http://opcfoundation.org/UA/WoT-Binding/securityMode" ;
   rdfs:comment "Property security_mode (xs:string) — OPC UA MessageSecurityMode: None, Sign, or SignAndEncrypt." .
 
 arso:UavSecurityPolicyProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "http://opcfoundation.org/UA/WoT-Binding/securityPolicy" ;
   rdfs:comment "Property security_policy (xs:string) — OPC UA SecurityPolicy URI, e.g. Basic256Sha256." .
 
 arso:OPCUAAuthenticationSecuritySchemeSMC rdf:type owl:Class ;
   rdfs:subClassOf arso:SecuritySchemeSMC ;
+  arso:semanticId "http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityAuthenticationScheme" ;
   rdfs:comment "SMC opcua_authentication_sc — OPC UA user authentication scheme. semanticId: http://opcfoundation.org/UA/WoT-Binding/OPCUASecurityAuthenticationScheme" .
 
 arso:UavUserIdentityTokenProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
+  arso:semanticId "http://opcfoundation.org/UA/WoT-Binding/userIdentityToken" ;
   rdfs:comment "Property user_token_type (xs:string) — OPC UA user identity token type: Anonymous, UserName, Certificate, or IssuedToken." .
 
 # OPC UA binding — Forms properties
@@ -313,6 +339,7 @@ arso:UavNamespaceProperty rdf:type owl:Class ;
 
 arso:ExternalDescriptorSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/ExternalDescriptor" ;
   arso:parentClass arso:InterfaceSMC ;
   arso:idShort "ExternalDescriptor" ;
   rdfs:comment "SMC ExternalDescriptor — container for File references to external TD documents." .
@@ -320,6 +347,7 @@ arso:ExternalDescriptorSMC rdf:type owl:Class ;
 # No idShort: the File entries are named per document.
 arso:ExternalDescriptorFile rdf:type owl:Class ;
   rdfs:subClassOf aas:File ;
+  arso:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/externalDescriptorName" ;
   arso:parentClass arso:ExternalDescriptorSMC ;
   rdfs:comment "File within ExternalDescriptor — path to an external TD document." .
 

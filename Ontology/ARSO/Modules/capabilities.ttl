@@ -56,12 +56,14 @@ arso:CapabilitiesSubmodel rdf:type owl:Class ;
 
 arso:CapabilitySetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0" ;
+  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0",
+    "https://admin-shell.io/idta/CapabilityDescription/CapabilitySet/1/0" ;
   rdfs:comment "SMC CapabilitySet — groups CapabilityContainers for one use case of the asset." .
 
 arso:CapabilityContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
-  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0" ;
+  arso:semanticId "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet/CapabilityContainer#1/0",
+    "https://admin-shell.io/idta/CapabilityDescription/CapabilityContainer/1/0" ;
   rdfs:comment "SMC CapabilityContainer — holds exactly one Capability element plus optional descriptive elements." .
 
 arso:CapabilityElement rdf:type owl:Class ;
@@ -72,6 +74,7 @@ arso:CapabilityElement rdf:type owl:Class ;
 
 arso:CapabilityCommentMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityComment/1/0" ;
   rdfs:comment "MLP CapabilityComment — individual human-readable comment for the capability." .
 
 
@@ -81,18 +84,22 @@ arso:CapabilityCommentMLP rdf:type owl:Class ;
 
 arso:PropertySetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertySet/1/0" ;
   rdfs:comment "SMC PropertySet — set of properties describing the capability in more detail." .
 
 arso:PropertyContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyContainer/1/0" ;
   rdfs:comment "SMC PropertyContainer — holds one CapabilityPropertyType instance plus SameProperty and PropertyComment." .
 
 arso:SamePropertyRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/SameProperty/1/0" ;
   rdfs:comment "RelationshipElement SameProperty — links the property in this PropertyContainer (first) to an identical property in another Submodel or external source (second)." .
 
 arso:PropertyCommentMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyComment/1/0" ;
   rdfs:comment "MLP PropertyComment — general human-readable description of the property." .
 
 
@@ -102,6 +109,7 @@ arso:PropertyCommentMLP rdf:type owl:Class ;
 
 arso:CapabilityRelationsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityRelations/1/0" ;
   rdfs:comment "SMC CapabilityRelations — optional container for all relationships of a capability." .
 
 arso:CapabilityRealizedBySML rdf:type owl:Class ;
@@ -121,18 +129,22 @@ arso:CapabilityRealizedByRel rdf:type owl:Class ;
 
 arso:ComposedOfSetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ComposedOfSet/1/0" ;
   rdfs:comment "SMC ComposedOfSet — created when the capability is composed of sub-capabilities." .
 
 arso:ComposedOfContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ComposedOfContainer/1/0" ;
   rdfs:comment "SMC ComposedOfContainer — one composition record; must contain at least 2 CapabilityComposedOf relationships." .
 
 arso:CapabilityComposedOfRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityComposedOf/1/0" ;
   rdfs:comment "RelationshipElement CapabilityComposedOf — first: composed capability; second: one of its sub-capabilities. Minimum 2 per ComposedOfContainer." .
 
 arso:ComposedOfCommentMLP rdf:type owl:Class ;
   rdfs:subClassOf aas:MultiLanguageProperty ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ComposedOfComment/1/0" ;
   rdfs:comment "MLP ComposedOfComment — human-readable description of the composition." .
 
 
@@ -142,10 +154,12 @@ arso:ComposedOfCommentMLP rdf:type owl:Class ;
 
 arso:GeneralizedBySetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/GeneralizedBySet/1/0" ;
   rdfs:comment "SMC GeneralizedBySet — created when generalizations of the capability exist." .
 
 arso:CapabilityGeneralizedByRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityGeneralizedBy/1/0" ;
   rdfs:comment "RelationshipElement CapabilityGeneralizedBy — first: this capability (to be generalized); second: a more general capability." .
 
 
@@ -155,26 +169,32 @@ arso:CapabilityGeneralizedByRel rdf:type owl:Class ;
 
 arso:ConstraintSetSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ConstraintSet/1/0" ;
   rdfs:comment "SMC ConstraintSet — created when constraints on the capability exist. Must contain at least one PropertyConstraintContainer or TransitionConstraintContainer (SM-CapabilityDescription-2)." .
 
 arso:PropertyConstraintContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyConstraintContainer/1/0" ;
   rdfs:comment "SMC PropertyConstraintContainer — one property constraint record. Contains: PropertyConstraintType (abstract, 1), PropertyConditionalType (1), ConstraintPropertyRelations (1)." .
 
 arso:TransitionConstraintContainerSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/TransitionConstraintContainer/1/0" ;
   rdfs:comment "SMC TransitionConstraintContainer — one transition constraint record. Contains: TransitionConstrainedBy (1), TransitionConditionalType (1)." .
 
 arso:ConstraintPropertyRelationsSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ConstraintPropertyRelations/1/0" ;
   rdfs:comment "SMC ConstraintPropertyRelations — contains all ConstraintHasProperty relationships for a PropertyConstraintContainer." .
 
 arso:ConstraintHasPropertyRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/ConstraintHasProperty/1/0" ;
   rdfs:comment "RelationshipElement ConstraintHasProperty — first: PropertyConstraint; second: Property from a PropertyContainer." .
 
 arso:TransitionConstrainedByRel rdf:type owl:Class ;
   rdfs:subClassOf aas:RelationshipElement ;
+  arso:semanticId "https://admin-shell.io/idta/CapabilityDescription/TransitionConstrainedBy/1/0" ;
   rdfs:comment "RelationshipElement TransitionConstrainedBy — first: constrained Capability; second: constraining Capability from another CapabilityContainer." .
 
 
