@@ -7,6 +7,8 @@ and in-process callers.
 """
 from __future__ import annotations
 
+from ..submodel_registry import SUBMODEL_IDSHORT_TO_KEY
+
 import json
 import re
 from typing import Any
@@ -34,18 +36,9 @@ _LEGACY_IDSHORT_PROTOCOL = {
     "InterfaceMODBUS": "MODBUS",
 }
 
-# AAS submodel idShort -> SystemConfig/profile section key. Matches the UI's
-# own IDSHORT_TO_KEY table in ui/src/store/useAppStore.ts -- keep in sync.
-_SUBMODEL_IDSHORT_TO_KEY: dict[str, str] = {
-    "DigitalNameplate": "Nameplate",
-    "HierarchicalStructures": "HierarchicalStructures",
-    "AID": "AID",
-    "Skills": "Skills",
-    "Capabilities": "Capabilities",
-    "OperationalData": "Variables",
-    "Parameters": "Parameters",
-    "AssetInterfacesMappingConfiguration": "AIMC",
-}
+# AAS submodel idShort -> profile section key, derived from the registry so it
+# cannot drift from what the builders emit.
+_SUBMODEL_IDSHORT_TO_KEY: dict[str, str] = dict(SUBMODEL_IDSHORT_TO_KEY)
 
 
 # ── small element-tree helpers ──────────────────────────────────────────────

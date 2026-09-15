@@ -3,6 +3,8 @@
 from typing import Dict, List
 from basyx.aas import model
 
+from ...submodel_registry import SPEC_BY_KEY, SUBMODEL_SPECS
+
 
 class AASBuilder:
     """
@@ -134,30 +136,17 @@ class AASBuilder:
         Returns:
             List of submodel names to include
         """
-        submodel_names = []
+        # Same activation test _build_object_store uses, so a built submodel is
+        # always referenced and vice versa.
+        submodel_names = [
+            spec.ref_name for spec in SUBMODEL_SPECS
+            if spec.required or spec.active_in(config)
+        ]
 
-        # DigitalNameplate is mandatory for ResourceAAS generation.
-        submodel_names.append('Nameplate')
-
-        # Add standard submodels if they exist in config
-        if 'AID' in config or 'AssetInterfacesDescription' in config:
-            submodel_names.append('AID')
-        if 'Variables' in config:
-            submodel_names.append('OperationalData')
-        if 'Parameters' in config:
-            submodel_names.append('Parameters')
-        if 'HierarchicalStructures' in config:
-            submodel_names.append('HierarchicalStructures')
-        if 'Capabilities' in config and config.get('Capabilities'):
-            submodel_names.append('Capabilities')
-
-        # Skills reference when explicitly configured, or auto-generated from
-        # AssetInterfacesDescription actions.
-        has_explicit_skills = 'Skills' in config and config.get('Skills')
-        has_actions = self._has_interface_actions(config)
-
-        if has_explicit_skills or has_actions:
-            submodel_names.append('Skills')
+        # Skills is also referenced when auto-generated from AID actions.
+        skills_ref = SPEC_BY_KEY['Skills'].ref_name
+        if skills_ref not in submodel_names and self._has_interface_actions(config):
+            submodel_names.append(skills_ref)
 
         # Add Process AAS specific submodels if they exist in config
         if 'ProcessInformation' in config:

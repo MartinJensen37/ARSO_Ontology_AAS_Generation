@@ -20,18 +20,12 @@ from .element_factory import AASElementFactory
 from .schema_handler import SchemaHandler
 from .semantic_ids import SemanticIdFactory
 from ..submodels import (
-    DigitalNameplateSubmodelBuilder,
-    AssetInterfacesBuilder,
-    VariablesSubmodelBuilder,
-    SkillsSubmodelBuilder,
-    ParametersSubmodelBuilder,
-    HierarchicalStructuresSubmodelBuilder,
-    CapabilitiesSubmodelBuilder,
-    # Process AAS specific builders
+    # Process AAS specific builders; the rest are resolved via SUBMODEL_SPECS
     ProcessInformationSubmodelBuilder,
     RequiredCapabilitiesSubmodelBuilder,
     PolicySubmodelBuilder,
 )
+from ...submodel_registry import SUBMODEL_SPECS
 
 def _as_named_dict(value: Any) -> Dict:
     """Coerce a profile section that should be {name: {...}} but may have
@@ -225,31 +219,24 @@ class AASGenerator:
         # AAS builder
         self.aas_builder = AASBuilder(self.base_url)
 
-        # Submodel builders
-        self.nameplate_builder = DigitalNameplateSubmodelBuilder(
-            self.base_url, self.semantic_factory, self.element_factory
-        )
-        self.asset_interfaces_builder = AssetInterfacesBuilder(
-            self.base_url, self.semantic_factory, self.element_factory
-        )
-        self.variables_builder = VariablesSubmodelBuilder(
-            self.base_url, self.semantic_factory, self.element_factory,
-            self.schema_handler
-        )
-        self.skills_builder = SkillsSubmodelBuilder(
-            self.base_url, self.delegation_base_url,
-            self.semantic_factory, self.element_factory, self.schema_handler
-        )
-        self.parameters_builder = ParametersSubmodelBuilder(
-            self.base_url, self.semantic_factory, self.element_factory,
-            self.schema_handler
-        )
-        self.hierarchical_structures_builder = HierarchicalStructuresSubmodelBuilder(
-            self.base_url, self.semantic_factory, self.element_factory
-        )
-        self.capabilities_builder = CapabilitiesSubmodelBuilder(
-            self.base_url, self.semantic_factory, self.element_factory
-        )
+        # Submodel builders, one per SUBMODEL_SPECS entry
+        from .. import submodels as _submodels
+
+        for spec in SUBMODEL_SPECS:
+            cls = getattr(_submodels, spec.builder_cls)
+            if spec.ctor == "skills":
+                instance = cls(
+                    self.base_url, self.delegation_base_url,
+                    self.semantic_factory, self.element_factory, self.schema_handler
+                )
+            elif spec.ctor == "schema":
+                instance = cls(
+                    self.base_url, self.semantic_factory, self.element_factory,
+                    self.schema_handler
+                )
+            else:
+                instance = cls(self.base_url, self.semantic_factory, self.element_factory)
+            setattr(self, spec.builder, instance)
 
         # Process AAS specific builders
         self.process_info_builder = ProcessInformationSubmodelBuilder(
@@ -565,26 +552,20 @@ class AASGenerator:
         # Generate standard submodels — only include sections present in config
         cfg = self.system_config
 
-        if cfg.get('DigitalNameplate') is not None:
-            obj_store.add(self.nameplate_builder.build(self.system_id, cfg))
-
-        if cfg.get('AID') or cfg.get('AssetInterfacesDescription'):
-            obj_store.add(self.asset_interfaces_builder.build(self.system_id, cfg))
-
-        if cfg.get('OperationalData') or cfg.get('Variables'):
-            obj_store.add(self.variables_builder.build(self.system_id, cfg, interface_properties))
-
-        if cfg.get('Parameters'):
-            obj_store.add(self.parameters_builder.build(self.system_id, cfg, interface_input_properties))
-
-        if cfg.get('HierarchicalStructures') is not None:
-            obj_store.add(self.hierarchical_structures_builder.build(self.system_id, cfg))
-
-        if cfg.get('Capabilities'):
-            obj_store.add(self.capabilities_builder.build(self.system_id, cfg))
-
-        if cfg.get('Skills'):
-            obj_store.add(self.skills_builder.build(self.system_id, cfg))
+        extra_args = {
+            "interface_properties": interface_properties,
+            "interface_input_properties": interface_input_properties,
+        }
+        for spec in SUBMODEL_SPECS:
+            if not spec.active_in(cfg):
+                continue
+            builder = getattr(self, spec.builder)
+            if spec.build_arg:
+                submodel = builder.build(self.system_id, cfg, extra_args[spec.build_arg])
+            else:
+                submodel = builder.build(self.system_id, cfg)
+            if submodel is not None:
+                obj_store.add(submodel)
 
         # Generate Process AAS specific submodels (if config contains them)
         process_submodels = self._build_process_submodels()
