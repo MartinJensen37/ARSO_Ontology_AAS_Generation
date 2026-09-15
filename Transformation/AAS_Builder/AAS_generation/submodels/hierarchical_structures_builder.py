@@ -224,5 +224,10 @@ class HierarchicalStructuresSubmodelBuilder:
                 ),
                 model.Entity
             ),
-            semantic_id=self.semantic_factory.HIERARCHICAL_RELATIONSHIP
+            # IDTA 02011 defines HasPart/IsPartOf ids, no generic one.
+            semantic_id=(
+                self.semantic_factory.HIERARCHICAL_IS_PART_OF
+                if relationship_prefix == "IsPartOf"
+                else self.semantic_factory.HIERARCHICAL_HAS_PART
+            )
         )
