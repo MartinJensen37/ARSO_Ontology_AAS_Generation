@@ -52,8 +52,9 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │   │   ├── context/                    Prompt fragments
 │   │   │   ├── 00-preamble.md
 │   │   │   ├── shacl-rules.md
-│   │   │   ├── valid-example.json
-│   │   │   └── submodels/              Per-submodel guidance (aid, nameplate, skills, ...)
+│   │   │   ├── valid-example.json      Builder-generated example AAS
+│   │   │   └── submodels/              One .md per submodel (aid, aimc, technicaldata, ...)
+│   │   │       └── SMTs/               IDTA submodel templates: JSON + PDF specifications
 │   │   ├── Parsing/
 │   │   │   ├── pdf_extractor.py        pdfplumber extraction, PyMuPDF fallback
 │   │   │   ├── profile_structure.py    Profile scaffolding + field-alias normalisation
@@ -69,7 +70,8 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │   ├── AAS/aas-rdf-ontology.ttl        RDF projection of the AAS metamodel
 │   ├── ARSO/                           AAS Resource Structure Ontology
 │   │   ├── ARSO_AAS.ttl                Root: converter annotations + AAS→submodel links
-│   │   └── Modules/                    aid, capabilities, control-component,
+│   │   ├── IDTA_CONFORMANCE.md         Where ARSO matches, tightens or diverges from IDTA
+│   │   └── Modules/                    aid, aimc, capabilities, control-component,
 │   │                                   hierarchical-structures, nameplate,
 │   │                                   operational-data, parameters, technical-data
 │   ├── APSO/                           Product AAS blueprint ontology (draft, not yet
@@ -86,12 +88,14 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 ├── Transformation/                     AAS construction and RDF projection
 │   ├── AAS_Builder/
 │   │   ├── AAS_builder.py              profile_document_to_aas_json() entry point
+│   │   ├── submodel_registry.py        One SubmodelSpec per submodel; drives dispatch
 │   │   ├── AAS_generation/
 │   │   │   ├── core/                   aas_builder, generate_aas, element_factory,
 │   │   │   │                           schema_handler, semantic_ids
-│   │   │   └── submodels/              One builder per submodel: asset_interfaces,
+│   │   │   └── submodels/              One builder per submodel: aimc, asset_interfaces,
 │   │   │                               capabilities, hierarchical_structures, nameplate,
-│   │   │                               parameters, process_submodels, skills, variables
+│   │   │                               parameters, process_submodels, skills,
+│   │   │                               technical_data, variables
 │   │   └── AAS_to_Profile/aas_to_profile.py   Full AAS JSON → profile (inverse)
 │   ├── AAS_to_RDF/
 │   │   ├── aas_to_rdf.py               AAS JSON → RDF/Turtle, ontology-annotation-driven
@@ -106,7 +110,7 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │
 ├── Testing/
 │   ├── SHACL_Tests/
-│   │   ├── Test_Cases/                 12 invalid_*.aas.json conformance fixtures
+│   │   ├── Test_Cases/                 13 invalid_*.aas.json conformance fixtures
 │   │   └── Test_Scripts/
 │   │       ├── validate_aas.py         Validate one AAS JSON file
 │   │       └── run_test_cases.py       Run the whole fixture suite
@@ -128,15 +132,16 @@ Rather than asking an LLM for a complete AAS JSON document, this framework has i
 │   │   ├── aas/semanticIds.ts          Semantic ID constants mirroring semantic_ids.py
 │   │   ├── api/client.ts               Typed backend client (incl. SSE generation stream)
 │   │   ├── types/resourceaas.ts        Profile type definitions
-│   │   ├── store/                      useAppStore (profile state), useModelStore (canvas)
+│   │   ├── store/                      useAppStore (profile state), useModelStore (canvas),
+│   │   │                               submodelRegistry (per-submodel UI table)
 │   │   ├── hooks/                      useValidation (debounced), useGenerateAI
 │   │   └── components/
 │   │       ├── modelbuilder/           ModelBuilder canvas, BuilderToolbar, CatalogPanel,
 │   │       │                           GenerateAIDialog, addAasShell, submodelLayout,
 │   │       │                           nodes/, edges/, modals/
-│   │       ├── submodels/              One form per submodel (AID, Capabilities,
+│   │       ├── submodels/              One form per submodel (AID, AIMC, Capabilities,
 │   │       │                           DigitalNameplate, HierarchicalStructures,
-│   │       │                           OperationalData, Parameters, Skills)
+│   │       │                           OperationalData, Parameters, Skills, TechnicalData)
 │   │       └── shared/                 GuidancePanel, SemanticIdInput, AdvField,
 │   │                                   AdvancedContext
 │   ├── vite.config.ts                  Dev proxy /api → backend, polling watcher
@@ -314,6 +319,29 @@ Results land in `Testing/Generation_Tests/results/<run-id>/`: `results.jsonl` (o
 Mandatory-field and structural constraints are OWL restrictions (`owl:someValuesFrom`, `owl:qualifiedCardinality`, `owl:oneOf`) on those classes, converted to SHACL by the owl2shacl generator. Constraints needing graph traversal beyond a single class — cross-submodel reference targets such as "a Skill's InterfaceReference must resolve to a real AID action" — are hand-written as SPARQL-based rules in `Ontology/SHACL/Manual/arso-rules.shacl.ttl`.
 
 `Ontology/APSO/` is a separate draft ontology describing a **Product** AAS blueprint (BatchInformation, Bill of Materials, Bill of Process). It is not yet referenced by the generation pipeline.
+
+---
+
+## Adding a Submodel
+
+RDF projection, SHACL generation and validation are ontology-driven and need no code changes. A
+new submodel touches:
+
+1. **Ontology** — a module in `Ontology/ARSO/Modules/` whose classes carry `arso:semanticId` (or
+   `arso:idShort` + `arso:parentClass`). Import it from `ARSO_AAS.ttl` with an
+   `arso:has<X>Submodel` link and cardinality, and add it to `generate_shapes.py`'s import catalog.
+2. **Registry** — one `SubmodelSpec` in `Transformation/AAS_Builder/submodel_registry.py`.
+   Building, shell references, profile pruning and inversion all follow from it.
+3. **Builder** — a class in `AAS_generation/submodels/` exported from `__init__.py`, its ids in
+   `semantic_ids.py`, and the inverse `parse_*` function in `aas_to_profile.py`.
+4. **Prompting** — `context/submodels/<key>.md`, plus a guide entry in
+   `json_description_generation.py` and a seed in `profile_structure.py` for profile mode.
+5. **UI** — one entry in `ui/src/store/submodelRegistry.ts`, a form in `components/submodels/`
+   and its profile type in `resourceaas.ts`. TypeScript then flags the `FORM_MAP` entry still
+   missing.
+6. **Rules** — cross-submodel constraints go in `Ontology/SHACL/Manual/arso-rules.shacl.ttl`, and
+   a keyword in `validator.py`'s `_FIELD_KEYWORDS` if the class names don't already map to the
+   submodel.
 
 ---
 
