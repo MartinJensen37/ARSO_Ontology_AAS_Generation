@@ -2,8 +2,9 @@
 Regenerate Ontology/SHACL/Generated/shapes.generated.shacl.ttl from ARSO_AAS.ttl.
 
 Applies the owl2sh-closed ruleset to the union of ARSO_AAS.ttl and the
-locally vendored AAS v3.1 ontology. The inline catalog mirrors the URL to file
-mapping so rdflib resolves imports without a network call.
+locally vendored AAS v3.1 ontology, then finishes the closed shapes (see
+finish_shapes.py). The inline catalog mirrors the URL to file mapping so rdflib
+resolves imports without a network call.
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ from pathlib import Path
 
 from rdflib import Graph, OWL
 
+from finish_shapes import finish_closed_shapes
 from generate_shapes_from_ontology import import_uri_to_local_path, run_owl2shacl_rules
 
 
@@ -22,6 +24,7 @@ _ARSO_AAS_TTL = _ONTOLOGY_DIR / "ARSO" / "ARSO_AAS.ttl"
 _AAS_RDF_TTL = _ONTOLOGY_DIR / "AAS" / "aas-rdf-ontology.ttl"
 _CSS_TTL = _ONTOLOGY_DIR / "CSS" / "CSS-Ontology.ttl"
 _RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-closed.ttl"
+_AAS_SHACL_SCHEMA = _ONTOLOGY_DIR / "SHACL" / "Manual" / "aas-shacl-schema.ttl"
 _OUTPUT = _ONTOLOGY_DIR / "SHACL" / "Generated" / "shapes.generated.shacl.ttl"
 
 
@@ -66,7 +69,7 @@ def _load_with_imports(target: Graph, ontology_file: Path, visited: set[Path]) -
 
 
 def main() -> None:
-    for required in (_ARSO_AAS_TTL, _AAS_RDF_TTL, _CSS_TTL, _RULESET):
+    for required in (_ARSO_AAS_TTL, _AAS_RDF_TTL, _CSS_TTL, _RULESET, _AAS_SHACL_SCHEMA):
         if not required.exists():
             raise FileNotFoundError(f"Required file not found: {required}")
 
@@ -78,6 +81,7 @@ def main() -> None:
 
     rules_graph = Graph().parse(str(_RULESET), format="turtle")
     generated_shapes = run_owl2shacl_rules(ontology_graph, rules_graph)
+    finish_closed_shapes(generated_shapes, [Graph().parse(str(_AAS_SHACL_SCHEMA), format="turtle")])
 
     _OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     generated_shapes.serialize(destination=str(_OUTPUT), format="turtle")

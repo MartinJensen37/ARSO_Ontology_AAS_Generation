@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 
 from rdflib import Graph, OWL
 
+from finish_shapes import finish_closed_shapes
+
 
 def import_uri_to_local_path(import_uri: str, parent_file: Path) -> Path | None:
     parsed = urlparse(import_uri)
@@ -86,6 +88,7 @@ ONTOLOGY_FILES = [
 OWL2SHACL_RULESET = _ONTOLOGY_DIR / "SHACL" / "owl2shacl" / "owl2sh-closed.ttl"
 GENERATED_OUTPUT = _ONTOLOGY_DIR / "SHACL" / "Generated" / "shapes.generated.shacl.ttl"
 MANUAL_SPARQL_INPUT = _ONTOLOGY_DIR / "SHACL" / "Manual" / "arso-rules.shacl.ttl"
+AAS_SHACL_SCHEMA = _ONTOLOGY_DIR / "SHACL" / "Manual" / "aas-shacl-schema.ttl"
 
 
 def main() -> None:
@@ -106,6 +109,7 @@ def main() -> None:
 
     rules_graph = Graph().parse(str(OWL2SHACL_RULESET), format="turtle")
     generated_shapes = run_owl2shacl_rules(ontology_graph, rules_graph)
+    finish_closed_shapes(generated_shapes, [Graph().parse(str(AAS_SHACL_SCHEMA), format="turtle")])
 
     GENERATED_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     generated_shapes.serialize(destination=str(GENERATED_OUTPUT), format="turtle")
