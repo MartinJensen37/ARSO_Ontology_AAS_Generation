@@ -33,7 +33,8 @@ Every violation is fed back as corrective context for the next attempt.
 - **[VIOLATION]** A Capability `realizedBy` relationship's `second` must resolve to a Skill.
 - **[VIOLATION]** An OperationalData or Parameters `InterfaceReference` must resolve to an AID property.
 - **[VIOLATION]** An AIMC `InterfaceReference` must resolve to an AID interface, and each AIMC
-  `Source` to an AID property.
+  `Source` to an AID property (or to a skill Operation, when the `Sink` names the AID action
+  that skill references).
 
 ## Values and Patterns (arso-rules)
 

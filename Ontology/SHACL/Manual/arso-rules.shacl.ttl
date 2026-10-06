@@ -428,16 +428,20 @@ arso:AIMCInterfaceRefTargetShape
     """ ;
   ] .
 
-# A Source must name an existing AID property -- never an action or event.
-# Sinks are not checked: IDTA 02027 lets them target any submodel element.
+# A Source must name an existing AID property, or an Operation of the Skills
+# submodel whose mapping hands it to an AID action: the Sink of the same
+# mapping names that action, and what holds the Operation (a skill, or the
+# collection of the module's commands) references the action itself. The
+# Sink of a property mapping is not checked: IDTA 02027 lets it target any
+# submodel element.
 
 arso:AIMCSourceRefTargetShape
   a sh:NodeShape ;
-  rdfs:label "AIMC Source must resolve to an existing AID property" ;
+  rdfs:label "AIMC Source must resolve to an AID property, or to a skill Operation mapped onto its AID action" ;
   sh:targetClass arso:SourceRef ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "An AIMC Source reference points at no AID property in the same AAS, or the AID submodel is missing." ;
+    sh:message "An AIMC Source reference points at no AID property in the same AAS, and at no Operation whose skill references the AID action the Sink names (or the AID submodel is missing)." ;
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -457,6 +461,56 @@ arso:AIMCSourceRefTargetShape
           ?propsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "properties"^^xsd:string .
           ?propsContainer <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?prop .
           ?prop   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
+        }
+
+        # Each step is an EXISTS of its own: rdflib orders the patterns of one group
+        # without knowing what is bound, and one group over all of this takes minutes.
+        FILTER NOT EXISTS {
+          # The Operation the Source names ...
+          ?opKey  <https://admin-shell.io/aas/3/1/Key/type>                <https://admin-shell.io/aas/3/1/KeyTypes/Operation> ;
+                  <https://admin-shell.io/aas/3/1/Key/value>               ?opIdShort .
+          ?opRef  <https://admin-shell.io/aas/3/1/Reference/keys>          ?opKey .
+          $this   <https://admin-shell.io/aas/3/1/ReferenceElement/value>  ?opRef .
+          FILTER EXISTS {
+            # ... and what holds it: a skill, or the collection of the module's commands.
+            ?op     rdf:type                                          <https://admin-shell.io/aas/3/1/Operation> ;
+                    <https://admin-shell.io/aas/3/1/Referable/idShort>     ?opIdShort .
+            ?holder <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?op .
+            ?shell  <https://w3id.org/2025/arso#hasSkillsSubmodel>    ?skillsSm .
+            ?skillsSm
+                    (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
+                    ?holder .
+            FILTER EXISTS {
+              # What the Sink of the same mapping names ...
+              ?sinkRef rdf:type                                               <https://w3id.org/2025/arso#SinkRef> ;
+                       <https://admin-shell.io/aas/3/1/ReferenceElement/value>      ?sinkTarget .
+              ?sinkTarget <https://admin-shell.io/aas/3/1/Reference/keys>           ?sinkKey .
+              ?sinkKey <https://admin-shell.io/aas/3/1/Key/value>                   ?actionIdShort .
+              ?sink    <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?sinkRef .
+              ?sinks   <https://admin-shell.io/aas/3/1/SubmodelElementList/value>   ?sink .
+              ?mapping <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?sinks ;
+                       <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?sources .
+              ?sources <https://admin-shell.io/aas/3/1/SubmodelElementList/value>   ?source .
+              ?source  <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> $this .
+              FILTER EXISTS {
+                # ... is an action of the AID ...
+                ?actionsContainer <https://admin-shell.io/aas/3/1/Referable/idShort> "actions"^^xsd:string ;
+                         <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?action .
+                ?action  <https://admin-shell.io/aas/3/1/Referable/idShort>         ?actionIdShort .
+                ?shell   <https://w3id.org/2025/arso#hasAIDSubmodel>         ?actionsSm .
+                ?actionsSm (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
+                         ?actionsContainer .
+              }
+              FILTER EXISTS {
+                # ... that the holder of the Operation references itself.
+                ?holder  (<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
+                         ?link .
+                ?link    <https://admin-shell.io/aas/3/1/ReferenceElement/value>    ?linkTarget .
+                ?linkTarget <https://admin-shell.io/aas/3/1/Reference/keys>         ?linkKey .
+                ?linkKey <https://admin-shell.io/aas/3/1/Key/value>                 ?actionIdShort .
+              }
+            }
+          }
         }
       }
     """ ;
