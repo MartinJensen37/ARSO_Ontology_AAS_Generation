@@ -289,18 +289,20 @@ def _emit_enum(g: Graph, subject: URIRef, predicate: URIRef, enum_class: str, me
 
 
 _VALUE_TYPE_TO_AAS_DATATYPE: dict[str, URIRef] = {
-    "xs:string":   AAS["DataTypeDefXsd/String"],
-    "xs:boolean":  AAS["DataTypeDefXsd/Boolean"],
-    "xs:int":      AAS["DataTypeDefXsd/Int"],
-    "xs:integer":  AAS["DataTypeDefXsd/Integer"],
-    "xs:double":   AAS["DataTypeDefXsd/Double"],
-    "xs:float":    AAS["DataTypeDefXsd/Float"],
-    "xs:decimal":  AAS["DataTypeDefXsd/Decimal"],
-    "xs:date":     AAS["DataTypeDefXsd/Date"],
-    "xs:dateTime": AAS["DataTypeDefXsd/DateTime"],
-    "xs:long":     AAS["DataTypeDefXsd/Long"],
-    "xs:short":    AAS["DataTypeDefXsd/Short"],
-    "xs:byte":     AAS["DataTypeDefXsd/Byte"],
+    # Every member of aas:DataTypeDefXsd. A valueType that is not found here
+    # stays a literal, which the metamodel shapes report.
+    **{
+        f"xs:{name}": AAS[f"DataTypeDefXsd/{name[0].upper()}{name[1:]}"]
+        for name in (
+            "base64Binary", "boolean", "byte", "date", "dateTime", "decimal",
+            "double", "duration", "float", "gDay", "gMonth", "gMonthDay", "gYear",
+            "gYearMonth", "hexBinary", "int", "integer", "long", "negativeInteger",
+            "nonNegativeInteger", "nonPositiveInteger", "positiveInteger", "short",
+            "string", "time", "unsignedByte", "unsignedInt", "unsignedLong",
+            "unsignedShort",
+        )
+    },
+    "xs:anyURI":   AAS["DataTypeDefXsd/AnyUri"],
     "string":      AAS["DataTypeDefXsd/String"],
     "boolean":     AAS["DataTypeDefXsd/Boolean"],
 }
