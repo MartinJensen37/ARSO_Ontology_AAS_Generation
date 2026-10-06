@@ -46,6 +46,7 @@ ARSO_PARENT_CLASS             = ARSO["parentClass"]
 ARSO_TRANSITIVE_PARENT_CLASS  = ARSO["transitiveParentClass"]
 ARSO_UNCONDITIONAL_AAS_TYPE   = ARSO["unconditionalAasType"]
 ARSO_HAS_SUBMODEL             = ARSO["hasSubmodel"]
+ARSO_RESOLVED_FROM            = ARSO["resolvedFrom"]
 
 
 def _resolve_ontology_import(import_uri: str, parent_file: Path) -> Path | None:
@@ -213,6 +214,11 @@ _ONTOLOGY = _ontology_graph()
 SUBMODEL_TYPE_BY_SEMANTIC_ID, SME_TYPE_BY_SEMANTIC_ID = _build_semantic_id_maps(_ONTOLOGY)
 _TYPED_LINK_BY_SUBTYPE: dict[URIRef, URIRef] = _build_typed_link_map(_ONTOLOGY)
 _STRUCTURAL_RULES = _StructuralRules(_ONTOLOGY)
+# Class of a list of references -> the link its references are resolved into
+# (arso:resolvedFrom, e.g. arso:SkillUsesSML -> arso:usesSkill).
+_RESOLVED_LINK_BY_LIST: dict[URIRef, URIRef] = {
+    list_cls: link for link, _, list_cls in _ONTOLOGY.triples((None, ARSO_RESOLVED_FROM, None))
+}
 
 # AAS modelType -> official AAS class IRI
 _AAS_CLASS_BY_MODEL_TYPE: dict[str, URIRef] = {
@@ -362,6 +368,8 @@ def _mint_child_uri(parent: URIRef, idshort: str | None, index: int) -> URIRef:
 # ---------------------------------------------------------------------------
 
 _BNODE_COUNTER = [0]
+# ReferenceElement -> the node its model reference names, were it in this document.
+_REFERENCE_TARGETS: dict[URIRef, URIRef] = {}
 
 
 def _next_anon(parent: URIRef, kind: str) -> URIRef:
@@ -482,8 +490,27 @@ def _emit_relationship(g: Graph, node_uri: URIRef, node: dict) -> None:
     _emit_reference(g, node_uri, P_REL_SECOND, node.get("second"))
 
 
+def _reference_target(ref: dict | None) -> URIRef | None:
+    """The node a model reference names, by the way nodes are named here: the
+    submodel's id, then one step per key (an index after a list key)."""
+    keys = ref.get("keys") if isinstance(ref, dict) else None
+    if not keys or ref.get("type") != "ModelReference" or keys[0].get("type") != "Submodel":
+        return None
+    target = URIRef(str(keys[0].get("value")))
+    for previous, key in zip(keys, keys[1:]):
+        value = str(key.get("value"))
+        if previous.get("type") == "SubmodelElementList" and value.isdigit():
+            target = _mint_child_uri(target, None, int(value))
+        else:
+            target = _mint_child_uri(target, value, 0)
+    return target
+
+
 def _emit_reference_element(g: Graph, node_uri: URIRef, node: dict) -> None:
     _emit_reference(g, node_uri, P_REF_ELEM_VALUE, node.get("value"))
+    target = _reference_target(node.get("value"))
+    if target is not None:
+        _REFERENCE_TARGETS[node_uri] = target
 
 
 def _emit_entity(g: Graph, node_uri: URIRef, node: dict) -> None:
@@ -708,6 +735,21 @@ def _apply_structural_typing(g: Graph) -> None:
         pass
 
 
+def _apply_resolved_links(g: Graph) -> None:
+    """Add the links the ontology declares as resolved from a list of
+    references (arso:resolvedFrom): from the element that holds the list to
+    every element of this document that one of its references names. A
+    reference that leaves the document gives no link."""
+    for list_cls, link in _RESOLVED_LINK_BY_LIST.items():
+        for list_node in list(g.subjects(RDF.type, list_cls)):
+            holders = [h for prop in _ALL_CONTAINMENT_PROPS for h in g.subjects(prop, list_node)]
+            for reference in g.objects(list_node, P_SML_VALUE):
+                target = _REFERENCE_TARGETS.get(reference)
+                if target is not None and (target, RDF.type, None) in g:
+                    for holder in holders:
+                        g.add((holder, link, target))
+
+
 def _walk_submodel(g: Graph, shell_uri: URIRef, submodel: dict) -> URIRef | None:
     submodel_id = submodel.get("id")
     if not submodel_id:
@@ -785,6 +827,7 @@ def _walk_shell(g: Graph, shell: dict, submodels_by_id: dict[str, dict]) -> None
 def serialize(document: dict) -> Graph:
     """Build an RDF graph from a parsed AAS JSON document."""
     _BNODE_COUNTER[0] = 0
+    _REFERENCE_TARGETS.clear()
     g = Graph()
     g.bind("aas",  AAS)
     g.bind("css",  CSS)
@@ -827,6 +870,7 @@ def serialize(document: dict) -> Graph:
             _walk_element(g, sm_uri, P_SUBMODEL_ELEMENTS, element, i)
 
     _apply_structural_typing(g)
+    _apply_resolved_links(g)
     return g
 
 
