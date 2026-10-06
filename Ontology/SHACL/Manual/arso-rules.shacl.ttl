@@ -195,7 +195,7 @@ arso:SkillMustBeRealizedByCapabilityShape
   sh:targetClass arso:SkillSMC ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability)." ;
+    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability). Occupy and Release are exempt." ;
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                              <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -204,6 +204,18 @@ arso:SkillMustBeRealizedByCapabilityShape
                 (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
                 $this .
         $this   <https://admin-shell.io/aas/3/1/Referable/idShort>     ?skillIdShort .
+
+        # Occupy and Release say who may control the resource. They are access
+        # control, not production, and realize no capability. Open: whether
+        # they stay in the list of skills at all (6 Oct 2026).
+        OPTIONAL {
+          ?meaning <https://admin-shell.io/aas/3/1/Referable/idShort>     "SemanticId"^^xsd:string .
+          $this    <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?meaning .
+          ?meaning <https://admin-shell.io/aas/3/1/Property/value>        ?skillMeaning .
+        }
+        FILTER (!BOUND(?skillMeaning) || str(?skillMeaning) NOT IN (
+                  "https://smartproductionlab.aau.dk/skills/Occupy",
+                  "https://smartproductionlab.aau.dk/skills/Release"))
 
         FILTER NOT EXISTS {
           ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm .

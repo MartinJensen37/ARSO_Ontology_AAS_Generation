@@ -30,7 +30,7 @@ Every violation is fed back as corrective context for the next attempt.
 - **[VIOLATION]** A Skill's `InterfaceReference` must resolve to an AID interface, and one of its
   keys must name an action under `actions`.
 - **[VIOLATION]** Every Skill must be realized by at least one Capability, itself or as a step
-  (`Uses`) of a composite Skill that is.
+  (`Uses`) of a composite Skill that is. `Occupy` and `Release` (access control) are exempt.
 - **[VIOLATION]** A Capability `realizedBy` relationship's `second` must resolve to a Skill.
 - **[VIOLATION]** An OperationalData or Parameters `InterfaceReference` must resolve to an AID property.
 - **[VIOLATION]** An AIMC `InterfaceReference` must resolve to an AID interface, and each AIMC
