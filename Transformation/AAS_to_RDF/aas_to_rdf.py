@@ -170,31 +170,43 @@ def _build_typed_link_map(ontology_g: Graph) -> dict[URIRef, URIRef]:
 class _StructuralRules:
     """Ontology-derived rules driving `_apply_structural_typing`.
 
-    direct / transitive: {(parent_cls, idshort_or_None): child_cls}. A None
+    direct / transitive: [((parent_cls, idshort_or_None), child_cls)]. A None
     idshort means "apply unconditionally to every matching child of that
-    parent" (see arso:parentClass's doc comment in ARSO_AAS.ttl).
+    parent" (see arso:parentClass's doc comment in ARSO_AAS.ttl). Several
+    classes can stand at one place (told apart by their AAS modelType), and a
+    class with several idShorts has one entry for each.
+    named: {(parent_cls, idshort)}, the children some class claims by idShort;
+    a class found by its place alone does not take those.
     unconditional_aas_type: {aas_base_cls: arso_cls}, from arso:unconditionalAasType.
     parents / ancestors: {child_cls: {parent_cls}}, where a class stands. An
     element found by its semanticId is only taken for such a class there.
     """
 
     def __init__(self, ontology_g: Graph) -> None:
-        self.direct: dict[tuple[URIRef, str | None], URIRef] = {}
-        self.transitive: dict[tuple[URIRef, str | None], URIRef] = {}
+        self.direct: list[tuple[tuple[URIRef, str | None], URIRef]] = []
+        self.transitive: list[tuple[tuple[URIRef, str | None], URIRef]] = []
+        self.named: set[tuple[URIRef, str]] = set()
         self.unconditional_aas_type: dict[URIRef, URIRef] = {}
         self.parents: dict[URIRef, set[URIRef]] = {}
         self.ancestors: dict[URIRef, set[URIRef]] = {}
 
-        for child, _, parent in ontology_g.triples((None, ARSO_PARENT_CLASS, None)):
-            idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
-            self.direct[(parent, str(idshorts[0]) if idshorts else None)] = child
+        for child, _, parent in sorted(ontology_g.triples((None, ARSO_PARENT_CLASS, None))):
+            for idshort in self._idshorts(ontology_g, child):
+                self.direct.append(((parent, idshort), child))
+                if idshort is not None:
+                    self.named.add((parent, idshort))
             self.parents.setdefault(child, set()).add(parent)
-        for child, _, parent in ontology_g.triples((None, ARSO_TRANSITIVE_PARENT_CLASS, None)):
-            idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
-            self.transitive[(parent, str(idshorts[0]) if idshorts else None)] = child
+        for child, _, parent in sorted(ontology_g.triples((None, ARSO_TRANSITIVE_PARENT_CLASS, None))):
+            for idshort in self._idshorts(ontology_g, child):
+                self.transitive.append(((parent, idshort), child))
             self.ancestors.setdefault(child, set()).add(parent)
         for child, _, aas_cls in ontology_g.triples((None, ARSO_UNCONDITIONAL_AAS_TYPE, None)):
             self.unconditional_aas_type[aas_cls] = child
+
+    @staticmethod
+    def _idshorts(ontology_g: Graph, cls: URIRef) -> list[str | None]:
+        """Every idShort a class goes by; [None] for a class found by its place alone."""
+        return sorted(str(idshort) for idshort in ontology_g.objects(cls, ARSO_ID_SHORT)) or [None]
 
 
 _ONTOLOGY = _ontology_graph()
@@ -653,7 +665,7 @@ def _apply_structural_typing(g: Graph) -> None:
     changed = True
     while changed:
         changed = False
-        for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.direct.items():
+        for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.direct:
             containment_prop = _containment_prop_for(_ONTOLOGY, parent_cls)
             if containment_prop is None:
                 continue
@@ -667,8 +679,10 @@ def _apply_structural_typing(g: Graph) -> None:
                     if idshort is not None:
                         if _idshort_of(g, child_node) != idshort:
                             continue
-                    elif base_aas_type is not None:
-                        if (child_node, RDF.type, base_aas_type) not in g:
+                    else:
+                        if base_aas_type is not None and (child_node, RDF.type, base_aas_type) not in g:
+                            continue
+                        if (parent_cls, _idshort_of(g, child_node)) in _STRUCTURAL_RULES.named:
                             continue
                     g.add((child_node, RDF.type, child_cls))
                     changed = True
@@ -677,7 +691,7 @@ def _apply_structural_typing(g: Graph) -> None:
 
     # 3. Transitive rules, for containment paths through untyped intermediates.
     #    Falls back to the child's AAS modelType when no idShort anchor.
-    for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.transitive.items():
+    for (parent_cls, idshort), child_cls in _STRUCTURAL_RULES.transitive:
         base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
         for parent_node in list(g.subjects(RDF.type, parent_cls)):
             for descendant in list(_transitive_descendants(g, parent_node)):
