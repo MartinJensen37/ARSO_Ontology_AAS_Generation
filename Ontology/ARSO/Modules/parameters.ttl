@@ -56,7 +56,7 @@ arso:ParameterValueProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
   arso:parentClass arso:ParameterEntrySMC ;
   arso:idShort "Value" ;
-  rdfs:comment "Property Value -- the parameter's value as deployed; its valueType is the parameter's type (added 2 Oct 2026 for the registration service)." .
+  rdfs:comment "Property Value (optional) -- the parameter's value as deployed; its valueType is the parameter's type (added 2 Oct 2026 for the registration service)." .
 
 arso:ParameterUnitProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
@@ -74,9 +74,11 @@ arso:ParametersSubmodel rdfs:subClassOf [
   owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
   owl:someValuesFrom arso:ParameterEntrySMC ] .
 
-# A parameter entry has exactly one Value and at most one Unit.
+# A parameter entry has at most one Value and at most one Unit. The Value is the value as
+# deployed, which only a description made from a running resource has; what an entry has to
+# hold is not settled yet (6 Oct 2026).
 arso:ParameterEntrySMC rdfs:subClassOf
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:ParameterValueProperty ] ,
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:ParameterValueProperty ] ,
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
     owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:ParameterUnitProperty ] .

@@ -1053,15 +1053,15 @@ ns1:DigitalNameplateSubmodel a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:AssetSpecificPropertiesSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
-            sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:MarkingsSML ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:AddressInformationSMC ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:AssetSpecificPropertiesSMC ] ],
         ns1:DigitalNameplateSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements ;
     ns1:semanticId "https://admin-shell.io/idta/nameplate/3/0/Nameplate",
         "https://admin-shell.io/zvei/nameplate/2/0/Nameplate" .
@@ -1320,9 +1320,9 @@ ns1:ParameterEntrySMC a rdfs:Class,
         sh:NodeShape ;
     rdfs:comment "SMC {parameter_name} -- a named parameter entry, as currently produced by the generation pipeline (parameters_builder.py::_create_parameter_collection, which mirrors variables_builder.py exactly). Wraps an optional InterfaceReference plus any schema-derived data fields. Applied unconditionally to every direct SubmodelElementCollection child of Parameters (no idShort -- parameter names are user-defined). Its semanticId, when present, must use the lab's URI namespace (enforced via SHACL sh:pattern)." ;
     rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
             owl:onClass ns1:ParameterValueProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
         [ a owl:Restriction ;
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
             owl:onClass ns1:ParameterUnitProperty ;
@@ -1333,12 +1333,11 @@ ns1:ParameterEntrySMC a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ParameterValueProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:ParameterUnitProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ParameterUnitProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:ParameterValueProperty ] ],
         ns1:ParameterEntrySMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:parentClass ns1:ParametersSubmodel .
 
@@ -1596,11 +1595,11 @@ ns1:SkillSMC a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillOccupiesSML ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillContractSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillKindProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillImplementationSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
@@ -1608,11 +1607,11 @@ ns1:SkillSMC a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillParametersSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillKindProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillImplementationSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillParametersSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
@@ -1624,7 +1623,7 @@ ns1:SkillSMC a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillContractSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillOccupiesSML ] ],
         ns1:SkillSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value,
         ns1:SkillSMC-occupies,
         ns1:SkillSMC-usesSkill ;
@@ -1667,17 +1666,17 @@ ns1:SkillsSubmodel a rdfs:Class,
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:CCSkillsSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:CCInterfacesSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:CCErrorsSMC ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:CCSkillsSMC ] ],
         ns1:SkillsSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements ;
     ns1:semanticId "https://admin-shell.io/idta/ControlComponentType/1/0",
         "https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel" .
@@ -1740,11 +1739,11 @@ ns1:TechnicalFurtherInformationSMC a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:TechnicalTextStatementMLP ] ],
+            sh:qualifiedValueShape [ sh:class ns1:TechnicalValidDateProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:TechnicalValidDateProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:TechnicalTextStatementMLP ] ],
         ns1:TechnicalFurtherInformationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "0173-1#02-ABK164#002" .
 
@@ -2689,7 +2688,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> .
 
 <https://admin-shell.io/aas/3/1/AssetInformation-https___admin-shell.io_aas_3_1_AssetInformation_assetKind> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b18 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb18 ;
     sh:path <https://admin-shell.io/aas/3/1/AssetInformation/assetKind> .
 
 <https://admin-shell.io/aas/3/1/AssetInformation-https___admin-shell.io_aas_3_1_AssetInformation_assetType> a sh:PropertyShape ;
@@ -2755,7 +2754,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     rdfs:comment "Type asset"@en .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_direction> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b71 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb71 ;
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/direction> .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_lastUpdate> a sh:PropertyShape ;
@@ -2783,7 +2782,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/observed> .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_state> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b106 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb106 ;
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/state> .
 
 <https://admin-shell.io/aas/3/1/Blob-https___admin-shell.io_aas_3_1_Blob_contentType> a sh:PropertyShape ;
@@ -2799,7 +2798,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> .
 
 <https://admin-shell.io/aas/3/1/DataSpecificationIec61360-https___admin-shell.io_aas_3_1_DataSpecificationIec61360_dataType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b52 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb52 ;
     sh:path <https://admin-shell.io/aas/3/1/DataSpecificationIec61360/dataType> .
 
 <https://admin-shell.io/aas/3/1/DataSpecificationIec61360-https___admin-shell.io_aas_3_1_DataSpecificationIec61360_definition> a sh:PropertyShape ;
@@ -3110,7 +3109,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     rdfs:range <https://admin-shell.io/aas/3/1/DataSpecificationContent> .
 
 <https://admin-shell.io/aas/3/1/Entity-https___admin-shell.io_aas_3_1_Entity_entityType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b73 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb73 ;
     sh:path <https://admin-shell.io/aas/3/1/Entity/entityType> .
 
 <https://admin-shell.io/aas/3/1/Entity-https___admin-shell.io_aas_3_1_Entity_globalAssetId> a sh:PropertyShape ;
@@ -3257,7 +3256,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Extension/value> .
 
 <https://admin-shell.io/aas/3/1/Extension-https___admin-shell.io_aas_3_1_Extension_valueType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/Extension/valueType> .
 
 <https://admin-shell.io/aas/3/1/File-https___admin-shell.io_aas_3_1_File_contentType> a sh:PropertyShape ;
@@ -3277,7 +3276,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/HasExtensions/extensions> .
 
 <https://admin-shell.io/aas/3/1/HasKind-https___admin-shell.io_aas_3_1_HasKind_kind> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b99 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb99 ;
     sh:path <https://admin-shell.io/aas/3/1/HasKind/kind> .
 
 <https://admin-shell.io/aas/3/1/HasSemantics-https___admin-shell.io_aas_3_1_HasSemantics_semanticId> a sh:PropertyShape ;
@@ -3297,7 +3296,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Identifiable/id> .
 
 <https://admin-shell.io/aas/3/1/Key-https___admin-shell.io_aas_3_1_Key_type> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b75 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb75 ;
     sh:path <https://admin-shell.io/aas/3/1/Key/type> .
 
 <https://admin-shell.io/aas/3/1/Key-https___admin-shell.io_aas_3_1_Key_value> a sh:PropertyShape ;
@@ -3486,7 +3485,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Property/valueId> .
 
 <https://admin-shell.io/aas/3/1/Property-https___admin-shell.io_aas_3_1_Property_valueType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/Property/valueType> .
 
 <https://admin-shell.io/aas/3/1/Qualifiable-https___admin-shell.io_aas_3_1_Qualifiable_qualifiers> a sh:PropertyShape ;
@@ -3494,7 +3493,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_kind> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b101 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb101 ;
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/kind> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_type> a sh:PropertyShape ;
@@ -3510,7 +3509,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/valueId> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_valueType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/valueType> .
 
 <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> a <https://admin-shell.io/aas/3/1/QualifierKind> ;
@@ -3534,7 +3533,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Range/min> .
 
 <https://admin-shell.io/aas/3/1/Range-https___admin-shell.io_aas_3_1_Range_valueType> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/Range/valueType> .
 
 <https://admin-shell.io/aas/3/1/Referable-https___admin-shell.io_aas_3_1_Referable_category> a sh:PropertyShape ;
@@ -3562,7 +3561,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Reference/referredSemanticId> .
 
 <https://admin-shell.io/aas/3/1/Reference-https___admin-shell.io_aas_3_1_Reference_type> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b104 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb104 ;
     sh:path <https://admin-shell.io/aas/3/1/Reference/type> .
 
 <https://admin-shell.io/aas/3/1/Reference/keys> a owl:ObjectProperty ;
@@ -3660,7 +3659,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_typeValueListElement> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b1 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_value> a sh:PropertyShape ;
@@ -3668,7 +3667,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_valueTypeListElement> a sh:PropertyShape ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> .
 
 <https://admin-shell.io/aas/3/1/ValueList-https___admin-shell.io_aas_3_1_ValueList_valueReferencePairs> a sh:PropertyShape ;
@@ -3817,7 +3816,7 @@ ns1:Datapoint-https___admin-shell.io_aas_3_1_Property_value a sh:PropertyShape ;
 
 ns1:Datapoint-https___admin-shell.io_aas_3_1_Property_valueType a sh:PropertyShape ;
     sh:hasValue <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Decimal> ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b22 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb22 ;
     sh:path <https://admin-shell.io/aas/3/1/Property/valueType> .
 
 ns1:DatapointGroup-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
@@ -4038,7 +4037,7 @@ ns1:SecuritySchemeSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_v
 
 ns1:SelfManagedBomEntity-https___admin-shell.io_aas_3_1_Entity_entityType a sh:PropertyShape ;
     sh:hasValue <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
-    sh:in _:n69ca5bf665b54e1680189c7ace2c0944b73 ;
+    sh:in _:nbe03851e793840af8047d79cd2d7a79bb73 ;
     sh:path <https://admin-shell.io/aas/3/1/Entity/entityType> .
 
 ns1:SelfManagedBomEntity-https___admin-shell.io_aas_3_1_Entity_globalAssetId a sh:PropertyShape ;
@@ -4513,7 +4512,7 @@ ns1:ParameterUnitProperty a owl:Class ;
     ns1:parentClass ns1:ParameterEntrySMC .
 
 ns1:ParameterValueProperty a owl:Class ;
-    rdfs:comment "Property Value -- the parameter's value as deployed; its valueType is the parameter's type (added 2 Oct 2026 for the registration service)." ;
+    rdfs:comment "Property Value (optional) -- the parameter's value as deployed; its valueType is the parameter's type (added 2 Oct 2026 for the registration service)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "Value" ;
     ns1:parentClass ns1:ParameterEntrySMC .
@@ -4673,12 +4672,12 @@ ns1:URIOfTheProductProperty a owl:Class ;
 <https://admin-shell.io/aas/3/1/Direction> a owl:Class ;
     rdfs:label "Direction"^^xsd:string ;
     rdfs:comment "Direction"@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b71 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb71 .
 
 <https://admin-shell.io/aas/3/1/EntityType> a owl:Class ;
     rdfs:label "Entity Type"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an entity is a self-managed entity or a co-managed entity."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b73 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb73 .
 
 <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> a <https://admin-shell.io/aas/3/1/EntityType> ;
     rdfs:label "Self Managed Entity"^^xsd:string ;
@@ -4687,17 +4686,17 @@ ns1:URIOfTheProductProperty a owl:Class ;
 <https://admin-shell.io/aas/3/1/ModellingKind> a owl:Class ;
     rdfs:label "Modelling Kind"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an element is a template or an instance."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b99 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb99 .
 
 <https://admin-shell.io/aas/3/1/ReferenceTypes> a owl:Class ;
     rdfs:label "Reference Types"^^xsd:string ;
     rdfs:comment "Reference types"@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b104 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb104 .
 
 <https://admin-shell.io/aas/3/1/StateOfEvent> a owl:Class ;
     rdfs:label "State Of Event"^^xsd:string ;
     rdfs:comment "State of an event"@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b106 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb106 .
 
 ns1:CCErrorsSMC a owl:Class ;
     rdfs:comment "SMC Errors — mandatory top-level container for global CC error entries. Always present, may be empty; not currently populated by the generation pipeline." ;
@@ -4784,7 +4783,7 @@ function.\r
 <https://admin-shell.io/aas/3/1/QualifierKind> a owl:Class ;
     rdfs:label "Qualifier Kind"^^xsd:string ;
     rdfs:comment "Enumeration for kinds of qualifiers."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b101 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb101 .
 
 ns1:PropertyContainerSMC a owl:Class ;
     rdfs:comment "SMC PropertyContainer — holds one CapabilityPropertyType instance plus SameProperty and PropertyComment." ;
@@ -4804,7 +4803,7 @@ ns1:TechnicalSpecificDescriptionSMC a owl:Class ;
 <https://admin-shell.io/aas/3/1/AssetKind> a owl:Class ;
     rdfs:label "Asset Kind"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an asset is a type asset or an instance asset."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b18 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb18 .
 
 <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> a owl:ObjectProperty ;
     rdfs:label "has is case of"^^xsd:string ;
@@ -5178,7 +5177,7 @@ ns1:hasSubmodel a owl:ObjectProperty ;
 <https://admin-shell.io/aas/3/1/AasSubmodelElements> a owl:Class ;
     rdfs:label "AAS Submodel Elements"^^xsd:string ;
     rdfs:comment "Enumeration of all possible elements of a 'SubmodelElementList'."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b1 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb1 .
 
 <https://admin-shell.io/aas/3/1/HasKind/kind> a owl:ObjectProperty ;
     rdfs:label "has kind"^^xsd:string ;
@@ -5194,7 +5193,7 @@ ns1:hasSubmodel a owl:ObjectProperty ;
 
 <https://admin-shell.io/aas/3/1/DataTypeIec61360> a owl:Class ;
     rdfs:label "Data Type IEC 61360"^^xsd:string ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b52 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb52 .
 
 <https://admin-shell.io/aas/3/1/Identifiable/administration> a owl:ObjectProperty ;
     rdfs:label "has administration"^^xsd:string ;
@@ -5220,12 +5219,12 @@ Notes:\r
 <https://admin-shell.io/aas/3/1/KeyTypes> a owl:Class ;
     rdfs:label "Key Types"^^xsd:string ;
     rdfs:comment "Enumeration of different key value types within a key."@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b75 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb75 .
 
 <https://admin-shell.io/aas/3/1/DataTypeDefXsd> a owl:Class ;
     rdfs:label "Data Type Def XSD"^^xsd:string ;
     rdfs:comment "Enumeration listing all XSD anySimpleTypes"@en ;
-    owl:oneOf _:n69ca5bf665b54e1680189c7ace2c0944b22 .
+    owl:oneOf _:nbe03851e793840af8047d79cd2d7a79bb22 .
 
 <https://admin-shell.io/aas/3/1/Submodel/submodelElements> a owl:ObjectProperty ;
     rdfs:label "has submodel elements"^^xsd:string ;
@@ -5301,72 +5300,72 @@ Notes:\r
     rdfs:domain <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b10 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> ;
+_:nbe03851e793840af8047d79cd2d7a79bb10 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AasSubmodelElements/Property> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Range> <https://admin-shell.io/aas/3/1/AasSubmodelElements/ReferenceElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementList> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b100 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Template> ;
+_:nbe03851e793840af8047d79cd2d7a79bb100 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Template> ;
     rdf:rest () .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b102 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/TemplateQualifier> ;
+_:nbe03851e793840af8047d79cd2d7a79bb102 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/TemplateQualifier> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/QualifierKind/ValueQualifier> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b105 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> ;
+_:nbe03851e793840af8047d79cd2d7a79bb105 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> ;
     rdf:rest () .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b107 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/On> ;
+_:nbe03851e793840af8047d79cd2d7a79bb107 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/On> ;
     rdf:rest () .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b19 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/NotApplicable> ;
+_:nbe03851e793840af8047d79cd2d7a79bb19 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/NotApplicable> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AssetKind/Role> <https://admin-shell.io/aas/3/1/AssetKind/Type> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b2 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/BasicEventElement> ;
+_:nbe03851e793840af8047d79cd2d7a79bb2 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/BasicEventElement> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AasSubmodelElements/Blob> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Capability> <https://admin-shell.io/aas/3/1/AasSubmodelElements/DataElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Entity> <https://admin-shell.io/aas/3/1/AasSubmodelElements/EventElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/File> <https://admin-shell.io/aas/3/1/AasSubmodelElements/MultiLanguageProperty> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Property> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Range> <https://admin-shell.io/aas/3/1/AasSubmodelElements/ReferenceElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementList> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b23 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Base64Binary> ;
+_:nbe03851e793840af8047d79cd2d7a79bb23 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Base64Binary> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Boolean> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Byte> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Date> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/DateTime> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Decimal> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Double> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Duration> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Float> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GDay> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GMonth> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GMonthDay> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GYear> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GYearMonth> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/HexBinary> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Int> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Integer> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Long> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NegativeInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NonNegativeInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NonPositiveInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/PositiveInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Short> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Time> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedByte> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedInt> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedLong> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedShort> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b53 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Boolean> ;
+_:nbe03851e793840af8047d79cd2d7a79bb53 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Boolean> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/DataTypeIec61360/Date> <https://admin-shell.io/aas/3/1/DataTypeIec61360/File> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Html> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Irdi> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Iri> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Rational> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RationalMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/String> <https://admin-shell.io/aas/3/1/DataTypeIec61360/StringTranslatable> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Time> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Timestamp> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b72 rdf:first <https://admin-shell.io/aas/3/1/Direction/Output> ;
+_:nbe03851e793840af8047d79cd2d7a79bb72 rdf:first <https://admin-shell.io/aas/3/1/Direction/Output> ;
     rdf:rest () .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b74 rdf:first <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
+_:nbe03851e793840af8047d79cd2d7a79bb74 rdf:first <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
     rdf:rest () .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b76 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> ;
+_:nbe03851e793840af8047d79cd2d7a79bb76 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/KeyTypes/BasicEventElement> <https://admin-shell.io/aas/3/1/KeyTypes/Blob> <https://admin-shell.io/aas/3/1/KeyTypes/Capability> <https://admin-shell.io/aas/3/1/KeyTypes/ConceptDescription> <https://admin-shell.io/aas/3/1/KeyTypes/DataElement> <https://admin-shell.io/aas/3/1/KeyTypes/Entity> <https://admin-shell.io/aas/3/1/KeyTypes/EventElement> <https://admin-shell.io/aas/3/1/KeyTypes/File> <https://admin-shell.io/aas/3/1/KeyTypes/FragmentReference> <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> <https://admin-shell.io/aas/3/1/KeyTypes/Identifiable> <https://admin-shell.io/aas/3/1/KeyTypes/MultiLanguageProperty> <https://admin-shell.io/aas/3/1/KeyTypes/Operation> <https://admin-shell.io/aas/3/1/KeyTypes/Property> <https://admin-shell.io/aas/3/1/KeyTypes/Range> <https://admin-shell.io/aas/3/1/KeyTypes/Referable> <https://admin-shell.io/aas/3/1/KeyTypes/ReferenceElement> <https://admin-shell.io/aas/3/1/KeyTypes/RelationshipElement> <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElement> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementList> ) .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b1 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/AnnotatedRelationshipElement> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b2 .
+_:nbe03851e793840af8047d79cd2d7a79bb1 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/AnnotatedRelationshipElement> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb2 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b101 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b102 .
+_:nbe03851e793840af8047d79cd2d7a79bb101 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb102 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b104 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b105 .
+_:nbe03851e793840af8047d79cd2d7a79bb104 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb105 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b106 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/Off> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b107 .
+_:nbe03851e793840af8047d79cd2d7a79bb106 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/Off> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb107 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b18 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/Instance> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b19 .
+_:nbe03851e793840af8047d79cd2d7a79bb18 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/Instance> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb19 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b52 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Blob> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b53 .
+_:nbe03851e793840af8047d79cd2d7a79bb52 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Blob> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb53 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b71 rdf:first <https://admin-shell.io/aas/3/1/Direction/Input> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b72 .
+_:nbe03851e793840af8047d79cd2d7a79bb71 rdf:first <https://admin-shell.io/aas/3/1/Direction/Input> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb72 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b75 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AnnotatedRelationshipElement> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b76 .
+_:nbe03851e793840af8047d79cd2d7a79bb75 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AnnotatedRelationshipElement> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb76 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b99 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Instance> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b100 .
+_:nbe03851e793840af8047d79cd2d7a79bb99 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Instance> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb100 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b73 rdf:first <https://admin-shell.io/aas/3/1/EntityType/CoManagedEntity> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b74 .
+_:nbe03851e793840af8047d79cd2d7a79bb73 rdf:first <https://admin-shell.io/aas/3/1/EntityType/CoManagedEntity> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb74 .
 
-_:n69ca5bf665b54e1680189c7ace2c0944b22 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/AnyUri> ;
-    rdf:rest _:n69ca5bf665b54e1680189c7ace2c0944b23 .
+_:nbe03851e793840af8047d79cd2d7a79bb22 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/AnyUri> ;
+    rdf:rest _:nbe03851e793840af8047d79cd2d7a79bb23 .
 
