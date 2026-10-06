@@ -945,14 +945,20 @@ It deliberately does not fire for a class carrying more than one union, because 
         ?restriction sh:maxCount ?max .
       }
       WHERE {
-        $this rdfs:subClassOf ?union .
-        FILTER isBlank(?union) .
-        ?union owl:unionOf ?list .
-        FILTER NOT EXISTS {
-          $this rdfs:subClassOf ?otherUnion .
-          ?otherUnion owl:unionOf ?otherList .
-          FILTER (?otherUnion != ?union) .
-        } .
+        # A group of its own, so the union of the focus class is found first.
+        # In one group rdflib may start with the two list paths, unbound, and
+        # pair every list cell of the graph with every other for each class:
+        # hours on the full ontology, also when no class has such a union.
+        {
+          $this rdfs:subClassOf ?union .
+          FILTER isBlank(?union) .
+          ?union owl:unionOf ?list .
+          FILTER NOT EXISTS {
+            $this rdfs:subClassOf ?otherUnion .
+            ?otherUnion owl:unionOf ?otherList .
+            FILTER (?otherUnion != ?union) .
+          } .
+        }
         ?list rdf:rest*/rdf:first ?member .
         ?member owl:intersectionOf ?intersection .
         ?intersection rdf:rest*/rdf:first ?restriction .
