@@ -195,7 +195,7 @@ arso:SkillMustBeRealizedByCapabilityShape
   sh:targetClass arso:SkillSMC ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability). Occupy and Release are exempt." ;
+    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability). A Skill of Kind Primitive, Occupy and Release are exempt." ;
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                              <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -216,6 +216,17 @@ arso:SkillMustBeRealizedByCapabilityShape
         FILTER (!BOUND(?skillMeaning) || str(?skillMeaning) NOT IN (
                   "https://smartproductionlab.aau.dk/skills/Occupy",
                   "https://smartproductionlab.aau.dk/skills/Release"))
+
+        # A primitive is a building block: composite skills are made of
+        # primitives, and reconfiguration makes new ones of them. It needs no
+        # capability of its own, used by a composite or not. A skill that does
+        # not say its Kind is held to the rule.
+        OPTIONAL {
+          ?kind    <https://admin-shell.io/aas/3/1/Referable/idShort>     "Kind"^^xsd:string .
+          $this    <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?kind .
+          ?kind    <https://admin-shell.io/aas/3/1/Property/value>        ?skillKind .
+        }
+        FILTER (!BOUND(?skillKind) || str(?skillKind) != "Primitive")
 
         FILTER NOT EXISTS {
           ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm .
