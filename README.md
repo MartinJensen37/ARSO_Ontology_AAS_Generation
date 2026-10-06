@@ -73,8 +73,9 @@ The system has been tested on multiple pieces of equipment namely a filling and 
 │   │   ├── ARSO_AAS.ttl                Root: converter annotations + AAS→submodel links
 │   │   ├── IDTA_CONFORMANCE.md         Where ARSO matches, tightens or diverges from IDTA
 │   │   └── Modules/                    aid, aimc, capabilities, control-component,
-│   │                                   hierarchical-structures, nameplate,
-│   │                                   operational-data, parameters, technical-data
+│   │                                   control-configuration, hierarchical-structures,
+│   │                                   nameplate, operational-data, parameters,
+│   │                                   technical-data
 │   ├── CSS/CSS-Ontology.ttl            Capability-Skill-Service ontology
 │   └── SHACL/
 │       ├── Generated/shapes.generated.shacl.ttl   Derived from the ARSO OWL restrictions
@@ -293,7 +294,7 @@ python Transformation/Generate_Shapes/generate_shapes.py
 
 The shapes are **closed**: a node may only carry the properties its classes declare. The ruleset leaves two things to its caller, which `finish_shapes.py` does as the last step of the generation: it gathers `sh:ignoredProperties` (and `sh:or`) into the RDF lists SHACL requires, and it lets every closed shape ignore the properties of all classes an instance can also belong to (the descendants of its class and their other ancestors, plus the paths the AAS metamodel's SHACL schema declares). Without it a closed shape ignores nothing and every AAS fails with thousands of violations.
 
-A run takes about a minute and a half for the full ontology, so regenerate after every change to the ontology and run the regression suite, rather than patching the shapes file by hand. (After a hand patch, bring the closed shapes' lists up to date with `python Transformation/Generate_Shapes/finish_shapes.py`.)
+A run takes about two minutes for the full ontology, so regenerate after every change to the ontology and run the regression suite, rather than patching the shapes file by hand. (After a hand patch, bring the closed shapes' lists up to date with `python Transformation/Generate_Shapes/finish_shapes.py`.)
 
 **LLM generation evaluation** — `Testing/Generation_Tests/` runs the full pipeline against real equipment fixtures and scores the result. Each `equipment/<id>/` holds an `equipment.yaml` (asset name, protocol, submodels, source documents) and a ground-truth **profile** plus a small `required_paths`/`must_not_contain` scoring-hints block. The harness builds that profile into a reference AAS through the real pipeline and diffs the generated AAS against it by semanticId/path, so ground truth cannot drift from what the pipeline actually produces.
 
