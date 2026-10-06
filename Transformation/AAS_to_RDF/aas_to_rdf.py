@@ -174,19 +174,25 @@ class _StructuralRules:
     idshort means "apply unconditionally to every matching child of that
     parent" (see arso:parentClass's doc comment in ARSO_AAS.ttl).
     unconditional_aas_type: {aas_base_cls: arso_cls}, from arso:unconditionalAasType.
+    parents / ancestors: {child_cls: {parent_cls}}, where a class stands. An
+    element found by its semanticId is only taken for such a class there.
     """
 
     def __init__(self, ontology_g: Graph) -> None:
         self.direct: dict[tuple[URIRef, str | None], URIRef] = {}
         self.transitive: dict[tuple[URIRef, str | None], URIRef] = {}
         self.unconditional_aas_type: dict[URIRef, URIRef] = {}
+        self.parents: dict[URIRef, set[URIRef]] = {}
+        self.ancestors: dict[URIRef, set[URIRef]] = {}
 
         for child, _, parent in ontology_g.triples((None, ARSO_PARENT_CLASS, None)):
             idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
             self.direct[(parent, str(idshorts[0]) if idshorts else None)] = child
+            self.parents.setdefault(child, set()).add(parent)
         for child, _, parent in ontology_g.triples((None, ARSO_TRANSITIVE_PARENT_CLASS, None)):
             idshorts = list(ontology_g.objects(child, ARSO_ID_SHORT))
             self.transitive[(parent, str(idshorts[0]) if idshorts else None)] = child
+            self.ancestors.setdefault(child, set()).add(parent)
         for child, _, aas_cls in ontology_g.triples((None, ARSO_UNCONDITIONAL_AAS_TYPE, None)):
             self.unconditional_aas_type[aas_cls] = child
 
@@ -603,6 +609,41 @@ def _apply_structural_typing(g: Graph) -> None:
     (see the arso:parentClass / arso:transitiveParentClass /
     arso:unconditionalAasType annotations in the ontology modules)."""
 
+    # 0. A class that declares where it stands was so far given by semanticId
+    #    alone. Take it back until the element is known to stand there: an
+    #    action that carries the semanticId of its `actions` container is not a
+    #    container. Decided in step 2, as the parent's class can depend on its
+    #    own position.
+    parent_of: dict[URIRef, URIRef] = {
+        child: parent for prop in _ALL_CONTAINMENT_PROPS for parent, child in g.subject_objects(prop)
+    }
+    pending: list[tuple[URIRef, URIRef]] = []
+    for cls in set(_STRUCTURAL_RULES.parents) | set(_STRUCTURAL_RULES.ancestors):
+        for node in list(g.subjects(RDF.type, cls)):
+            if node in parent_of:
+                g.remove((node, RDF.type, cls))
+                pending.append((node, cls))
+
+    def stands(node: URIRef, cls: URIRef) -> bool:
+        parent = parent_of.get(node)
+        if parent is None:
+            return False
+        if any((parent, RDF.type, p) in g for p in _STRUCTURAL_RULES.parents.get(cls, ())):
+            return True
+        above = _STRUCTURAL_RULES.ancestors.get(cls)
+        while above and parent is not None:
+            if any((parent, RDF.type, p) in g for p in above):
+                return True
+            parent = parent_of.get(parent)
+        return False
+
+    def confirm_pending() -> bool:
+        confirmed = [(node, cls) for node, cls in pending if stands(node, cls)]
+        for node, cls in confirmed:
+            g.add((node, RDF.type, cls))
+            pending.remove((node, cls))
+        return bool(confirmed)
+
     # 1. Unconditional AAS-type rules (e.g. aas:Capability -> arso:CapabilityElement).
     for aas_cls, arso_cls in _STRUCTURAL_RULES.unconditional_aas_type.items():
         for node in list(g.subjects(RDF.type, aas_cls)):
@@ -631,6 +672,8 @@ def _apply_structural_typing(g: Graph) -> None:
                             continue
                     g.add((child_node, RDF.type, child_cls))
                     changed = True
+        if confirm_pending():
+            changed = True
 
     # 3. Transitive rules, for containment paths through untyped intermediates.
     #    Falls back to the child's AAS modelType when no idShort anchor.
@@ -645,6 +688,10 @@ def _apply_structural_typing(g: Graph) -> None:
                     if (descendant, RDF.type, base_aas_type) not in g:
                         continue
                 g.add((descendant, RDF.type, child_cls))
+
+    # A parent typed by a transitive rule can still confirm what is pending.
+    while confirm_pending():
+        pass
 
 
 def _walk_submodel(g: Graph, shell_uri: URIRef, submodel: dict) -> URIRef | None:
