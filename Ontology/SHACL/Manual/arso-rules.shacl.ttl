@@ -191,11 +191,11 @@ arso:RealizedByRefTargetShape
 
 arso:SkillMustBeRealizedByCapabilityShape
   a sh:NodeShape ;
-  rdfs:label "Every Skill must be realized by at least one Capability" ;
+  rdfs:label "Every Skill must be realized by a Capability, itself or as a step of a composite Skill" ;
   sh:targetClass arso:SkillSMC ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "This Skill is not referenced by any Capability's realizedBy. Every Skill must be realized by at least one Capability (several Skills may share one Capability)." ;
+    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability)." ;
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                              <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -213,6 +213,22 @@ arso:SkillMustBeRealizedByCapabilityShape
           ?relBy  <https://admin-shell.io/aas/3/1/RelationshipElement/second> ?ref .
           ?ref    <https://admin-shell.io/aas/3/1/Reference/keys>            ?key .
           ?key    <https://admin-shell.io/aas/3/1/Key/value>                 ?skillIdShort .
+        }
+
+        # Or a step of a composite Skill that is: arso:usesSkill is the resolved
+        # Uses entry, and a composite may itself be a step of another.
+        FILTER NOT EXISTS {
+          ?composite <https://w3id.org/2025/arso#usesSkill>+ $this .
+          FILTER EXISTS {
+            ?composite <https://admin-shell.io/aas/3/1/Referable/idShort>   ?compositeIdShort .
+            ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm2 .
+            ?capsSm2
+                    (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
+                    ?relBy2 .
+            ?relBy2 <https://admin-shell.io/aas/3/1/RelationshipElement/second> ?ref2 .
+            ?ref2   <https://admin-shell.io/aas/3/1/Reference/keys>            ?key2 .
+            ?key2   <https://admin-shell.io/aas/3/1/Key/value>                 ?compositeIdShort .
+          }
         }
       }
     """ ;
