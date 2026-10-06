@@ -100,7 +100,8 @@ The system has been tested on multiple pieces of equipment namely a filling and 
 │   │   └── Examples/                   Reference Turtle output
 │   └── Generate_Shapes/
 │       ├── generate_shapes.py          Regenerates Ontology/SHACL/Generated/
-│       └── generate_shapes_from_ontology.py
+│       ├── generate_shapes_from_ontology.py
+│       └── finish_shapes.py            Gathers the closed shapes' lists (also runs alone)
 │
 ├── Validation/Validator/validator.py   run_shacl(): the single validation entry point
 │
@@ -111,7 +112,7 @@ The system has been tested on multiple pieces of equipment namely a filling and 
 │   │   ├── Test_Cases/                 13 invalid_*.aas.json conformance fixtures
 │   │   └── Test_Scripts/
 │   │       ├── validate_aas.py         Validate one AAS JSON file
-│   │       └── run_test_cases.py       Run the whole fixture suite
+│   │       └── run_test_cases.py       Valid example passes, every fixture fails as intended
 │   └── Generation_Tests/
 │       ├── equipment/                  Fixtures: datasheet PDFs, interface specs,
 │       │                               equipment.yaml + ground-truth profile per asset
@@ -278,7 +279,7 @@ Exact request/response models are in `api/routers/*.py`, or the interactive docs
 python Testing/SHACL_Tests/Test_Scripts/validate_aas.py path/to/your.aas.json
 ```
 
-**SHACL regression suite** — `Testing/SHACL_Tests/Test_Cases/` holds deliberately-broken fixtures, each exercising one shape. All are expected to fail; the runner exits non-zero if any unexpectedly conforms:
+**SHACL regression suite** — the valid example (`Generation/Context_Builder/context/valid-example.json`) has to conform, and `Testing/SHACL_Tests/Test_Cases/` holds deliberately-broken fixtures, each exercising one shape. All fixtures are expected to fail, and to fail for the reason recorded for them in the runner (`_EXPECTED`); the runner exits non-zero if the valid example does not conform, a fixture unexpectedly conforms, or a fixture fails without its reason. Run it after every change to the ontology or the shapes: the shapes are closed, so a mistake in them makes every file fail, which a suite of invalid fixtures alone cannot tell:
 
 ```bash
 python Testing/SHACL_Tests/Test_Scripts/run_test_cases.py
@@ -290,7 +291,9 @@ python Testing/SHACL_Tests/Test_Scripts/run_test_cases.py
 python Transformation/Generate_Shapes/generate_shapes.py
 ```
 
-> **Known issue:** the generator has a `pyparsing`/SPARQL bottleneck in the owl2shacl ruleset that can make it impractically slow. If a run hangs, note that the shapes file has been hand-patched before — diff the shape you changed against its ontology restriction rather than waiting on a full regeneration.
+The shapes are **closed**: a node may only carry the properties its classes declare. The ruleset leaves two things to its caller, which `finish_shapes.py` does as the last step of the generation: it gathers `sh:ignoredProperties` (and `sh:or`) into the RDF lists SHACL requires, and it lets every closed shape ignore the properties of all classes an instance can also belong to (the descendants of its class and their other ancestors, plus the paths the AAS metamodel's SHACL schema declares). Without it a closed shape ignores nothing and every AAS fails with thousands of violations.
+
+A run takes about a minute and a half for the full ontology, so regenerate after every change to the ontology and run the regression suite, rather than patching the shapes file by hand. (After a hand patch, bring the closed shapes' lists up to date with `python Transformation/Generate_Shapes/finish_shapes.py`.)
 
 **LLM generation evaluation** — `Testing/Generation_Tests/` runs the full pipeline against real equipment fixtures and scores the result. Each `equipment/<id>/` holds an `equipment.yaml` (asset name, protocol, submodels, source documents) and a ground-truth **profile** plus a small `required_paths`/`must_not_contain` scoring-hints block. The harness builds that profile into a reference AAS through the real pipeline and diffs the generated AAS against it by semanticId/path, so ground truth cannot drift from what the pipeline actually produces.
 
