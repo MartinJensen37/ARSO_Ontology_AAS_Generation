@@ -292,17 +292,39 @@ arso:SkillOperationSemanticIdPatternShape
     sh:message "Skill semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
   ] .
 
+# A Capability says what it means with a URI of the lab's namespace. IDTA 02020
+# puts the template's own id on the element and the meaning beside it as a
+# supplemental id; this project's builder writes the meaning as the element's
+# id. Both are accepted.
+
 arso:CapabilitySemanticIdPatternShape
   a sh:NodeShape ;
-  rdfs:label "Capability semanticId must use the lab's URI namespace" ;
+  rdfs:label "Capability meaning must use the lab's URI namespace" ;
   sh:targetClass arso:CapabilityElement ;
-  sh:property [
-    sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
-              <https://admin-shell.io/aas/3/1/Reference/keys>
-              <https://admin-shell.io/aas/3/1/Key/value> ) ;
-    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
-    sh:message "Capability semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
-  ] .
+  sh:or (
+    [ sh:property [
+        sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+                  <https://admin-shell.io/aas/3/1/Reference/keys>
+                  <https://admin-shell.io/aas/3/1/Key/value> ) ;
+        sh:pattern "^https://admin-shell\\.io/idta/CapabilityDescription/Capability/1/0$" ;
+      ] ;
+      sh:property [
+        sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds>
+                  <https://admin-shell.io/aas/3/1/Reference/keys>
+                  <https://admin-shell.io/aas/3/1/Key/value> ) ;
+        sh:qualifiedValueShape [ sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ] ;
+        sh:qualifiedMinCount 1 ;
+      ] ;
+    ]
+    [ sh:property [
+        sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
+                  <https://admin-shell.io/aas/3/1/Reference/keys>
+                  <https://admin-shell.io/aas/3/1/Key/value> ) ;
+        sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
+      ] ;
+    ]
+  ) ;
+  sh:message "A Capability needs a URI under https://smartproductionlab.aau.dk/ (lab convention): as a supplemental semantic id beside the id of IDTA 02020, or as its semanticId." .
 
 arso:OperationalDataVariableSemanticIdPatternShape
   a sh:NodeShape ;
