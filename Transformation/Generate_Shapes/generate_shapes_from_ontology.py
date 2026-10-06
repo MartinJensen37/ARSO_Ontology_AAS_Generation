@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -48,6 +49,35 @@ def load_ontology_with_imports(target_graph: Graph, ontology_file: Path, visited
             load_ontology_with_imports(target_graph, imported_path, visited)
 
 
+@contextmanager
+def _queries_parsed_once():
+    """Keep every parsed query while the rules run.
+
+    pyshacl hands rdflib the text of a rule's query once per focus node, and
+    rdflib parses the text every time. That parsing, not the evaluation, is
+    what made the rule step take hours on the full ontology.
+    """
+    from rdflib.plugins.sparql import processor
+
+    original = processor.SPARQLProcessor.query
+    kept: dict[tuple, object] = {}
+
+    def query(self, strOrQuery, initBindings=None, initNs=None, base=None, DEBUG=False):
+        if isinstance(strOrQuery, str):
+            namespaces = tuple(sorted((prefix, str(ns)) for prefix, ns in (initNs or {}).items()))
+            key = (strOrQuery, base, namespaces)
+            if key not in kept:
+                kept[key] = processor.translateQuery(processor.parseQuery(strOrQuery), base, initNs)
+            strOrQuery = kept[key]
+        return original(self, strOrQuery, initBindings, initNs, base, DEBUG)
+
+    processor.SPARQLProcessor.query = query
+    try:
+        yield
+    finally:
+        processor.SPARQLProcessor.query = original
+
+
 def run_owl2shacl_rules(ontology_graph: Graph, rules_graph: Graph) -> Graph:
     try:
         from pyshacl import shacl_rules
@@ -56,14 +86,15 @@ def run_owl2shacl_rules(ontology_graph: Graph, rules_graph: Graph) -> Graph:
             "pyshacl with SHACL-AF support is required. Install project validation requirements first."
         ) from exc
 
-    rules_result = shacl_rules(
-        ontology_graph,
-        shacl_graph=rules_graph,
-        inference="none",
-        advanced=True,
-        iterate_rules=False,
-        inplace=False,
-    )
+    with _queries_parsed_once():
+        rules_result = shacl_rules(
+            ontology_graph,
+            shacl_graph=rules_graph,
+            inference="none",
+            advanced=True,
+            iterate_rules=False,
+            inplace=False,
+        )
 
     if isinstance(rules_result, tuple):
         for item in rules_result:
