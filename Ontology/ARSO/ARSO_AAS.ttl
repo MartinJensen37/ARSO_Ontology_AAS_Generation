@@ -12,7 +12,7 @@
 
 <https://w3id.org/2025/arso>
   rdf:type owl:Ontology ;
-  owl:versionIRI <https://w3id.org/2025/arso/0.4.0> ;
+  owl:versionIRI <https://w3id.org/2025/arso/0.5.0> ;
   owl:imports <http://www.w3id.org/hsu-aut/css> ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
   owl:imports <https://w3id.org/2025/arso/modules/nameplate> ;
@@ -24,7 +24,14 @@
   owl:imports <https://w3id.org/2025/arso/modules/parameters> ;
   owl:imports <https://w3id.org/2025/arso/modules/technical-data> ;
   owl:imports <https://w3id.org/2025/arso/modules/aimc> ;
-  rdfs:comment """ARSO v0.4 — Domain extension ontology for Resource AAS.
+  owl:imports <https://w3id.org/2025/arso/modules/control-configuration> ;
+  rdfs:comment """ARSO v0.5 — Domain extension ontology for Resource AAS.
+
+  v0.5 (30 Sep 2026): optional reconfiguration elements per skill (control-component:
+  Parameters, RealizesProperty, Contract, Uses, Execute/Stop, Occupies, Implementation),
+  a Control Configuration submodel, and resolved cross-submodel links for them below.
+  Relations to products and processes live in the PPR link ontology (pprl).
+
 
   This ontology:
     - imports the official AAS v3.1 ontology for structural validation
@@ -69,6 +76,10 @@ arso:unconditionalAasType rdf:type owl:AnnotationProperty ;
   rdfs:label "unconditionalAasType" ;
   rdfs:comment "Explicit opt-in: any RDF node whose base AAS modelType class is the given value is unconditionally also typed as this class, wherever it occurs in the graph -- no parent/idShort scoping at all. Only safe for AAS modelTypes that are inherently specific to one concept (e.g. aas:Capability); NOT a general 'sole ARSO subclass' inference, since a generic modelType like aas:ReferenceElement legitimately has many unrelated ARSO subclasses and must never be auto-applied this way." .
 
+arso:resolvedFrom rdf:type owl:AnnotationProperty ;
+  rdfs:label "resolvedFrom" ;
+  rdfs:comment "On a resolved link: the class of the list whose ReferenceElements the JSON-to-RDF projection resolves into this link. The link runs from the element that holds the list to every element of the same document that one of its references names." .
+
 
 #################################################################
 #################################################################
@@ -82,13 +93,18 @@ arso:unconditionalAasType rdf:type owl:AnnotationProperty ;
 #################################################################
 #################################################################
 
+arso:ResourceAAS rdf:type owl:Class ;
+  rdfs:subClassOf aas:AssetAdministrationShell ;
+  rdfs:label "Resource AAS" ;
+  rdfs:comment "Asset Administration Shell of a resource (line, module, component). v0.5: the restrictions below apply to this class, not to every aas:AssetAdministrationShell, so ARSO can be loaded together with the product (APSO) and process (AProSO) blueprints without every shell having to represent a css:Resource. The JSON-to-RDF projection types a shell as ResourceAAS when it represents a resource, e.g. when its derivedFrom is the lab's resource template (https://smartproductionlab.aau.dk/aas/templates/resource)." .
+
 arso:hasAAS rdf:type owl:ObjectProperty ;
   rdfs:domain css:Resource ;
-  rdfs:range aas:AssetAdministrationShell ;
+  rdfs:range arso:ResourceAAS ;
   rdfs:comment "Connects a CSS Resource to the AAS that represents it." .
 
 arso:representsResource rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
-  rdfs:domain aas:AssetAdministrationShell ;
+  rdfs:domain arso:ResourceAAS ;
   rdfs:range css:Resource ;
   owl:inverseOf arso:hasAAS ;
   rdfs:comment "The CSS Resource this AAS represents." .
@@ -98,10 +114,10 @@ css:Resource rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasAAS ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass aas:AssetAdministrationShell ] .
+  owl:onClass arso:ResourceAAS ] .
 
-# Each AAS represents exactly one Resource
-aas:AssetAdministrationShell rdfs:subClassOf [
+# Each resource AAS represents exactly one Resource
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:representsResource ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
@@ -157,6 +173,40 @@ arso:hasAIMCSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
   rdfs:subPropertyOf arso:hasSubmodel ;
   rdfs:range arso:AIMCSubmodel .
 
+arso:hasControlConfigurationSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:ControlConfigurationSubmodel .
+
+
+#################################################################
+##  Resolved cross-submodel links of the reconfiguration elements (v0.5)
+##
+##  Like hasSubmodel, created by the JSON-to-RDF projection from the
+##  ReferenceElements and RelationshipElements, so OWL and SHACL can
+##  reason over them.
+#################################################################
+
+arso:usesSkill rdf:type owl:ObjectProperty ;
+  rdfs:domain arso:SkillSMC ;
+  rdfs:range arso:SkillSMC ;
+  arso:resolvedFrom arso:SkillUsesSML ;
+  rdfs:comment "Resolved Uses entry: a composite skill uses this skill (same AAS or an AAS that is a part of it)." .
+
+arso:occupies rdf:type owl:ObjectProperty ;
+  rdfs:domain arso:SkillSMC ;
+  rdfs:range [ rdf:type owl:Class ; owl:unionOf ( arso:EntryNodeEntity arso:NodeEntity ) ] ;
+  rdfs:comment "Resolved Occupies entry: the HierarchicalStructures node (equipment) the skill locks while it runs." .
+
+arso:realizesProperty rdf:type owl:ObjectProperty ;
+  rdfs:domain arso:SkillParameterProperty ;
+  rdfs:range arso:PropertyContainerSMC ;
+  rdfs:comment "Resolved RealizesProperty: the capability property a skill parameter realizes." .
+
+arso:realizedBySkill rdf:type owl:ObjectProperty ;
+  rdfs:domain arso:CapabilityContainerSMC ;
+  rdfs:range arso:SkillSMC ;
+  rdfs:comment "Resolved CapabilityRealizedBy: the skill that realizes an offered capability (same AAS)." .
+
 
 #################################################################
 #################################################################
@@ -173,63 +223,70 @@ arso:hasAIMCSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
 # --- Mandatory submodels ---
 
 # Every AAS must have exactly one DigitalNameplate
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasDigitalNameplateSubmodel ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:DigitalNameplateSubmodel ] .
 
 # Every AAS must have exactly one HierarchicalStructures
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasHierarchicalStructuresSubmodel ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:HierarchicalStructuresSubmodel ] .
 
 # At most one AID
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasAIDSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:AIDSubmodel ] .
 
 # At most one Skills submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasSkillsSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:SkillsSubmodel ] .
 
 # At most one Capabilities submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasCapabilitiesSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:CapabilitiesSubmodel ] .
 
 # At most one OperationalData submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasOperationalDataSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:OperationalDataSubmodel ] .
 
 # At most one Parameters submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasParametersSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:ParametersSubmodel ] .
 
 # At most one TechnicalData submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasTechnicalDataSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:TechnicalDataSubmodel ] .
 
+# At most one ControlConfiguration submodel
+arso:ResourceAAS rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasControlConfigurationSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:ControlConfigurationSubmodel ] .
+
 # At most one AIMC submodel
-aas:AssetAdministrationShell rdfs:subClassOf [
+arso:ResourceAAS rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasAIMCSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;

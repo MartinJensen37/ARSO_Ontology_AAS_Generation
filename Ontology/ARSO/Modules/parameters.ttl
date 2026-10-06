@@ -52,6 +52,19 @@ arso:ParameterInterfaceReferenceRef rdf:type owl:Class ;
   rdfs:comment "ReferenceElement InterfaceReference -- points to an AID property (.../InteractionMetadata/properties/{key}) in the same AAS (parameters_builder.py hardcodes the properties path segment, never actions/events). Cross-SM target existence enforced via SPARQL SHACL (arso:ParameterInterfaceRefTargetShape)." .
 
 
+arso:ParameterValueProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ParameterEntrySMC ;
+  arso:idShort "Value" ;
+  rdfs:comment "Property Value -- the parameter's value as deployed; its valueType is the parameter's type (added 2 Oct 2026 for the registration service)." .
+
+arso:ParameterUnitProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ParameterEntrySMC ;
+  arso:idShort "Unit" ;
+  rdfs:comment "Property Unit (xs:string, optional) -- the unit of the value (added 2 Oct 2026)." .
+
+
 #################################################################
 # CONTAINMENT CONSTRAINTS
 #################################################################
@@ -60,3 +73,10 @@ arso:ParametersSubmodel rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
   owl:someValuesFrom arso:ParameterEntrySMC ] .
+
+# A parameter entry has exactly one Value and at most one Unit.
+arso:ParameterEntrySMC rdfs:subClassOf
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:ParameterValueProperty ] ,
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:ParameterUnitProperty ] .

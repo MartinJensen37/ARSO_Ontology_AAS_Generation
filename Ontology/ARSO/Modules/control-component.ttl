@@ -31,9 +31,33 @@
 #   │         │    SPARQL SHACL, not OWL restriction (see
 #   │         │    arso:SkillInterfaceRefActionShape /
 #   │         │    arso:SkillInterfaceRefTargetShape in arso-rules.shacl.ttl)
-#   │         └─ StateMachine [Property, xs:string, 0..1] — present only
-#   │              for asynchronous skills; polled for IDLE/RUNNING/
-#   │              SUCCESS/FAILURE
+#   │         ├─ StateMachine [Property, xs:string, 0..1] — present only
+#   │         │    for asynchronous skills; polled for IDLE/RUNNING/
+#   │         │    SUCCESS/FAILURE
+#   │         │  --- optional, for skills that can be reconfigured (v0.5) ---
+#   │         ├─ Kind [Property, xs:string, 0..1] — Primitive | Composite
+#   │         ├─ Parameters [SMC, 0..1]
+#   │         │    └─ {parameter} [Property, 0..*] — value = current value;
+#   │         │         qualifiers Unit, Minimum, Maximum, Default
+#   │         ├─ RealizesProperty [RelationshipElement, 0..*] — first: a
+#   │         │    parameter of this skill; second: a capability property
+#   │         │    (PropertyContainer) of the capability it realizes
+#   │         │    (css:isRealizedBySkillParameter, read backwards)
+#   │         ├─ Contract [SMC, 0..1] — primitives: Requires, Ensures | After,
+#   │         │    Invariant, Timeout (css:Constraint: pre-, post-condition,
+#   │         │    invariant)
+#   │         ├─ Uses [SML of ReferenceElement, 0..1] — the skills a composite
+#   │         │    uses (IDTA 02015 "Uses"): of this AAS or of a part in its
+#   │         │    HierarchicalStructures, never of a sibling resource
+#   │         ├─ Execute, Stop [SML of Step SMC, 0..1 each] — a composite's
+#   │         │    sequences; Step: Skill [ReferenceElement, 1] and Bindings
+#   │         │    [SMC of Property, 0..1] (constants bound to its parameters)
+#   │         ├─ Occupies [SML of ReferenceElement, 0..1] — HierarchicalStructures
+#   │         │    nodes (equipment) the skill locks while it runs
+#   │         ├─ StateReference [ReferenceElement, 0..1] — the AID property
+#   │         │    publishing the skill's state
+#   │         └─ Implementation [SMC, 0..1] — FBType, TypeHash, InstancePath
+#   │              of the IEC 61499 block that implements the skill
 #   └─ Errors [SMC, 1] — always present, empty (not currently populated)
 
 #################################################################
@@ -43,7 +67,7 @@
 <https://w3id.org/2025/arso/modules/control-component>
   rdf:type owl:Ontology ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
-  rdfs:comment """ARSO module: Control Component / Skills -- an ARSO-flattened adaptation of IDTA 02015-2-0 ControlComponentType (February 2025). See the design note above for how this diverges from the full standard.
+  rdfs:comment """ARSO module: Control Component / Skills -- an ARSO-flattened adaptation of IDTA 02015-2-0 ControlComponentType (February 2025). See the design note above for how this diverges from the full standard. v0.5 adds optional reconfiguration elements per skill (Kind, Parameters, RealizesProperty, Contract, Uses, Execute/Stop, Occupies, StateReference, Implementation).
 
   Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0
   Cross-submodel: Skill InterfaceReference targets are validated in SPARQL SHACL (arso-rules.shacl.ttl).""" .
@@ -109,6 +133,80 @@ arso:SkillStateMachineProperty rdf:type owl:Class ;
   arso:parentClass arso:SkillSMC ;
   arso:idShort "StateMachine" ;
   rdfs:comment "Property StateMachine (xs:string) — present only on asynchronous skills. Polled by clients for intermediate state (IDLE, RUNNING, SUCCESS, FAILURE) during execution." .
+
+
+#################################################################
+# ELEMENT TYPES — optional reconfiguration elements of a Skill (v0.5)
+#
+# ARSO's flattening dropped per-skill parameters and IDTA 02015's
+# Uses. Reconfiguration needs them back: which capability property a
+# parameter realizes, what a composite is made of, what it locks,
+# and which runtime block implements it. All are optional, so skills
+# generated for the MQTT stations stay valid.
+#################################################################
+
+arso:SkillKindProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Kind" ;
+  rdfs:comment "Property Kind (xs:string) — Primitive (one function of one equipment item, with a contract) or Composite (a sequence of other skills). Value enumeration enforced in SHACL." .
+
+arso:SkillParametersSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Parameters" ;
+  rdfs:comment "SMC Parameters — the skill's parameters as Properties (css:SkillParameter); value is the current (deployed) value, qualifiers Unit, Minimum, Maximum and Default the declaration." .
+
+arso:SkillParameterProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:SkillParametersSMC ;
+  rdfs:comment "Property {parameter} — one skill parameter (css:InputParameter). Applied to every Property directly in Parameters." .
+
+arso:RealizesPropertyRel rdf:type owl:Class ;
+  rdfs:subClassOf aas:RelationshipElement ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "RealizesProperty" ;
+  rdfs:comment "RelationshipElement RealizesProperty — first: a parameter of this skill; second: a property (PropertyContainer) of a capability this skill realizes (CapabilityRealizedBy). The link the IDTA templates lack: it is where a product value reaches the controller (capability property -> skill parameter, css:isRealizedBySkillParameter)." .
+
+arso:SkillContractSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Contract" ;
+  rdfs:comment "SMC Contract — for primitive skills: Requires (precondition), Ensures (postcondition) or After (open-loop duration), Invariant, Timeout. Conditions over the resource's state variables (css:Constraint). Composing skills relies on these contracts." .
+
+arso:SkillUsesSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Uses" ;
+  rdfs:comment "SML Uses — references to the skills a composite skill uses (IDTA 02015 Uses). Targets: skills of the same AAS or of an AAS that is a part of it in HierarchicalStructures (downward only; checked in SHACL, pprl:UsesDownwardShape)." .
+
+arso:SkillSequenceSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:parentClass arso:SkillSMC ;
+  rdfs:comment "SML Execute or Stop — a composite's sequence of Steps (Execute: what Start runs; Stop: what Stop runs)." .
+
+arso:SkillStepSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:SkillSequenceSML ;
+  rdfs:comment "SMC Step — one use of a skill in a sequence: Skill [ReferenceElement, 1] to a skill listed in Uses, and Bindings [SMC of Property, 0..1] with the constants bound to its parameters (current values)." .
+
+arso:SkillOccupiesSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Occupies" ;
+  rdfs:comment "SML Occupies — references to HierarchicalStructures nodes (equipment) the skill locks while it runs; two skills occupying one node never run at once." .
+
+arso:SkillStateReferenceRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "StateReference" ;
+  rdfs:comment "ReferenceElement StateReference — the AID property that publishes this skill's state (the synchronous alternative to StateMachine)." .
+
+arso:SkillImplementationSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:SkillSMC ;
+  arso:idShort "Implementation" ;
+  rdfs:comment "SMC Implementation — the runtime block implementing the skill: FBType (qualified IEC 61499 type), TypeHash (as the runtime reports it) and InstancePath (dotted instance name). Lets a reader check that the described skill is the deployed one." .
 
 
 #################################################################
@@ -178,6 +276,29 @@ arso:SkillSMC rdfs:subClassOf [
   owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:SkillStateMachineProperty ] .
+
+# Optional reconfiguration elements: at most one each (v0.5)
+arso:SkillSMC rdfs:subClassOf
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillKindProperty ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillParametersSMC ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillContractSMC ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillUsesSML ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillOccupiesSML ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillStateReferenceRef ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillImplementationSMC ] .
+
+# A Step names exactly one skill
+arso:SkillStepSMC rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+  owl:someValuesFrom aas:ReferenceElement ] .
 
 # Each Error entry must contain ErrorCode (mandatory)
 arso:ErrorSMC rdfs:subClassOf [

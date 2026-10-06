@@ -744,6 +744,9 @@ def _walk_shell(g: Graph, shell: dict, submodels_by_id: dict[str, dict]) -> None
 
     shell_uri = URIRef(shell_id)
     g.add((shell_uri, RDF.type, AAS.AssetAdministrationShell))
+    # Every shell this pipeline handles is the AAS of a resource; ARSO's
+    # restrictions on the shell apply to arso:ResourceAAS (v0.5).
+    g.add((shell_uri, RDF.type, ARSO.ResourceAAS))
     g.add((shell_uri, P_IDENTIFIABLE_ID, Literal(shell_id, datatype=XSD.string)))
     _emit_referable(g, shell_uri, shell)
     _emit_administration(g, shell_uri, shell)

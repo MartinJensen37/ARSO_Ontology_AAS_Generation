@@ -1,0 +1,144 @@
+@prefix arso: <https://w3id.org/2025/arso#> .
+@prefix aas:  <https://admin-shell.io/aas/3/1/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SMT STRUCTURE OVERVIEW
+#################################################################
+# ControlConfiguration (Submodel) — what runs on the resource's controller
+#   ├─ Runtime [SMC, 1]
+#   │    ├─ Name [Property, xs:string, 1]              e.g. Eclipse 4diac FORTE
+#   │    ├─ ManagementEndpoint [Property, xs:string, 1] host:port
+#   │    └─ Resource [Property, xs:string, 0..1]       e.g. RES
+#   ├─ ModuleSpec [Property, xs:string, 0..1]          source the program was generated from
+#   ├─ Target [Property, xs:string, 0..1]
+#   ├─ SyncState [Property, xs:string, 1]              InSync | Drift | NoProgram | NotRead
+#   ├─ ReadAt [Property, xs:dateTime, 0..1]
+#   ├─ Differences [SMC or SML of Property, 0..1]     one per difference from the source
+#   ├─ Types [SMC or SML, 0..1]
+#   │    └─ {type} [SMC, 0..*]: Name, Hash            as the runtime reports them
+#   ├─ ActiveProcedure [SMC, 0..1]
+#   │    ├─ ProcessReference [ReferenceElement, 1]    → Process AAS (version)
+#   │    ├─ NetworkHash [Property, 0..1]
+#   │    ├─ BootFileHash [Property, 0..1]
+#   │    └─ ActivatedAt [Property, xs:dateTime, 0..1]
+#   └─ ChangeLog [SML of Change SMC, 0..1]
+#        └─ Change: Time, Trigger, ChangeClass (pprl change classes),
+#           From, To, Result (Applied | Rejected | RolledBack), Duration
+
+#################################################################
+# ONTOLOGY METADATA
+#################################################################
+
+<https://w3id.org/2025/arso/modules/control-configuration>
+  rdf:type owl:Ontology ;
+  owl:imports <https://admin-shell.io/aas/3/1/> ;
+  rdfs:comment """ARSO module: Control Configuration (custom, v0.5). The reflection of a
+  controller in its resource AAS: which program runs, whether it still matches the
+  source it was generated from, the type hashes the runtime reports, the active
+  procedure and the log of reconfigurations. Written by modsync (as idShort
+  ControlSoftware until it is renamed).""" .
+
+
+#################################################################
+# SUBMODEL TYPE
+#################################################################
+
+arso:ControlConfigurationSubmodel rdf:type owl:Class ;
+  rdfs:subClassOf aas:Submodel ;
+  rdfs:label "Control Configuration Submodel" ;
+  arso:semanticId "https://smartproductionlab.aau.dk/ARSO/ControlConfiguration/1/0/Submodel" ,
+                  "https://smartproductionlab.aau.dk/submodels/ControlSoftware/1/0" ;
+  rdfs:comment "Custom — what runs on the resource's controller and how it got there." .
+
+
+#################################################################
+# ELEMENT TYPES
+#################################################################
+
+arso:CCfgRuntimeSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "Runtime" ;
+  rdfs:comment "SMC Runtime — the controller runtime: Name, ManagementEndpoint, Resource." .
+
+arso:CCfgRuntimeDetailProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:CCfgRuntimeSMC ;
+  arso:idShort "Name" , "ManagementEndpoint" , "Resource" ;
+  rdfs:comment "Property Name, ManagementEndpoint or Resource of the runtime (v0.6)." .
+
+arso:CCfgSourceProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "ModuleSpec" , "Target" , "Generator" , "ProgramDigest" , "ReadAt" ;
+  rdfs:comment "Property ModuleSpec, Target, Generator (what the program was generated from and by), ProgramDigest (SHA-256 of the generated program: instances, types, connections, values) or ReadAt (when the controller was read) (v0.6)." .
+
+arso:CCfgDifferenceProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:CCfgDifferencesSMC ;
+  rdfs:comment "Property D001.. — one difference (v0.6)." .
+
+arso:CCfgTypeSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:CCfgTypesSMC ;
+  rdfs:comment "SMC T001.. — one function block type in use (v0.6)." .
+
+arso:CCfgTypeDetailProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:CCfgTypeSMC ;
+  arso:idShort "Name" , "Hash" ;
+  rdfs:comment "Property Name or Hash of a type, as the runtime reports them (v0.6)." .
+
+arso:CCfgSyncStateProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "SyncState" ;
+  rdfs:comment "Property SyncState — InSync (the running program is the one its source generates), Drift (it differs, see Differences), NoProgram, NotRead (described from the source only)." .
+
+arso:CCfgDifferencesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "Differences" ;
+  rdfs:comment "SMC Differences — one Property per difference between the running program and its source." .
+
+arso:CCfgTypesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "Types" ;
+  rdfs:comment "SMC Types — the function block types in use, each with Name and Hash as the runtime reports them." .
+
+arso:CCfgActiveProcedureSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "ActiveProcedure" ;
+  rdfs:comment "SMC ActiveProcedure — reference to the Process AAS (and version) whose procedure is active, with NetworkHash, BootFileHash, ActivatedAt." .
+
+arso:CCfgChangeLogSML rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementList ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "ChangeLog" ;
+  rdfs:comment "SML ChangeLog — one Change SMC per reconfiguration: Time, Trigger, ChangeClass (a pprl:ChangeClass IRI), From, To, Result, Duration." .
+
+arso:CCfgChangeSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:CCfgChangeLogSML ;
+  rdfs:comment "SMC Change — one reconfiguration record." .
+
+
+#################################################################
+# CONTAINMENT CONSTRAINTS
+#################################################################
+
+arso:ControlConfigurationSubmodel rdfs:subClassOf
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgSyncStateProperty ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgRuntimeSMC ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgActiveProcedureSMC ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgChangeLogSML ] .
