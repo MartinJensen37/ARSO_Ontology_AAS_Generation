@@ -51,7 +51,9 @@
 #   │         │    HierarchicalStructures, never of a sibling resource
 #   │         ├─ Execute, Stop [SML of Step SMC, 0..1 each] — a composite's
 #   │         │    sequences; Step: Skill [ReferenceElement, 1] and Bindings
-#   │         │    [SMC of Property, 0..1] (constants bound to its parameters)
+#   │         │    [SMC, 0..1], named like the parameters of the step's skill:
+#   │         │    a Property (a constant) or a ReferenceElement to the
+#   │         │    parameter of this skill that is handed down
 #   │         ├─ Occupies [SML of ReferenceElement, 0..1] — HierarchicalStructures
 #   │         │    nodes (equipment) the skill locks while it runs
 #   │         ├─ StateReference [ReferenceElement, 0..1] — the AID property
@@ -200,7 +202,7 @@ arso:SkillSequenceSML rdf:type owl:Class ;
 arso:SkillStepSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
   arso:parentClass arso:SkillSequenceSML ;
-  rdfs:comment "SMC Step — one use of a skill in a sequence: Skill [ReferenceElement, 1] to a skill listed in Uses (a Skill or a BuildingBlock), and Bindings [SMC of Property, 0..1] with the constants bound to its parameters (current values)." .
+  rdfs:comment "SMC Step — one use of a skill in a sequence: Skill [ReferenceElement, 1] to a skill listed in Uses (a Skill or a BuildingBlock), and Bindings [SMC, 0..1] with what is bound to its parameters, each named like the parameter: a Property with the constant (current value), or a ReferenceElement to the parameter of the composite skill that is handed down to the step." .
 
 arso:SkillOccupiesSML rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementList ;
