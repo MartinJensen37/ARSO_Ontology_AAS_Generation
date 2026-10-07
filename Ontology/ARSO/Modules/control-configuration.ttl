@@ -13,6 +13,7 @@
 #   │    ├─ Name [Property, xs:string, 1]              e.g. Eclipse 4diac FORTE
 #   │    ├─ ManagementEndpoint [Property, xs:string, 1] host:port
 #   │    └─ Resource [Property, xs:string, 0..1]       e.g. RES
+#   ├─ Rules [Property, xs:string, 0..1]               the rule set the program is built by (v0.6)
 #   ├─ ModuleSpec [Property, xs:string, 0..1]          source the program was generated from
 #   ├─ Target [Property, xs:string, 0..1]
 #   ├─ SyncState [Property, xs:string, 1]              InSync | Drift | NoProgram | NotRead
@@ -70,6 +71,12 @@ arso:CCfgRuntimeDetailProperty rdf:type owl:Class ;
   arso:parentClass arso:CCfgRuntimeSMC ;
   arso:idShort "Name" , "ManagementEndpoint" , "Resource" ;
   rdfs:comment "Property Name, ManagementEndpoint or Resource of the runtime (v0.6)." .
+
+arso:CCfgRulesProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "Rules" ;
+  rdfs:comment "Property Rules (xs:string) — the IRI of the rule set the resource's program is built by: its shell, the interface of a skill primitive and the pattern of a composite skill. A tool that knows the rule set can verify the program and give it a new skill; whoever built the program is then of no concern (v0.6)." .
 
 arso:CCfgSourceProperty rdf:type owl:Class ;
   rdfs:subClassOf aas:Property ;
@@ -136,6 +143,8 @@ arso:CCfgChangeSMC rdf:type owl:Class ;
 arso:ControlConfigurationSubmodel rdfs:subClassOf
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgSyncStateProperty ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgRulesProperty ],
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
     owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgRuntimeSMC ],
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;

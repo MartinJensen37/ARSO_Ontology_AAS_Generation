@@ -12,7 +12,7 @@
 
 <https://w3id.org/2025/arso>
   rdf:type owl:Ontology ;
-  owl:versionIRI <https://w3id.org/2025/arso/0.5.0> ;
+  owl:versionIRI <https://w3id.org/2025/arso/0.6.0> ;
   owl:imports <http://www.w3id.org/hsu-aut/css> ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
   owl:imports <https://w3id.org/2025/arso/modules/nameplate> ;
@@ -25,7 +25,11 @@
   owl:imports <https://w3id.org/2025/arso/modules/technical-data> ;
   owl:imports <https://w3id.org/2025/arso/modules/aimc> ;
   owl:imports <https://w3id.org/2025/arso/modules/control-configuration> ;
-  rdfs:comment """ARSO v0.5 — Domain extension ontology for Resource AAS.
+  rdfs:comment """ARSO v0.6 — Domain extension ontology for Resource AAS.
+
+  v0.6 (7 Oct 2026): building blocks (the skill primitives a resource does not offer), what an
+  Implementation and a Contract hold, the rule set a program is built by (Control Configuration),
+  usesSkill resolved from a skill's Uses (arso:resolvedFrom), and a parameter entry's Value optional.
 
   v0.5 (30 Sep 2026): optional reconfiguration elements per skill (control-component:
   Parameters, RealizesProperty, Contract, Uses, Execute/Stop, Occupies, Implementation),
@@ -188,9 +192,9 @@ arso:hasControlConfigurationSubmodel rdf:type owl:ObjectProperty , owl:Functiona
 
 arso:usesSkill rdf:type owl:ObjectProperty ;
   rdfs:domain arso:SkillSMC ;
-  rdfs:range arso:SkillSMC ;
+  rdfs:range [ rdf:type owl:Class ; owl:unionOf ( arso:SkillSMC arso:BuildingBlockSMC ) ] ;
   arso:resolvedFrom arso:SkillUsesSML ;
-  rdfs:comment "Resolved Uses entry: a composite skill uses this skill (same AAS or an AAS that is a part of it)." .
+  rdfs:comment "Resolved Uses entry: a composite skill uses this skill or building block (same AAS or an AAS that is a part of it)." .
 
 arso:occupies rdf:type owl:ObjectProperty ;
   rdfs:domain arso:SkillSMC ;
