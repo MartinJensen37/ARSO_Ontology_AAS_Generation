@@ -91,7 +91,7 @@ Notes\r
 - A production resource may only provide capabilities (i.e. when engineering a resource, for planning purposes) and may additionally provide skills for automatic execution of the specified function.\r
 - A human becomes a Production Resource, if that person is able to perform a function specified as a capability.""" ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:onClass ns1:ResourceAAS ;
+            owl:onClass ns1:ResourceShell ;
             owl:onProperty ns1:hasAAS ;
             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ] ;
     owl:disjointWith <http://www.w3id.org/hsu-aut/css#Service>,
@@ -283,7 +283,7 @@ monitored and transitions triggered.\r
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/HasDataSpecification>,
         <https://admin-shell.io/aas/3/1/Identifiable> ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasTechnicalDataSubmodel ns1:representsResource ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasTechnicalDataSubmodel ns1:representsResource ) ;
     sh:property <https://admin-shell.io/aas/3/1/AssetAdministrationShell-hasSubmodel>,
         <https://admin-shell.io/aas/3/1/AssetAdministrationShell-https___admin-shell.io_aas_3_1_AssetAdministrationShell_assetInformation>,
         <https://admin-shell.io/aas/3/1/AssetAdministrationShell-https___admin-shell.io_aas_3_1_AssetAdministrationShell_derivedFrom>,
@@ -442,7 +442,7 @@ monitored and transitions triggered.\r
     rdfs:label "Has Data Specification"^^xsd:string ;
     rdfs:comment "Element that can be extended by using data specification templates."@en ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AdministrativeInformation/creator> <https://admin-shell.io/aas/3/1/AdministrativeInformation/revision> <https://admin-shell.io/aas/3/1/AdministrativeInformation/templateId> <https://admin-shell.io/aas/3/1/AdministrativeInformation/version> <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:occupies ns1:realizedBySkill ns1:realizesProperty ns1:representsResource ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AdministrativeInformation/creator> <https://admin-shell.io/aas/3/1/AdministrativeInformation/revision> <https://admin-shell.io/aas/3/1/AdministrativeInformation/templateId> <https://admin-shell.io/aas/3/1/AdministrativeInformation/version> <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:realizedBySkill ns1:representsResource ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/HasDataSpecification-https___admin-shell.io_aas_3_1_HasDataSpecification_embeddedDataSpecifications> .
 
 <https://admin-shell.io/aas/3/1/HasExtensions> a rdfs:Class,
@@ -451,7 +451,7 @@ monitored and transitions triggered.\r
     rdfs:label "Has Extensions"^^xsd:string ;
     rdfs:comment "Element that can be extended by proprietary extensions."@en ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:occupies ns1:realizedBySkill ns1:realizesProperty ns1:representsResource ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:realizedBySkill ns1:representsResource ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/HasExtensions-https___admin-shell.io_aas_3_1_HasExtensions_extensions> .
 
 <https://admin-shell.io/aas/3/1/HasKind> a rdfs:Class,
@@ -469,7 +469,7 @@ monitored and transitions triggered.\r
     rdfs:label "Has Semantics"^^xsd:string ;
     rdfs:comment "Element that can have a semantic definition plus some supplemental semantic definitions."@en ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/Extension/name> <https://admin-shell.io/aas/3/1/Extension/refersTo> <https://admin-shell.io/aas/3/1/Extension/value> <https://admin-shell.io/aas/3/1/Extension/valueType> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Qualifier/kind> <https://admin-shell.io/aas/3/1/Qualifier/type> <https://admin-shell.io/aas/3/1/Qualifier/value> <https://admin-shell.io/aas/3/1/Qualifier/valueId> <https://admin-shell.io/aas/3/1/Qualifier/valueType> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/SpecificAssetId/externalSubjectId> <https://admin-shell.io/aas/3/1/SpecificAssetId/name> <https://admin-shell.io/aas/3/1/SpecificAssetId/value> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:occupies ns1:realizedBySkill ns1:realizesProperty ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/Extension/name> <https://admin-shell.io/aas/3/1/Extension/refersTo> <https://admin-shell.io/aas/3/1/Extension/value> <https://admin-shell.io/aas/3/1/Extension/valueType> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Qualifier/kind> <https://admin-shell.io/aas/3/1/Qualifier/type> <https://admin-shell.io/aas/3/1/Qualifier/value> <https://admin-shell.io/aas/3/1/Qualifier/valueId> <https://admin-shell.io/aas/3/1/Qualifier/valueType> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/SpecificAssetId/externalSubjectId> <https://admin-shell.io/aas/3/1/SpecificAssetId/name> <https://admin-shell.io/aas/3/1/SpecificAssetId/value> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:realizedBySkill ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/HasSemantics-https___admin-shell.io_aas_3_1_HasSemantics_semanticId>,
         <https://admin-shell.io/aas/3/1/HasSemantics-https___admin-shell.io_aas_3_1_HasSemantics_supplementalSemanticIds> .
 
@@ -480,7 +480,7 @@ monitored and transitions triggered.\r
     rdfs:comment "An element that has a globally unique identifier."@en ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Referable> ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:representsResource ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:representsResource ) ;
     sh:property <https://admin-shell.io/aas/3/1/Identifiable-https___admin-shell.io_aas_3_1_Identifiable_administration>,
         <https://admin-shell.io/aas/3/1/Identifiable-https___admin-shell.io_aas_3_1_Identifiable_id> .
 
@@ -545,7 +545,7 @@ monitored and transitions triggered.\r
     rdfs:comment "A property is a data element that has a single value."@en ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/DataElement> ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:realizesProperty ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
     sh:property <https://admin-shell.io/aas/3/1/Property-https___admin-shell.io_aas_3_1_Property_value>,
         <https://admin-shell.io/aas/3/1/Property-https___admin-shell.io_aas_3_1_Property_valueId>,
         <https://admin-shell.io/aas/3/1/Property-https___admin-shell.io_aas_3_1_Property_valueType> .
@@ -556,7 +556,7 @@ monitored and transitions triggered.\r
     rdfs:label "Qualifiable"^^xsd:string ;
     rdfs:comment "The value of a qualifiable element may be further qualified by one or more qualifiers."@en ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:occupies ns1:realizedBySkill ns1:realizesProperty ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:realizedBySkill ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/Qualifiable-https___admin-shell.io_aas_3_1_Qualifiable_qualifiers> .
 
 <https://admin-shell.io/aas/3/1/Qualifier> a rdfs:Class,
@@ -592,7 +592,7 @@ monitored and transitions triggered.\r
     rdfs:comment "An element that is referable by its 'idShort'."@en ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/HasExtensions> ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:occupies ns1:realizedBySkill ns1:realizesProperty ns1:representsResource ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/BasicEventElement/direction> <https://admin-shell.io/aas/3/1/BasicEventElement/lastUpdate> <https://admin-shell.io/aas/3/1/BasicEventElement/maxInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/messageBroker> <https://admin-shell.io/aas/3/1/BasicEventElement/messageTopic> <https://admin-shell.io/aas/3/1/BasicEventElement/minInterval> <https://admin-shell.io/aas/3/1/BasicEventElement/observed> <https://admin-shell.io/aas/3/1/BasicEventElement/state> <https://admin-shell.io/aas/3/1/Blob/contentType> <https://admin-shell.io/aas/3/1/Blob/value> <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> <https://admin-shell.io/aas/3/1/Entity/entityType> <https://admin-shell.io/aas/3/1/Entity/globalAssetId> <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> <https://admin-shell.io/aas/3/1/Entity/statements> <https://admin-shell.io/aas/3/1/File/contentType> <https://admin-shell.io/aas/3/1/File/value> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasKind/kind> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/value> <https://admin-shell.io/aas/3/1/MultiLanguageProperty/valueId> <https://admin-shell.io/aas/3/1/Operation/inoutputVariables> <https://admin-shell.io/aas/3/1/Operation/inputVariables> <https://admin-shell.io/aas/3/1/Operation/outputVariables> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Range/max> <https://admin-shell.io/aas/3/1/Range/min> <https://admin-shell.io/aas/3/1/Range/valueType> <https://admin-shell.io/aas/3/1/ReferenceElement/value> <https://admin-shell.io/aas/3/1/RelationshipElement/first> <https://admin-shell.io/aas/3/1/RelationshipElement/second> <https://admin-shell.io/aas/3/1/Submodel/submodelElements> <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> <https://admin-shell.io/aas/3/1/SubmodelElementList/value> <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ns1:realizedBySkill ns1:representsResource ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/Referable-https___admin-shell.io_aas_3_1_Referable_category>,
         <https://admin-shell.io/aas/3/1/Referable-https___admin-shell.io_aas_3_1_Referable_description>,
         <https://admin-shell.io/aas/3/1/Referable-https___admin-shell.io_aas_3_1_Referable_displayName>,
@@ -673,7 +673,7 @@ monitored and transitions triggered.\r
     rdfs:comment "A submodel element collection is a kind of struct, i.e. a a logical encapsulation of multiple named values. It has a fixed number of submodel elements."@en ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:occupies ns1:realizedBySkill ns1:usesSkill ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:realizedBySkill ns1:usesSkill ) ;
     sh:property <https://admin-shell.io/aas/3/1/SubmodelElementCollection-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList> a rdfs:Class,
@@ -834,62 +834,6 @@ ns1:AssetSpecificPropertiesSMC a rdfs:Class,
         ns1:AssetSpecificPropertiesSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "0173-1#02-ABI218#003/0173-1#01-AGZ672#004" .
 
-ns1:BuildingBlockSMC a rdfs:Class,
-        owl:Class,
-        sh:NodeShape ;
-    rdfs:comment "SMC {name} — a skill primitive that only runs as a step of composite skills. Applied to every direct child of BuildingBlocks. Contains SemanticId and Implementation (FBType: the block type a step of it is an instance of; both mandatory) and, as a skill of Kind Primitive does, Kind, Parameters (value: the default), Contract and Occupies; Results declares what a step of it gives back." ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom ns1:SkillSemanticIdProperty ],
-        [ a owl:Restriction ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom ns1:SkillImplementationSMC ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillKindProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillParametersSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillContractSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillOccupiesSML ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:BuildingBlockResultsSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
-    sh:property [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillContractSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:BuildingBlockResultsSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillOccupiesSML ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillKindProperty ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillParametersSMC ] ],
-        ns1:BuildingBlockSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
-    ns1:parentClass ns1:BuildingBlocksSMC .
-
 ns1:CapabilitiesSubmodel a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
@@ -946,11 +890,11 @@ ns1:CapabilityRelationsSMC a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ComposedOfSetSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:GeneralizedBySetSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:GeneralizedBySetSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:ComposedOfSetSMC ] ],
         ns1:CapabilityRelationsSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilityRelations/1/0" .
 
@@ -967,6 +911,26 @@ ns1:CapabilitySetSMC a rdfs:Class,
     sh:property ns1:CapabilitySetSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/CapabilitySet/1/0",
         "https://smartfactory.de/aas/submodel/OfferedCapabilityDescription/CapabilitySet#1/0" .
+
+ns1:ComponentAAS a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:label "Component AAS" ;
+    rdfs:comment "Asset Administration Shell of a component of a module: a part that acts and so has skills of its own (v0.7). It needs its Skills; a nameplate is optional. Its interface is the module's: the commands of its skills refer to actions of the module's interface description." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onClass ns1:SkillsSubmodel ;
+            owl:onProperty ns1:hasSkillsSubmodel ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:DigitalNameplateSubmodel ;
+            owl:onProperty ns1:hasDigitalNameplateSubmodel ],
+        ns1:ResourceShell ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasSubmodel ns1:representsResource ) ;
+    sh:property ns1:ComponentAAS-hasDigitalNameplateSubmodel,
+        ns1:ComponentAAS-hasSkillsSubmodel ;
+    ns1:assetType "https://smartproductionlab.aau.dk/Resource/Component" .
 
 ns1:ComposedOfSetSMC a rdfs:Class,
         owl:Class,
@@ -1013,6 +977,10 @@ ns1:ControlConfigurationSubmodel a rdfs:Class,
             owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ],
         [ a owl:Restriction ;
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:CCfgInstancesSMC ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
             owl:onClass ns1:CCfgActiveProcedureSMC ;
             owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ],
         [ a owl:Restriction ;
@@ -1025,12 +993,7 @@ ns1:ControlConfigurationSubmodel a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:CCfgChangeLogSML ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:CCfgSyncStateProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:CCfgInstancesSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
@@ -1038,7 +1001,16 @@ ns1:ControlConfigurationSubmodel a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:CCfgChangeLogSML ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:CCfgRuntimeSMC ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:CCfgSyncStateProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
@@ -1117,7 +1089,7 @@ ns1:DigitalNameplateSubmodel a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:AddressInformationSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:MarkingsSML ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
@@ -1125,7 +1097,7 @@ ns1:DigitalNameplateSubmodel a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:MarkingsSML ] ],
+            sh:qualifiedValueShape [ sh:class ns1:AddressInformationSMC ] ],
         ns1:DigitalNameplateSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements ;
     ns1:semanticId "https://admin-shell.io/idta/nameplate/3/0/Nameplate",
         "https://admin-shell.io/zvei/nameplate/2/0/Nameplate" .
@@ -1347,6 +1319,39 @@ ns1:MarkingsSML a rdfs:Class,
     sh:property ns1:MarkingsSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value ;
     ns1:semanticId "0112/2///61360_7#AAS006#001" .
 
+ns1:ModuleCommandSMC a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC Occupy, Release, Reset, Start, Stop, Abort or Clear — one command of the resource: the action that calls it, its Operation, and what the resource runs on it." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:SkillInterfaceReferenceRef ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:CommandStepsSMC ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
+    sh:property [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:SkillInterfaceReferenceRef ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:CommandStepsSMC ] ],
+        ns1:ModuleCommandSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
+    ns1:idShort "Abort",
+        "Clear",
+        "Occupy",
+        "Release",
+        "Reset",
+        "Start",
+        "Stop" ;
+    ns1:parentClass ns1:ModuleSubmodel .
+
 ns1:NodeEntity a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
@@ -1480,6 +1485,26 @@ ns1:ResourceAAS a rdfs:Class,
     rdfs:label "Resource AAS" ;
     rdfs:comment "Asset Administration Shell of a resource (line, module, component). v0.5: the restrictions below apply to this class, not to every aas:AssetAdministrationShell, so ARSO can be loaded together with the product (APSO) and process (AProSO) blueprints without every shell having to represent a css:Resource. The JSON-to-RDF projection types a shell as ResourceAAS when it represents a resource, e.g. when its derivedFrom is the lab's resource template (https://smartproductionlab.aau.dk/aas/templates/resource)." ;
     rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:TechnicalDataSubmodel ;
+            owl:onProperty ns1:hasTechnicalDataSubmodel ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:ControlConfigurationSubmodel ;
+            owl:onProperty ns1:hasControlConfigurationSubmodel ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:AIMCSubmodel ;
+            owl:onProperty ns1:hasAIMCSubmodel ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:ModuleSubmodel ;
+            owl:onProperty ns1:hasModuleSubmodel ],
+        [ a owl:Restriction ;
+            owl:onClass ns1:DigitalNameplateSubmodel ;
+            owl:onProperty ns1:hasDigitalNameplateSubmodel ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ a owl:Restriction ;
             owl:onClass ns1:HierarchicalStructuresSubmodel ;
             owl:onProperty ns1:hasHierarchicalStructuresSubmodel ;
             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
@@ -1503,40 +1528,36 @@ ns1:ResourceAAS a rdfs:Class,
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
             owl:onClass ns1:ParametersSubmodel ;
             owl:onProperty ns1:hasParametersSubmodel ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:TechnicalDataSubmodel ;
-            owl:onProperty ns1:hasTechnicalDataSubmodel ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:ControlConfigurationSubmodel ;
-            owl:onProperty ns1:hasControlConfigurationSubmodel ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:AIMCSubmodel ;
-            owl:onProperty ns1:hasAIMCSubmodel ],
-        [ a owl:Restriction ;
-            owl:onClass <http://www.w3id.org/hsu-aut/css#Resource> ;
-            owl:onProperty ns1:representsResource ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        [ a owl:Restriction ;
-            owl:onClass ns1:DigitalNameplateSubmodel ;
-            owl:onProperty ns1:hasDigitalNameplateSubmodel ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+        <https://admin-shell.io/aas/3/1/AssetAdministrationShell>,
+        ns1:ResourceShell ;
     sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasSubmodel ) ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasSubmodel ns1:representsResource ) ;
     sh:property ns1:ResourceAAS-hasAIDSubmodel,
         ns1:ResourceAAS-hasAIMCSubmodel,
         ns1:ResourceAAS-hasCapabilitiesSubmodel,
         ns1:ResourceAAS-hasControlConfigurationSubmodel,
         ns1:ResourceAAS-hasDigitalNameplateSubmodel,
         ns1:ResourceAAS-hasHierarchicalStructuresSubmodel,
+        ns1:ResourceAAS-hasModuleSubmodel,
         ns1:ResourceAAS-hasOperationalDataSubmodel,
         ns1:ResourceAAS-hasParametersSubmodel,
         ns1:ResourceAAS-hasSkillsSubmodel,
-        ns1:ResourceAAS-hasTechnicalDataSubmodel,
-        ns1:ResourceAAS-representsResource .
+        ns1:ResourceAAS-hasTechnicalDataSubmodel ;
+    ns1:assetType "https://smartproductionlab.aau.dk/Resource/Module" .
+
+ns1:ResourceShell a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:label "AAS of a resource" ;
+    rdfs:comment "The Asset Administration Shell of any resource: a module (arso:ResourceAAS), a component of one (arso:ComponentAAS) or a system of modules (arso:SystemAAS). What each has to hold is on those classes (v0.7)." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onClass <http://www.w3id.org/hsu-aut/css#Resource> ;
+            owl:onProperty ns1:representsResource ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasAIDSubmodel ns1:hasAIMCSubmodel ns1:hasCapabilitiesSubmodel ns1:hasControlConfigurationSubmodel ns1:hasDigitalNameplateSubmodel ns1:hasHierarchicalStructuresSubmodel ns1:hasModuleSubmodel ns1:hasOperationalDataSubmodel ns1:hasParametersSubmodel ns1:hasSkillsSubmodel ns1:hasSubmodel ns1:hasTechnicalDataSubmodel ) ;
+    sh:property ns1:ResourceShell-representsResource .
 
 ns1:SecurityDefinitionsSMC a rdfs:Class,
         owl:Class,
@@ -1598,6 +1619,36 @@ ns1:SinkSMC a rdfs:Class,
     sh:property ns1:SinkSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sink" .
 
+ns1:SkillCommandSMC a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:comment "SMC Start, Stop, Abort or Reset — one command of a skill: the action that calls it, its Operation, and what it runs." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:SkillInterfaceReferenceRef ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:CommandStepsSMC ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
+        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
+    sh:property [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:CommandStepsSMC ] ],
+        [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:SkillInterfaceReferenceRef ] ],
+        ns1:SkillCommandSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
+    ns1:idShort "Abort",
+        "Reset",
+        "Start",
+        "Stop" ;
+    ns1:parentClass ns1:SkillSMC .
+
 ns1:SkillContractSMC a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
@@ -1632,7 +1683,7 @@ ns1:SkillContractSMC a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ContractTimeoutProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:ContractRequiresProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
@@ -1640,107 +1691,33 @@ ns1:SkillContractSMC a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ContractRequiresProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:ContractTimeoutProperty ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedValueShape [ sh:class ns1:ContractEnsuresProperty ] ],
         ns1:SkillContractSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:idShort "Contract" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
-
-ns1:SkillImplementationSMC a rdfs:Class,
-        owl:Class,
-        sh:NodeShape ;
-    rdfs:comment "SMC Implementation — the runtime block implementing the skill: FBType (qualified IEC 61499 type), TypeHash (as the runtime reports it) and InstancePath (dotted instance name). Lets a reader check that the described skill is the deployed one." ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:onClass ns1:ImplementationFBTypeProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:ImplementationTypeHashProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:ImplementationInstancePathProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
-    sh:property [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ImplementationInstancePathProperty ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ImplementationTypeHashProperty ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:ImplementationFBTypeProperty ] ],
-        ns1:SkillImplementationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
-    ns1:idShort "Implementation" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
-
-ns1:SkillParameterProperty a rdfs:Class,
-        owl:Class,
-        sh:NodeShape ;
-    rdfs:comment "Property {parameter} — one skill parameter (css:InputParameter). Applied to every Property directly in Parameters." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    sh:closed true ;
-    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Property/value> <https://admin-shell.io/aas/3/1/Property/valueId> <https://admin-shell.io/aas/3/1/Property/valueType> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
-    sh:property ns1:SkillParameterProperty-realizesProperty ;
-    ns1:parentClass ns1:SkillParametersSMC .
+    ns1:parentClass ns1:SkillSMC .
 
 ns1:SkillSMC a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment "SMC {skill_name} — a named skill. Applied unconditionally to every direct child of Skills (no idShort — the skill name is user-defined). Contains SemanticId, an Operation, and an InterfaceReference (all mandatory), plus an optional StateMachine for asynchronous skills." ;
+    rdfs:comment "SMC {skill_name} — a named skill. Applied unconditionally to every direct child of Skills (no idShort — the skill name is user-defined). Contains SemanticId (mandatory) and either its commands (Start, Stop, Abort, Reset) or, in the short form, an Operation and an InterfaceReference. Its own semanticId says whether it is a primitive (https://smartproductionlab.aau.dk/skill/Primitive: its commands run nothing) or a composite (.../skill/Composite: a command runs other skills)." ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillContractSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillUsesSML ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillOccupiesSML ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillStateReferenceRef ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillImplementationSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             owl:someValuesFrom ns1:SkillSemanticIdProperty ],
         [ a owl:Restriction ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom ns1:SkillOperationElement ],
-        [ a owl:Restriction ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom ns1:SkillInterfaceReferenceRef ],
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:SkillInterfaceReferenceRef ;
+            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
         [ a owl:Restriction ;
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
             owl:onClass ns1:SkillStateMachineProperty ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
         [ a owl:Restriction ;
             owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillKindProperty ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:SkillParametersSMC ;
+            owl:onClass ns1:SkillContractSMC ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ],
         <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     sh:closed true ;
@@ -1748,27 +1725,7 @@ ns1:SkillSMC a rdfs:Class,
     sh:property [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillUsesSML ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillImplementationSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillStateMachineProperty ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillOccupiesSML ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillParametersSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillStateReferenceRef ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillInterfaceReferenceRef ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
@@ -1776,24 +1733,29 @@ ns1:SkillSMC a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:SkillKindProperty ] ],
+            sh:qualifiedValueShape [ sh:class ns1:SkillStateMachineProperty ] ],
         ns1:SkillSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value,
-        ns1:SkillSMC-occupies,
         ns1:SkillSMC-usesSkill ;
     ns1:parentClass ns1:CCSkillsSMC .
 
 ns1:SkillStepSMC a rdfs:Class,
         owl:Class,
         sh:NodeShape ;
-    rdfs:comment "SMC Step — one use of a skill in a sequence: Skill [ReferenceElement, 1] to a skill listed in Uses (a Skill or a BuildingBlock), and Bindings [SMC, 0..1] with what is bound to its parameters, each named like the parameter: a Property with the constant (current value), or a ReferenceElement to the parameter of the composite skill that is handed down to the step." ;
+    rdfs:comment "SMC P1, P2, ... — one use of a skill by a command. Skill: the skill it runs; every other element is named like a variable of that skill's Start and says what it is connected to." ;
     rdfs:subClassOf [ a owl:Restriction ;
+            owl:onClass ns1:StepSkillRef ;
             owl:onProperty <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
-            owl:someValuesFrom <https://admin-shell.io/aas/3/1/ReferenceElement> ],
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     sh:closed true ;
     sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
-    sh:property ns1:SkillStepSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
-    ns1:parentClass ns1:SkillSequenceSML .
+    sh:property [ a sh:PropertyShape ;
+            sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+            sh:qualifiedMaxCount 1 ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class ns1:StepSkillRef ] ],
+        ns1:SkillStepSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
+    ns1:parentClass ns1:CommandStepsSMC .
 
 ns1:SkillsSubmodel a rdfs:Class,
         owl:Class,
@@ -1804,10 +1766,6 @@ ns1:SkillsSubmodel a rdfs:Class,
             owl:onClass ns1:CCInterfacesSMC ;
             owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        [ a owl:Restriction ;
-            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-            owl:onClass ns1:BuildingBlocksSMC ;
-            owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ],
         [ a owl:Restriction ;
             owl:onClass ns1:CCSkillsSMC ;
             owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
@@ -1823,7 +1781,7 @@ ns1:SkillsSubmodel a rdfs:Class,
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:CCSkillsSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:CCErrorsSMC ] ],
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
@@ -1832,12 +1790,8 @@ ns1:SkillsSubmodel a rdfs:Class,
         [ a sh:PropertyShape ;
             sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
             sh:qualifiedMaxCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:BuildingBlocksSMC ] ],
-        [ a sh:PropertyShape ;
-            sh:path <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
-            sh:qualifiedMaxCount 1 ;
             sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class ns1:CCErrorsSMC ] ],
+            sh:qualifiedValueShape [ sh:class ns1:CCSkillsSMC ] ],
         ns1:SkillsSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements ;
     ns1:semanticId "https://admin-shell.io/idta/ControlComponentType/1/0",
         "https://smartproductionlab.aau.dk/ARSO/Skills/1/0/Submodel" .
@@ -1857,6 +1811,26 @@ ns1:SourceSMC a rdfs:Class,
     sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/HasSemantics/semanticId> <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ) ;
     sh:property ns1:SourceSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source" .
+
+ns1:SystemAAS a rdfs:Class,
+        owl:Class,
+        sh:NodeShape ;
+    rdfs:label "System AAS" ;
+    rdfs:comment "Asset Administration Shell of a production system made of modules (v0.7). It needs its Hierarchical Structures: the modules, each found by its asset id." ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onClass ns1:HierarchicalStructuresSubmodel ;
+            owl:onProperty ns1:hasHierarchicalStructuresSubmodel ;
+            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ a owl:Restriction ;
+            owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+            owl:onClass ns1:DigitalNameplateSubmodel ;
+            owl:onProperty ns1:hasDigitalNameplateSubmodel ],
+        ns1:ResourceShell ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type rdfs:comment rdfs:label <https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> <https://admin-shell.io/aas/3/1/HasDataSpecification/embeddedDataSpecifications> <https://admin-shell.io/aas/3/1/HasExtensions/extensions> <https://admin-shell.io/aas/3/1/Identifiable/administration> <https://admin-shell.io/aas/3/1/Identifiable/id> <https://admin-shell.io/aas/3/1/Referable/category> <https://admin-shell.io/aas/3/1/Referable/description> <https://admin-shell.io/aas/3/1/Referable/displayName> <https://admin-shell.io/aas/3/1/Referable/idShort> ns1:hasSubmodel ns1:representsResource ) ;
+    sh:property ns1:SystemAAS-hasDigitalNameplateSubmodel,
+        ns1:SystemAAS-hasHierarchicalStructuresSubmodel ;
+    ns1:assetType "https://smartproductionlab.aau.dk/Resource/System" .
 
 ns1:TechnicalDataSubmodel a rdfs:Class,
         owl:Class,
@@ -2025,7 +1999,17 @@ ns1:TransitionConstraintContainerSMC a rdfs:Class,
     rdfs:subClassOf <http://www.w3id.org/hsu-aut/css#SkillParameter> .
 
 <https://w3id.org/2025/arso> a owl:Ontology ;
-    rdfs:comment """ARSO v0.6 — Domain extension ontology for Resource AAS.\r
+    rdfs:comment """ARSO v0.7 — Domain extension ontology for Resource AAS.\r
+\r
+  v0.7 (8 Oct 2026): a skill is its commands (Start, Stop, Abort, Reset), each with the action\r
+  that calls it, its Operation (parameters, results and the answer are its variables) and the steps\r
+  it runs. Kind, Parameters, RealizesProperty, Uses, Execute/Stop, Occupies, StateReference,\r
+  Implementation and the building blocks are gone: a skill's kind is its semanticId, its state and\r
+  results are data points, the block it is in the program is in the Control Configuration\r
+  (Instances), and a capability names the skill, never the other way. The resource's own commands\r
+  are a submodel of their own (Module). A resource is a module, a component of one (its AAS holds\r
+  its primitives) or a system of modules, told by its asset type. The short form of a skill\r
+  (SemanticId, Operation, InterfaceReference) stays valid.\r
 \r
   v0.6 (7 Oct 2026): building blocks (the skill primitives a resource does not offer), what an\r
   Implementation and a Contract hold, the rule set a program is built by (Control Configuration),\r
@@ -2058,18 +2042,13 @@ ns1:TransitionConstraintContainerSMC a rdfs:Class,
         <https://w3id.org/2025/arso/modules/operational-data>,
         <https://w3id.org/2025/arso/modules/parameters>,
         <https://w3id.org/2025/arso/modules/technical-data> ;
-    owl:versionIRI <https://w3id.org/2025/arso/0.6.0> .
+    owl:versionIRI <https://w3id.org/2025/arso/0.7.0> .
 
 ns1:AIMCInterfaceReferenceRef a owl:Class ;
     rdfs:comment "ReferenceElement InterfaceReference -- the AID interface SMC this configuration maps. Cross-submodel target enforced via SPARQL SHACL." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
     ns1:idShort "InterfaceReference" ;
     ns1:parentClass ns1:MappingConfigurationSMC .
-
-ns1:BuildingBlockResultProperty a owl:Class ;
-    rdfs:comment "Property {result} — one result: its valueType, and the qualifier Unit. Applied to every Property directly in Results." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:parentClass ns1:BuildingBlockResultsSMC .
 
 ns1:CCfgChangeSMC a owl:Class ;
     rdfs:comment "SMC Change — one reconfiguration record." ;
@@ -2080,6 +2059,20 @@ ns1:CCfgDifferenceProperty a owl:Class ;
     rdfs:comment "Property D001.. — one difference (v0.6)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:parentClass ns1:CCfgDifferencesSMC .
+
+ns1:CCfgInstanceDetailProperty a owl:Class ;
+    rdfs:comment "Property InstancePath (the dotted name of the instance), FBType (its qualified IEC 61499 type) or TypeHash (the hash of that type as the runtime reports it)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
+    ns1:idShort "FBType",
+        "InstancePath",
+        "TypeHash" ;
+    ns1:parentClass ns1:CCfgInstanceSMC .
+
+ns1:CCfgInstanceSkillRef a owl:Class ;
+    rdfs:comment "ReferenceElement Skill — what the block is: a skill (in the Skills submodel of this AAS or of a component), or the step of a command that runs one." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
+    ns1:idShort "Skill" ;
+    ns1:parentClass ns1:CCfgInstanceSMC .
 
 ns1:CCfgRuntimeDetailProperty a owl:Class ;
     rdfs:comment "Property Name, ManagementEndpoint or Resource of the runtime (v0.6)." ;
@@ -2312,12 +2305,6 @@ ns1:PropertyCommentMLP a owl:Class ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/MultiLanguageProperty> ;
     ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyComment/1/0" .
 
-ns1:RealizesPropertyRel a owl:Class ;
-    rdfs:comment "RelationshipElement RealizesProperty — first: a parameter of this skill; second: a property (PropertyContainer) of a capability this skill realizes (CapabilityRealizedBy). The link the IDTA templates lack: it is where a product value reaches the controller (capability property -> skill parameter, css:isRealizedBySkillParameter)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/RelationshipElement> ;
-    ns1:idShort "RealizesProperty" ;
-    ns1:parentClass ns1:SkillSMC .
-
 ns1:SameAsRelationship a owl:Class ;
     rdfs:comment "RelationshipElement SameAs — links two entities representing the same asset, within or across submodels. Both first and second must reference an EntryNodeEntity or NodeEntity." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/RelationshipElement> ;
@@ -2333,6 +2320,13 @@ ns1:SerialNumberProperty a owl:Class ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:semanticId "0112/2///61987#ABA951#009" .
 
+ns1:SkillOperationElement a owl:Class ;
+    rdfs:comment "Operation — the invocable Operation of a command (named like it), or in the short form of a skill (named like the skill). Applied unconditionally to every direct child with AAS modelType Operation. Its variables are the parameters (in), the results and the answer (out); a variable carries its unit and limits." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Operation> ;
+    ns1:parentClass ns1:ModuleCommandSMC,
+        ns1:SkillCommandSMC,
+        ns1:SkillSMC .
+
 ns1:SoftwareVersionProperty a owl:Class ;
     rdfs:comment "Property SoftwareVersion (xs:string) — version of software used by the device. semanticId: 0112/2///61987#ABA601#008. Optional (0..1)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
@@ -2342,6 +2336,16 @@ ns1:SourcePollingIntervalProperty a owl:Class ;
     rdfs:comment "Property PollingInterval (xs:double) — per-source override of DefaultPollingInterval." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Source/PollingInterval" .
+
+ns1:StepConstantProperty a owl:Class ;
+    rdfs:comment "Property {variable} — a constant handed to the input of the step's skill that is named like it (the value as it runs). Applied to every Property directly in a step." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
+    ns1:parentClass ns1:SkillStepSMC .
+
+ns1:StepVariableRef a owl:Class ;
+    rdfs:comment "ReferenceElement {variable} — the variable of the command's Operation that the variable of the step's skill named like it is connected to: an input that is handed down, or an output that the step's result becomes. Applied to every ReferenceElement directly in a step that is not Skill." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
+    ns1:parentClass ns1:SkillStepSMC .
 
 ns1:TechnicalCompanyLogoFile a owl:Class ;
     rdfs:comment "File CompanyLogo — company logo image." ;
@@ -2412,6 +2416,9 @@ ns1:YearOfConstructionProperty a owl:Class ;
     rdfs:comment "Property YearOfConstruction (xs:string) — year manufacturing process completed. semanticId: 0112/2///61987#ABP000#002. Optional (0..1); changed from mandatory in v2." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:semanticId "0112/2///61987#ABP000#002" .
+
+ns1:assetType a owl:AnnotationProperty ;
+    rdfs:comment "The beginning of the asset type (assetInformation.assetType) by which an AAS is recognised as this kind of resource." .
 
 ns1:idShort a owl:AnnotationProperty ;
     rdfs:label "idShort" ;
@@ -2488,7 +2495,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <http://www.w3id.org/hsu-aut/css#behaviorConformsTo> .
 
 <http://www.w3id.org/hsu-aut/css#Resource-hasAAS> a sh:PropertyShape ;
-    sh:class ns1:ResourceAAS ;
+    sh:class ns1:ResourceShell ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path ns1:hasAAS .
@@ -2858,7 +2865,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> .
 
 <https://admin-shell.io/aas/3/1/AssetInformation-https___admin-shell.io_aas_3_1_AssetInformation_assetKind> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b18 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b18 ;
     sh:path <https://admin-shell.io/aas/3/1/AssetInformation/assetKind> .
 
 <https://admin-shell.io/aas/3/1/AssetInformation-https___admin-shell.io_aas_3_1_AssetInformation_assetType> a sh:PropertyShape ;
@@ -2924,7 +2931,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     rdfs:comment "Type asset"@en .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_direction> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b71 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b71 ;
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/direction> .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_lastUpdate> a sh:PropertyShape ;
@@ -2952,7 +2959,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/observed> .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement-https___admin-shell.io_aas_3_1_BasicEventElement_state> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b106 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b106 ;
     sh:path <https://admin-shell.io/aas/3/1/BasicEventElement/state> .
 
 <https://admin-shell.io/aas/3/1/Blob-https___admin-shell.io_aas_3_1_Blob_contentType> a sh:PropertyShape ;
@@ -2968,7 +2975,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> .
 
 <https://admin-shell.io/aas/3/1/DataSpecificationIec61360-https___admin-shell.io_aas_3_1_DataSpecificationIec61360_dataType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b52 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b52 ;
     sh:path <https://admin-shell.io/aas/3/1/DataSpecificationIec61360/dataType> .
 
 <https://admin-shell.io/aas/3/1/DataSpecificationIec61360-https___admin-shell.io_aas_3_1_DataSpecificationIec61360_definition> a sh:PropertyShape ;
@@ -3279,7 +3286,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     rdfs:range <https://admin-shell.io/aas/3/1/DataSpecificationContent> .
 
 <https://admin-shell.io/aas/3/1/Entity-https___admin-shell.io_aas_3_1_Entity_entityType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b73 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b73 ;
     sh:path <https://admin-shell.io/aas/3/1/Entity/entityType> .
 
 <https://admin-shell.io/aas/3/1/Entity-https___admin-shell.io_aas_3_1_Entity_globalAssetId> a sh:PropertyShape ;
@@ -3426,7 +3433,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Extension/value> .
 
 <https://admin-shell.io/aas/3/1/Extension-https___admin-shell.io_aas_3_1_Extension_valueType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/Extension/valueType> .
 
 <https://admin-shell.io/aas/3/1/File-https___admin-shell.io_aas_3_1_File_contentType> a sh:PropertyShape ;
@@ -3446,7 +3453,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/HasExtensions/extensions> .
 
 <https://admin-shell.io/aas/3/1/HasKind-https___admin-shell.io_aas_3_1_HasKind_kind> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b99 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b99 ;
     sh:path <https://admin-shell.io/aas/3/1/HasKind/kind> .
 
 <https://admin-shell.io/aas/3/1/HasSemantics-https___admin-shell.io_aas_3_1_HasSemantics_semanticId> a sh:PropertyShape ;
@@ -3466,7 +3473,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Identifiable/id> .
 
 <https://admin-shell.io/aas/3/1/Key-https___admin-shell.io_aas_3_1_Key_type> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b75 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b75 ;
     sh:path <https://admin-shell.io/aas/3/1/Key/type> .
 
 <https://admin-shell.io/aas/3/1/Key-https___admin-shell.io_aas_3_1_Key_value> a sh:PropertyShape ;
@@ -3655,7 +3662,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Property/valueId> .
 
 <https://admin-shell.io/aas/3/1/Property-https___admin-shell.io_aas_3_1_Property_valueType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/Property/valueType> .
 
 <https://admin-shell.io/aas/3/1/Qualifiable-https___admin-shell.io_aas_3_1_Qualifiable_qualifiers> a sh:PropertyShape ;
@@ -3663,7 +3670,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Qualifiable/qualifiers> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_kind> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b101 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b101 ;
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/kind> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_type> a sh:PropertyShape ;
@@ -3679,7 +3686,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/valueId> .
 
 <https://admin-shell.io/aas/3/1/Qualifier-https___admin-shell.io_aas_3_1_Qualifier_valueType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/Qualifier/valueType> .
 
 <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> a <https://admin-shell.io/aas/3/1/QualifierKind> ;
@@ -3703,7 +3710,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Range/min> .
 
 <https://admin-shell.io/aas/3/1/Range-https___admin-shell.io_aas_3_1_Range_valueType> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/Range/valueType> .
 
 <https://admin-shell.io/aas/3/1/Referable-https___admin-shell.io_aas_3_1_Referable_category> a sh:PropertyShape ;
@@ -3731,7 +3738,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/Reference/referredSemanticId> .
 
 <https://admin-shell.io/aas/3/1/Reference-https___admin-shell.io_aas_3_1_Reference_type> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b104 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b104 ;
     sh:path <https://admin-shell.io/aas/3/1/Reference/type> .
 
 <https://admin-shell.io/aas/3/1/Reference/keys> a owl:ObjectProperty ;
@@ -3829,7 +3836,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/semanticIdListElement> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_typeValueListElement> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b1 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/typeValueListElement> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_value> a sh:PropertyShape ;
@@ -3837,7 +3844,7 @@ Includes extensions defined in https://www.plattform-i40.de/IP/Redaktion/DE/Down
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList-https___admin-shell.io_aas_3_1_SubmodelElementList_valueTypeListElement> a sh:PropertyShape ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/valueTypeListElement> .
 
 <https://admin-shell.io/aas/3/1/ValueList-https___admin-shell.io_aas_3_1_ValueList_valueReferencePairs> a sh:PropertyShape ;
@@ -3909,13 +3916,6 @@ ns1:AssetSpecificPropertiesSMC-https___admin-shell.io_aas_3_1_SubmodelElementCol
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
-ns1:BuildingBlockSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
-    ns2:hasValueWithClass ns1:SkillImplementationSMC,
-        ns1:SkillSemanticIdProperty ;
-    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
-    sh:minCount 1 ;
-    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
-
 ns1:CCfgDifferencesSMC a owl:Class ;
     rdfs:comment "SMC Differences — one Property per difference between the running program and its source." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
@@ -3964,6 +3964,17 @@ ns1:CapabilitySetSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_va
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
+ns1:ComponentAAS-hasDigitalNameplateSubmodel a sh:PropertyShape ;
+    sh:class ns1:DigitalNameplateSubmodel ;
+    sh:maxCount 1 ;
+    sh:path ns1:hasDigitalNameplateSubmodel .
+
+ns1:ComponentAAS-hasSkillsSubmodel a sh:PropertyShape ;
+    sh:class ns1:SkillsSubmodel ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path ns1:hasSkillsSubmodel .
+
 ns1:ComposedOfSetSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
     ns2:hasValueWithClass ns1:ComposedOfContainerSMC ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
@@ -3993,7 +4004,7 @@ ns1:Datapoint-https___admin-shell.io_aas_3_1_Property_value a sh:PropertyShape ;
 
 ns1:Datapoint-https___admin-shell.io_aas_3_1_Property_valueType a sh:PropertyShape ;
     sh:hasValue <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Decimal> ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b22 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b22 ;
     sh:path <https://admin-shell.io/aas/3/1/Property/valueType> .
 
 ns1:DatapointGroup-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
@@ -4095,6 +4106,10 @@ ns1:MarkingsSML-https___admin-shell.io_aas_3_1_SubmodelElementList_value a sh:Pr
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementList/value> .
 
+ns1:ModuleCommandSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
 ns1:NodeEntity-https___admin-shell.io_aas_3_1_Entity_statements a sh:PropertyShape ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:path <https://admin-shell.io/aas/3/1/Entity/statements> .
@@ -4174,6 +4189,11 @@ ns1:ResourceAAS-hasHierarchicalStructuresSubmodel a sh:PropertyShape ;
     sh:minCount 1 ;
     sh:path ns1:hasHierarchicalStructuresSubmodel .
 
+ns1:ResourceAAS-hasModuleSubmodel a sh:PropertyShape ;
+    sh:class ns1:ModuleSubmodel ;
+    sh:maxCount 1 ;
+    sh:path ns1:hasModuleSubmodel .
+
 ns1:ResourceAAS-hasOperationalDataSubmodel a sh:PropertyShape ;
     sh:class ns1:OperationalDataSubmodel ;
     sh:maxCount 1 ;
@@ -4194,7 +4214,7 @@ ns1:ResourceAAS-hasTechnicalDataSubmodel a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:path ns1:hasTechnicalDataSubmodel .
 
-ns1:ResourceAAS-representsResource a sh:PropertyShape ;
+ns1:ResourceShell-representsResource a sh:PropertyShape ;
     sh:class <http://www.w3id.org/hsu-aut/css#Resource> ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
@@ -4214,7 +4234,7 @@ ns1:SecuritySchemeSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_v
 
 ns1:SelfManagedBomEntity-https___admin-shell.io_aas_3_1_Entity_entityType a sh:PropertyShape ;
     sh:hasValue <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
-    sh:in _:ne0737937014847c7af62d153c59ff218b73 ;
+    sh:in _:nf8d38217dbec4726b849e760c1200f34b73 ;
     sh:path <https://admin-shell.io/aas/3/1/Entity/entityType> .
 
 ns1:SelfManagedBomEntity-https___admin-shell.io_aas_3_1_Entity_globalAssetId a sh:PropertyShape ;
@@ -4229,41 +4249,26 @@ ns1:SinkSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
+ns1:SkillCommandSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
+    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
 ns1:SkillContractSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
-ns1:SkillImplementationSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
-    sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
-    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
-
-ns1:SkillParameterProperty-realizesProperty a sh:PropertyShape ;
-    sh:class ns1:PropertyContainerSMC ;
-    sh:path ns1:realizesProperty .
-
 ns1:SkillSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
-    ns2:hasValueWithClass ns1:SkillInterfaceReferenceRef,
-        ns1:SkillOperationElement,
-        ns1:SkillSemanticIdProperty ;
+    ns2:hasValueWithClass ns1:SkillSemanticIdProperty ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
-
-ns1:SkillSMC-occupies a sh:PropertyShape ;
-    sh:path ns1:occupies .
 
 ns1:SkillSMC-usesSkill a sh:PropertyShape ;
+    sh:class ns1:SkillSMC ;
     sh:path ns1:usesSkill .
 
-ns1:SkillSequenceSML a owl:Class ;
-    rdfs:comment "SML Execute or Stop — a composite's sequence of Steps (Execute: what Start runs; Stop: what Stop runs)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
-    ns1:parentClass ns1:SkillSMC .
-
 ns1:SkillStepSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a sh:PropertyShape ;
-    ns2:hasValueWithClass <https://admin-shell.io/aas/3/1/ReferenceElement> ;
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
-    sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
 
 ns1:SkillsSubmodel-https___admin-shell.io_aas_3_1_Submodel_submodelElements a sh:PropertyShape ;
@@ -4276,6 +4281,17 @@ ns1:SourceSMC-https___admin-shell.io_aas_3_1_SubmodelElementCollection_value a s
     sh:class <https://admin-shell.io/aas/3/1/SubmodelElement> ;
     sh:minCount 1 ;
     sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> .
+
+ns1:SystemAAS-hasDigitalNameplateSubmodel a sh:PropertyShape ;
+    sh:class ns1:DigitalNameplateSubmodel ;
+    sh:maxCount 1 ;
+    sh:path ns1:hasDigitalNameplateSubmodel .
+
+ns1:SystemAAS-hasHierarchicalStructuresSubmodel a sh:PropertyShape ;
+    sh:class ns1:HierarchicalStructuresSubmodel ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path ns1:hasHierarchicalStructuresSubmodel .
 
 ns1:TechnicalClassificationSystemProperty a owl:Class ;
     rdfs:comment "Property ClassificationSystem (xs:string) — classification system identifier." ;
@@ -4385,10 +4401,10 @@ ns1:TransitionConstraintContainerSMC-https___admin-shell.io_aas_3_1_SubmodelElem
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
 <https://w3id.org/2025/arso/modules/control-component> a owl:Ontology ;
-    rdfs:comment """ARSO module: Control Component / Skills -- an ARSO-flattened adaptation of IDTA 02015-2-0 ControlComponentType (February 2025). See the design note above for how this diverges from the full standard. v0.5 adds optional reconfiguration elements per skill (Kind, Parameters, RealizesProperty, Contract, Uses, Execute/Stop, Occupies, StateReference, Implementation).\r
+    rdfs:comment """ARSO module: Control Component / Skills -- an ARSO-flattened adaptation of IDTA 02015-2-0 ControlComponentType (February 2025), and the Module submodel. See the design note above for how this diverges from the full standard.\r
 \r
   Submodel semanticId: https://admin-shell.io/idta/ControlComponentType/1/0\r
-  Cross-submodel: Skill InterfaceReference targets are validated in SPARQL SHACL (arso-rules.shacl.ttl).""" ;
+  Cross-submodel: InterfaceReference targets are validated in SPARQL SHACL (arso-rules.shacl.ttl).""" ;
     owl:imports <https://admin-shell.io/aas/3/1/> .
 
 <https://w3id.org/2025/arso/modules/control-configuration> a owl:Ontology ;
@@ -4587,7 +4603,7 @@ ns1:BulkCountProperty a owl:Class ;
     ns1:semanticId "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0" .
 
 ns1:CCInterfacesSMC a owl:Class ;
-    rdfs:comment "SMC Interfaces — mandatory top-level container, always present and always empty. ARSO handles interface binding per-skill via each SkillSMC's own InterfaceReference (see design note above), not via device-level entries here." ;
+    rdfs:comment "SMC Interfaces — mandatory top-level container, always present and always empty. ARSO handles interface binding per command (its InterfaceReference), not via device-level entries here." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     ns1:idShort "Interfaces" ;
     ns1:parentClass ns1:SkillsSubmodel .
@@ -4597,6 +4613,11 @@ ns1:CCfgActiveProcedureSMC a owl:Class ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     ns1:idShort "ActiveProcedure" ;
     ns1:parentClass ns1:ControlConfigurationSubmodel .
+
+ns1:CCfgInstanceSMC a owl:Class ;
+    rdfs:comment "SMC {instance} — one block of the program, named like its instance path with underscores." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    ns1:parentClass ns1:CCfgInstancesSMC .
 
 ns1:CCfgRulesProperty a owl:Class ;
     rdfs:comment "Property Rules (xs:string) — the IRI of the rule set the resource's program is built by: its shell, the interface of a skill primitive and the pattern of a composite skill. A tool that knows the rule set can verify the program and give it a new skill; whoever built the program is then of no concern (v0.6)." ;
@@ -4632,31 +4653,31 @@ ns1:ConstraintHasPropertyRel a owl:Class ;
     ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/ConstraintHasProperty/1/0" .
 
 ns1:ContractAfterProperty a owl:Class ;
-    rdfs:comment "Property After (xs:string) — the open-loop duration: the skill has succeeded when it has passed, in seconds (a time ends it). An expression over the resource's state variables and the skill's parameters, or a duration (v0.6)." ;
+    rdfs:comment "Property After (xs:string) — the open-loop duration: the skill has succeeded when it has passed, in seconds (a time ends it). A number or an expression over the skill's parameters." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "After" ;
     ns1:parentClass ns1:SkillContractSMC .
 
 ns1:ContractEnsuresProperty a owl:Class ;
-    rdfs:comment "Property Ensures (xs:string) — the postcondition: the skill has succeeded when it holds (a sensor ends it). An expression over the resource's state variables and the skill's parameters, or a duration (v0.6)." ;
+    rdfs:comment "Property Ensures (xs:string) — the postcondition: the skill has succeeded when it holds (a sensor ends it). An expression over the resource's state variables and the skill's parameters." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "Ensures" ;
     ns1:parentClass ns1:SkillContractSMC .
 
 ns1:ContractInvariantProperty a owl:Class ;
-    rdfs:comment "Property Invariant (xs:string) — what has to hold all the while the skill runs. An expression over the resource's state variables and the skill's parameters, or a duration (v0.6)." ;
+    rdfs:comment "Property Invariant (xs:string) — what has to hold all the while the skill runs. An expression over the resource's state variables and the skill's parameters." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "Invariant" ;
     ns1:parentClass ns1:SkillContractSMC .
 
 ns1:ContractRequiresProperty a owl:Class ;
-    rdfs:comment "Property Requires (xs:string) — the precondition: what has to hold when the skill starts. An expression over the resource's state variables and the skill's parameters, or a duration (v0.6)." ;
+    rdfs:comment "Property Requires (xs:string) — the precondition: what has to hold when the skill starts. An expression over the resource's state variables and the skill's parameters." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "Requires" ;
     ns1:parentClass ns1:SkillContractSMC .
 
 ns1:ContractTimeoutProperty a owl:Class ;
-    rdfs:comment "Property Timeout (xs:string) — the longest the skill may run. An expression over the resource's state variables and the skill's parameters, or a duration (v0.6)." ;
+    rdfs:comment "Property Timeout (xs:string) — the longest the skill may run, a duration." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "Timeout" ;
     ns1:parentClass ns1:SkillContractSMC .
@@ -4684,24 +4705,6 @@ ns1:GuidelineForConformityDeclarationProperty a owl:Class ;
     rdfs:comment "Property GuidelineForConformityDeclaration (xs:string) — guideline/stipulation/legislation used for conformity determination. semanticId: 0173-1#02-AAO856#002. Mandatory within GuidelineSpecificPropertiesSMC." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:semanticId "0173-1#02-AAO856#002" .
-
-ns1:ImplementationFBTypeProperty a owl:Class ;
-    rdfs:comment "Property FBType (xs:string) — the qualified IEC 61499 type of the block. A step that runs the skill is an instance of this type (v0.6)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:idShort "FBType" ;
-    ns1:parentClass ns1:SkillImplementationSMC .
-
-ns1:ImplementationInstancePathProperty a owl:Class ;
-    rdfs:comment "Property InstancePath (xs:string) — the dotted name of the instance that is the skill. A building block has none: it has instances only as steps (v0.6)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:idShort "InstancePath" ;
-    ns1:parentClass ns1:SkillImplementationSMC .
-
-ns1:ImplementationTypeHashProperty a owl:Class ;
-    rdfs:comment "Property TypeHash (xs:string) — the hash of the type as the runtime reports it; there when the resource was read (v0.6)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:idShort "TypeHash" ;
-    ns1:parentClass ns1:SkillImplementationSMC .
 
 ns1:InterfaceTitleProperty a owl:Class ;
     rdfs:comment "Property title (xs:string) — human-readable name of the Interface." ;
@@ -4755,6 +4758,11 @@ ns1:ParameterValueProperty a owl:Class ;
     ns1:idShort "Value" ;
     ns1:parentClass ns1:ParameterEntrySMC .
 
+ns1:PropertyContainerSMC a owl:Class ;
+    rdfs:comment "SMC PropertyContainer — holds one CapabilityPropertyType instance plus SameProperty and PropertyComment." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyContainer/1/0" .
+
 ns1:SchemeProperty a owl:Class ;
     rdfs:comment "Property scheme (xs:string) — security scheme type identifier (nosec, basic, apikey, bearer, psk, digest, oauth2, combo, auto)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
@@ -4784,27 +4792,16 @@ ns1:SinksSML a owl:Class ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sinks" .
 
-ns1:SkillInterfaceReferenceRef a owl:Class ;
-    rdfs:comment "ReferenceElement InterfaceReference — points directly at the specific AID action idShort (arso:InterfaceSMC/InteractionMetadata/actions/{action}) this skill invokes. Cross-submodel target validated via SPARQL SHACL, not OWL restriction (arso:SkillInterfaceRefActionShape / arso:SkillInterfaceRefTargetShape in arso-rules.shacl.ttl)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
-    ns1:idShort "InterfaceReference" ;
-    ns1:parentClass ns1:SkillSMC .
-
-ns1:SkillOperationElement a owl:Class ;
-    rdfs:comment "Operation {skill_name} — the invocable Operation of a skill entry. Applied unconditionally to every direct child of a SkillSMC with AAS modelType Operation (no idShort — its idShort matches the skill name). Its semanticId must use the lab's URI namespace (enforced via SHACL sh:pattern)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Operation> ;
+ns1:SkillSemanticIdProperty a owl:Class ;
+    rdfs:comment "Property SemanticId (xs:string) — the skill's own semantic identifier URI: what it does (lab namespace convention, enforced via SHACL sh:pattern)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
+    ns1:idShort "SemanticId" ;
     ns1:parentClass ns1:SkillSMC .
 
 ns1:SkillStateMachineProperty a owl:Class ;
-    rdfs:comment "Property StateMachine (xs:string) — present only on asynchronous skills. Polled by clients for intermediate state (IDLE, RUNNING, SUCCESS, FAILURE) during execution." ;
+    rdfs:comment "Property StateMachine (xs:string) — present only on asynchronous skills of the short form. Polled by clients for intermediate state (IDLE, RUNNING, SUCCESS, FAILURE) during execution." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
     ns1:idShort "StateMachine" ;
-    ns1:parentClass ns1:SkillSMC .
-
-ns1:SkillStateReferenceRef a owl:Class ;
-    rdfs:comment "ReferenceElement StateReference — the AID property that publishes this skill's state (the synchronous alternative to StateMachine)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
-    ns1:idShort "StateReference" ;
     ns1:parentClass ns1:SkillSMC .
 
 ns1:SourceIdProperty a owl:Class ;
@@ -4821,6 +4818,12 @@ ns1:SourcesSML a owl:Class ;
     rdfs:comment "SML Sources — the AID elements this configuration reads from." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesMappingConfiguration/2/0/MappingConfiguration/Sources" .
+
+ns1:StepSkillRef a owl:Class ;
+    rdfs:comment "ReferenceElement Skill — the skill the step runs, the whole of it: running it is its Start, and its other commands are what ends it early. A skill of the same AAS or of an AAS that is a part of it in HierarchicalStructures (downward only)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
+    ns1:idShort "Skill" ;
+    ns1:parentClass ns1:SkillStepSMC .
 
 ns1:TechnicalImageFile a owl:Class ;
     rdfs:comment "File ImageFile — pictorial representation of the product." ;
@@ -4880,12 +4883,12 @@ ns1:URIOfTheProductProperty a owl:Class ;
 <https://admin-shell.io/aas/3/1/Direction> a owl:Class ;
     rdfs:label "Direction"^^xsd:string ;
     rdfs:comment "Direction"@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b71 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b71 .
 
 <https://admin-shell.io/aas/3/1/EntityType> a owl:Class ;
     rdfs:label "Entity Type"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an entity is a self-managed entity or a co-managed entity."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b73 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b73 .
 
 <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> a <https://admin-shell.io/aas/3/1/EntityType> ;
     rdfs:label "Self Managed Entity"^^xsd:string ;
@@ -4894,32 +4897,20 @@ ns1:URIOfTheProductProperty a owl:Class ;
 <https://admin-shell.io/aas/3/1/ModellingKind> a owl:Class ;
     rdfs:label "Modelling Kind"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an element is a template or an instance."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b99 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b99 .
 
 <https://admin-shell.io/aas/3/1/ReferenceTypes> a owl:Class ;
     rdfs:label "Reference Types"^^xsd:string ;
     rdfs:comment "Reference types"@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b104 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b104 .
 
 <https://admin-shell.io/aas/3/1/StateOfEvent> a owl:Class ;
     rdfs:label "State Of Event"^^xsd:string ;
     rdfs:comment "State of an event"@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b106 .
-
-ns1:BuildingBlockResultsSMC a owl:Class ;
-    rdfs:comment "SMC Results — the results of the building block, one Property each." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    ns1:idShort "Results" ;
-    ns1:parentClass ns1:BuildingBlockSMC .
-
-ns1:BuildingBlocksSMC a owl:Class ;
-    rdfs:comment "SMC BuildingBlocks — the skill primitives of the resource that it does not offer through its interface." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    ns1:idShort "BuildingBlocks" ;
-    ns1:parentClass ns1:SkillsSubmodel .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b106 .
 
 ns1:CCErrorsSMC a owl:Class ;
-    rdfs:comment "SMC Errors — mandatory top-level container for global CC error entries. Always present, may be empty; not currently populated by the generation pipeline." ;
+    rdfs:comment "SMC Errors — mandatory top-level container for global CC error entries: what the ErrorID in the answer of an Operation can be. Always present, may be empty." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     ns1:idShort "Errors" ;
     ns1:parentClass ns1:SkillsSubmodel .
@@ -4936,6 +4927,12 @@ ns1:CCfgChangeLogSML a owl:Class ;
     ns1:idShort "ChangeLog" ;
     ns1:parentClass ns1:ControlConfigurationSubmodel .
 
+ns1:CCfgInstancesSMC a owl:Class ;
+    rdfs:comment "SMC Instances — the blocks of the program that are the resource's skills and the steps of their commands: which block, of which type, is which skill (v0.7). The Skills submodel says what a skill is; this says where it is in the program." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
+    ns1:idShort "Instances" ;
+    ns1:parentClass ns1:ControlConfigurationSubmodel .
+
 ns1:CCfgRuntimeSMC a owl:Class ;
     rdfs:comment "SMC Runtime — the controller runtime: Name, ManagementEndpoint, Resource." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
@@ -4947,16 +4944,10 @@ ns1:InteractionMetadataSMC a owl:Class ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     ns1:semanticId "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/InteractionMetadata" .
 
-ns1:SkillUsesSML a owl:Class ;
-    rdfs:comment "SML Uses — references to the skills a composite skill uses (IDTA 02015 Uses). Targets: skills and building blocks of the same AAS or of an AAS that is a part of it in HierarchicalStructures (downward only; checked in SHACL, pprl:UsesDownwardShape)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
-    ns1:idShort "Uses" ;
-    ns1:parentClass ns1:SkillSMC .
-
 ns1:hasAAS a owl:ObjectProperty ;
     rdfs:comment "Connects a CSS Resource to the AAS that represents it." ;
     rdfs:domain <http://www.w3id.org/hsu-aut/css#Resource> ;
-    rdfs:range ns1:ResourceAAS .
+    rdfs:range ns1:ResourceShell .
 
 <http://www.w3id.org/hsu-aut/css#Constraint> a owl:Class ;
     rdfs:comment """Condition imposed on a capability that further details its applicability. \r
@@ -4997,33 +4988,13 @@ function.\r
 <https://admin-shell.io/aas/3/1/QualifierKind> a owl:Class ;
     rdfs:label "Qualifier Kind"^^xsd:string ;
     rdfs:comment "Enumeration for kinds of qualifiers."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b101 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b101 .
 
-ns1:PropertyContainerSMC a owl:Class ;
-    rdfs:comment "SMC PropertyContainer — holds one CapabilityPropertyType instance plus SameProperty and PropertyComment." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    ns1:semanticId "https://admin-shell.io/idta/CapabilityDescription/PropertyContainer/1/0" .
-
-ns1:SkillKindProperty a owl:Class ;
-    rdfs:comment "Property Kind (xs:string) — Primitive (one function of one equipment item, with a contract) or Composite (a sequence of other skills). Value enumeration enforced in SHACL." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:idShort "Kind" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
-
-ns1:SkillOccupiesSML a owl:Class ;
-    rdfs:comment "SML Occupies — references to HierarchicalStructures nodes (equipment) the skill locks while it runs; two skills occupying one node never run at once." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementList> ;
-    ns1:idShort "Occupies" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
-
-ns1:SkillSemanticIdProperty a owl:Class ;
-    rdfs:comment "Property SemanticId (xs:string) — the skill's own semantic identifier URI (lab namespace convention, enforced via SHACL sh:pattern)." ;
-    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Property> ;
-    ns1:idShort "SemanticId" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
+ns1:ModuleSubmodel a owl:Class ;
+    rdfs:label "Module Submodel" ;
+    rdfs:comment "The resource's own commands: its state machine (Reset, Start, Stop, Abort, Clear) and who may use it (Occupy, Release), each described like a command of a skill (v0.7)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/Submodel> ;
+    ns1:semanticId "https://smartproductionlab.aau.dk/ARSO/Module/1/0/Submodel" .
 
 ns1:TechnicalPropertyAreaSMC a owl:Class ;
     rdfs:comment "SMC TechnicalPropertyArea — one technical property area entry." ;
@@ -5038,7 +5009,7 @@ ns1:TechnicalSpecificDescriptionSMC a owl:Class ;
 <https://admin-shell.io/aas/3/1/AssetKind> a owl:Class ;
     rdfs:label "Asset Kind"^^xsd:string ;
     rdfs:comment "Enumeration for denoting whether an asset is a type asset or an instance asset."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b18 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b18 .
 
 <https://admin-shell.io/aas/3/1/ConceptDescription/isCaseOf> a owl:ObjectProperty ;
     rdfs:label "has is case of"^^xsd:string ;
@@ -5046,30 +5017,12 @@ ns1:TechnicalSpecificDescriptionSMC a owl:Class ;
     rdfs:domain <https://admin-shell.io/aas/3/1/ConceptDescription> ;
     rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
 
-ns1:SkillParametersSMC a owl:Class ;
-    rdfs:comment "SMC Parameters — the skill's parameters as Properties (css:SkillParameter); value is the current (deployed) value, qualifiers Unit, Minimum, Maximum and Default the declaration." ;
+ns1:CommandStepsSMC a owl:Class ;
+    rdfs:comment "SMC Steps — what a command runs, one step after the other in the order of their names (P1, P2, ...)." ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
-    ns1:idShort "Parameters" ;
-    ns1:parentClass ns1:BuildingBlockSMC,
-        ns1:SkillSMC .
-
-<https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> a owl:ObjectProperty ;
-    rdfs:label "has asset information"^^xsd:string ;
-    rdfs:comment "Meta-information about the asset the AAS is representing."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/AssetInformation> .
-
-<https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> a owl:ObjectProperty ;
-    rdfs:label "has derived from"^^xsd:string ;
-    rdfs:comment "The reference to the AAS the AAS was derived from."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
-
-<https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> a owl:ObjectProperty ;
-    rdfs:label "has submodels"^^xsd:string ;
-    rdfs:comment "References to submodels of the AAS."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+    ns1:idShort "Steps" ;
+    ns1:parentClass ns1:ModuleCommandSMC,
+        ns1:SkillCommandSMC .
 
 <https://admin-shell.io/aas/3/1/BasicEventElement/direction> a owl:ObjectProperty ;
     rdfs:label "has direction"^^xsd:string ;
@@ -5197,6 +5150,14 @@ ns1:SkillParametersSMC a owl:Class ;
     rdfs:domain <https://admin-shell.io/aas/3/1/ReferenceElement> ;
     rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
 
+ns1:SkillInterfaceReferenceRef a owl:Class ;
+    rdfs:comment "ReferenceElement InterfaceReference — the AID action (arso:InterfaceSMC/InteractionMetadata/actions/{action}) that calls the command; in the short form, the action that starts the skill. A command without it is not callable from outside. The action may be in the interface description of the resource the component is built into. Cross-submodel target validated via SPARQL SHACL (arso:SkillInterfaceRefActionShape / arso:SkillInterfaceRefTargetShape in arso-rules.shacl.ttl)." ;
+    rdfs:subClassOf <https://admin-shell.io/aas/3/1/ReferenceElement> ;
+    ns1:idShort "InterfaceReference" ;
+    ns1:parentClass ns1:ModuleCommandSMC,
+        ns1:SkillCommandSMC,
+        ns1:SkillSMC .
+
 <https://admin-shell.io/aas/3/1/AnnotatedRelationshipElement/annotations> a owl:ObjectProperty ;
     rdfs:label "has annotations"^^xsd:string ;
     rdfs:comment "A data element that represents an annotation that holds for the relationship between the two elements"@en ;
@@ -5215,85 +5176,15 @@ ns1:SkillParametersSMC a owl:Class ;
     rdfs:domain <https://admin-shell.io/aas/3/1/RelationshipElement> ;
     rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
 
-ns1:hasAIDSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:AIDSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasAIMCSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:AIMCSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasCapabilitiesSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:CapabilitiesSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasControlConfigurationSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:ControlConfigurationSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasDigitalNameplateSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:DigitalNameplateSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasHierarchicalStructuresSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:HierarchicalStructuresSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasOperationalDataSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:OperationalDataSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasParametersSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:ParametersSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasSkillsSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:SkillsSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:hasTechnicalDataSubmodel a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:range ns1:TechnicalDataSubmodel ;
-    rdfs:subPropertyOf ns1:hasSubmodel .
-
-ns1:occupies a owl:ObjectProperty ;
-    rdfs:comment "Resolved Occupies entry: the HierarchicalStructures node (equipment) the skill locks while it runs." ;
-    rdfs:domain ns1:SkillSMC ;
-    rdfs:range [ a owl:Class ;
-            owl:unionOf ( ns1:EntryNodeEntity ns1:NodeEntity ) ] .
-
 ns1:realizedBySkill a owl:ObjectProperty ;
     rdfs:comment "Resolved CapabilityRealizedBy: the skill that realizes an offered capability (same AAS)." ;
     rdfs:domain ns1:CapabilityContainerSMC ;
     rdfs:range ns1:SkillSMC .
 
-ns1:realizesProperty a owl:ObjectProperty ;
-    rdfs:comment "Resolved RealizesProperty: the capability property a skill parameter realizes." ;
-    rdfs:domain ns1:SkillParameterProperty ;
-    rdfs:range ns1:PropertyContainerSMC .
-
-ns1:representsResource a owl:FunctionalProperty,
-        owl:ObjectProperty ;
-    rdfs:comment "The CSS Resource this AAS represents." ;
-    rdfs:domain ns1:ResourceAAS ;
-    rdfs:range <http://www.w3id.org/hsu-aut/css#Resource> ;
-    owl:inverseOf ns1:hasAAS .
-
 ns1:usesSkill a owl:ObjectProperty ;
-    rdfs:comment "Resolved Uses entry: a composite skill uses this skill or building block (same AAS or an AAS that is a part of it)." ;
+    rdfs:comment "A skill runs this skill: a step of one of its commands refers to it (same AAS or an AAS that is a part of it). Since v0.7 the steps say so themselves (arso:StepSkillRef); the projection does not resolve them into this link." ;
     rdfs:domain ns1:SkillSMC ;
-    rdfs:range [ a owl:Class ;
-            owl:unionOf ( ns1:SkillSMC ns1:BuildingBlockSMC ) ] ;
-    ns1:resolvedFrom ns1:SkillUsesSML .
+    rdfs:range ns1:SkillSMC .
 
 <http://www.w3id.org/hsu-aut/css#Product> a owl:Class ;
     rdfs:comment """Physical object being used as an input or created as an output of a production process.\r
@@ -5318,17 +5209,81 @@ Notes:\r
     rdfs:comment "A data element is a submodel element that is not further composed out of other submodel elements."@en ;
     rdfs:subClassOf <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
+<https://admin-shell.io/aas/3/1/Property/valueId> a owl:ObjectProperty ;
+    rdfs:label "has value ID"^^xsd:string ;
+    rdfs:comment "Reference to the global unique ID of a coded value."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/Property> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+
+ns1:hasAIDSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:AIDSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasAIMCSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:AIMCSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasCapabilitiesSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:CapabilitiesSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasControlConfigurationSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:ControlConfigurationSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasModuleSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:ModuleSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasOperationalDataSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:OperationalDataSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasParametersSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:ParametersSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasTechnicalDataSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:TechnicalDataSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+<https://admin-shell.io/aas/3/1/AssetAdministrationShell/assetInformation> a owl:ObjectProperty ;
+    rdfs:label "has asset information"^^xsd:string ;
+    rdfs:comment "Meta-information about the asset the AAS is representing."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/AssetInformation> .
+
+<https://admin-shell.io/aas/3/1/AssetAdministrationShell/derivedFrom> a owl:ObjectProperty ;
+    rdfs:label "has derived from"^^xsd:string ;
+    rdfs:comment "The reference to the AAS the AAS was derived from."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+
+<https://admin-shell.io/aas/3/1/AssetAdministrationShell/submodels> a owl:ObjectProperty ;
+    rdfs:label "has submodels"^^xsd:string ;
+    rdfs:comment "References to submodels of the AAS."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+
 <https://admin-shell.io/aas/3/1/Entity/specificAssetIds> a owl:ObjectProperty ;
     rdfs:label "has specific asset IDs"^^xsd:string ;
     rdfs:comment "Reference to a specific asset ID representing a supplementary identifier of the asset represented by the Asset Administration Shell."@en ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Entity> ;
     rdfs:range <https://admin-shell.io/aas/3/1/SpecificAssetId> .
 
-<https://admin-shell.io/aas/3/1/Property/valueId> a owl:ObjectProperty ;
-    rdfs:label "has value ID"^^xsd:string ;
-    rdfs:comment "Reference to the global unique ID of a coded value."@en ;
+<https://admin-shell.io/aas/3/1/Property/valueType> a owl:ObjectProperty ;
+    rdfs:label "has value type"^^xsd:string ;
+    rdfs:comment "Data type of the value"@en ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Property> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+    rdfs:range <https://admin-shell.io/aas/3/1/DataTypeDefXsd> .
 
 ns1:FormsSMC a owl:Class ;
     rdfs:comment "SMC Forms — protocol binding for an interaction affordance. Must contain href." ;
@@ -5351,11 +5306,22 @@ ns1:FormsSMC a owl:Class ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Entity> ;
     rdfs:range xsd:string .
 
-<https://admin-shell.io/aas/3/1/Property/valueType> a owl:ObjectProperty ;
-    rdfs:label "has value type"^^xsd:string ;
-    rdfs:comment "Data type of the value"@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/Property> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/DataTypeDefXsd> .
+ns1:hasHierarchicalStructuresSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:HierarchicalStructuresSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:hasSkillsSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:SkillsSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
+ns1:representsResource a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:comment "The CSS Resource this AAS represents." ;
+    rdfs:domain ns1:ResourceShell ;
+    rdfs:range <http://www.w3id.org/hsu-aut/css#Resource> ;
+    owl:inverseOf ns1:hasAAS .
 
 <https://admin-shell.io/aas/3/1/SubmodelElementList/orderRelevant> a owl:DatatypeProperty ;
     rdfs:label "has order relevant"^^xsd:string ;
@@ -5392,6 +5358,17 @@ ns1:FormsSMC a owl:Class ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Entity> ;
     rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
+<https://admin-shell.io/aas/3/1/Property/value> a owl:DatatypeProperty ;
+    rdfs:label "has value"^^xsd:string ;
+    rdfs:comment "The value of the property instance."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/Property> ;
+    rdfs:range xsd:string .
+
+ns1:hasDigitalNameplateSubmodel a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:range ns1:DigitalNameplateSubmodel ;
+    rdfs:subPropertyOf ns1:hasSubmodel .
+
 <http://www.w3id.org/hsu-aut/css#ServiceOffer> a owl:Class ;
     rdfs:comment """Proposal for a binding contract from the Service Provider to execute one or more particular services that a ServiceRequester can receive and accept.\r
 \r
@@ -5406,21 +5383,10 @@ and may remain valid for a certain period of time.\r
         <http://www.w3id.org/hsu-aut/css#SkillParameter>,
         <http://www.w3id.org/hsu-aut/css#StateMachine> .
 
-<https://admin-shell.io/aas/3/1/Property/value> a owl:DatatypeProperty ;
-    rdfs:label "has value"^^xsd:string ;
-    rdfs:comment "The value of the property instance."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/Property> ;
-    rdfs:range xsd:string .
-
-ns1:hasSubmodel a owl:ObjectProperty ;
-    rdfs:comment "Direct link from AAS to a submodel instance (bypassing Reference indirection)." ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Submodel> .
-
 <https://admin-shell.io/aas/3/1/AasSubmodelElements> a owl:Class ;
     rdfs:label "AAS Submodel Elements"^^xsd:string ;
     rdfs:comment "Enumeration of all possible elements of a 'SubmodelElementList'."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b1 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b1 .
 
 <https://admin-shell.io/aas/3/1/HasKind/kind> a owl:ObjectProperty ;
     rdfs:label "has kind"^^xsd:string ;
@@ -5436,7 +5402,21 @@ ns1:hasSubmodel a owl:ObjectProperty ;
 
 <https://admin-shell.io/aas/3/1/DataTypeIec61360> a owl:Class ;
     rdfs:label "Data Type IEC 61360"^^xsd:string ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b52 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b52 .
+
+ns1:hasSubmodel a owl:ObjectProperty ;
+    rdfs:comment "Direct link from AAS to a submodel instance (bypassing Reference indirection)." ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Submodel> .
+
+<http://www.w3id.org/hsu-aut/css#SkillParameter> a owl:Class ;
+    rdfs:comment """Data unit to configure, control and monitor the execution of a skill.\r
+\r
+Notes:\r
+- Skill parameters might be used as in- /output parameters\r
+- Skill parameters might be used as results\r
+- Skill parameters might have a relation or be equivalent to capability properties""" ;
+    owl:disjointWith <http://www.w3id.org/hsu-aut/css#StateMachine> .
 
 <https://admin-shell.io/aas/3/1/Identifiable/administration> a owl:ObjectProperty ;
     rdfs:label "has administration"^^xsd:string ;
@@ -5450,24 +5430,15 @@ ns1:hasSubmodel a owl:ObjectProperty ;
     rdfs:domain <https://admin-shell.io/aas/3/1/Identifiable> ;
     rdfs:range xsd:string .
 
-<http://www.w3id.org/hsu-aut/css#SkillParameter> a owl:Class ;
-    rdfs:comment """Data unit to configure, control and monitor the execution of a skill.\r
-\r
-Notes:\r
-- Skill parameters might be used as in- /output parameters\r
-- Skill parameters might be used as results\r
-- Skill parameters might have a relation or be equivalent to capability properties""" ;
-    owl:disjointWith <http://www.w3id.org/hsu-aut/css#StateMachine> .
-
 <https://admin-shell.io/aas/3/1/KeyTypes> a owl:Class ;
     rdfs:label "Key Types"^^xsd:string ;
     rdfs:comment "Enumeration of different key value types within a key."@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b75 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b75 .
 
 <https://admin-shell.io/aas/3/1/DataTypeDefXsd> a owl:Class ;
     rdfs:label "Data Type Def XSD"^^xsd:string ;
     rdfs:comment "Enumeration listing all XSD anySimpleTypes"@en ;
-    owl:oneOf _:ne0737937014847c7af62d153c59ff218b22 .
+    owl:oneOf _:nf8d38217dbec4726b849e760c1200f34b22 .
 
 <https://admin-shell.io/aas/3/1/Submodel/submodelElements> a owl:ObjectProperty ;
     rdfs:label "has submodel elements"^^xsd:string ;
@@ -5489,17 +5460,23 @@ Notes:\r
     rdfs:domain <https://admin-shell.io/aas/3/1/Qualifiable> ;
     rdfs:range <https://admin-shell.io/aas/3/1/Qualifier> .
 
-<https://admin-shell.io/aas/3/1/HasExtensions/extensions> a owl:ObjectProperty ;
-    rdfs:label "has extensions"^^xsd:string ;
-    rdfs:comment "An extension of the element."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/HasExtensions> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Extension> .
-
 <https://admin-shell.io/aas/3/1/HasSemantics/supplementalSemanticIds> a owl:ObjectProperty ;
     rdfs:label "has supplemental semantic IDs"^^xsd:string ;
     rdfs:comment "Identifier of a supplemental semantic definition of the element. It is called supplemental semantic ID of the element."@en ;
     rdfs:domain <https://admin-shell.io/aas/3/1/HasSemantics> ;
     rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+
+<https://admin-shell.io/aas/3/1/HasSemantics/semanticId> a owl:ObjectProperty ;
+    rdfs:label "has semantic ID"^^xsd:string ;
+    rdfs:comment "Identifier of the semantic definition of the element. It is called semantic ID of the element or also main semantic ID of the element."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/HasSemantics> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
+
+<https://admin-shell.io/aas/3/1/HasExtensions/extensions> a owl:ObjectProperty ;
+    rdfs:label "has extensions"^^xsd:string ;
+    rdfs:comment "An extension of the element."@en ;
+    rdfs:domain <https://admin-shell.io/aas/3/1/HasExtensions> ;
+    rdfs:range <https://admin-shell.io/aas/3/1/Extension> .
 
 <https://admin-shell.io/aas/3/1/Referable/category> a owl:DatatypeProperty ;
     rdfs:label "has category"^^xsd:string ;
@@ -5531,84 +5508,78 @@ Notes:\r
     rdfs:domain <https://admin-shell.io/aas/3/1/HasDataSpecification> ;
     rdfs:range <https://admin-shell.io/aas/3/1/EmbeddedDataSpecification> .
 
-<https://admin-shell.io/aas/3/1/HasSemantics/semanticId> a owl:ObjectProperty ;
-    rdfs:label "has semantic ID"^^xsd:string ;
-    rdfs:comment "Identifier of the semantic definition of the element. It is called semantic ID of the element or also main semantic ID of the element."@en ;
-    rdfs:domain <https://admin-shell.io/aas/3/1/HasSemantics> ;
-    rdfs:range <https://admin-shell.io/aas/3/1/Reference> .
-
 <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> a owl:ObjectProperty ;
     rdfs:label "has value"^^xsd:string ;
     rdfs:comment "Submodel element contained in the collection."@en ;
     rdfs:domain <https://admin-shell.io/aas/3/1/SubmodelElementCollection> ;
     rdfs:range <https://admin-shell.io/aas/3/1/SubmodelElement> .
 
-_:ne0737937014847c7af62d153c59ff218b10 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> ;
+_:nf8d38217dbec4726b849e760c1200f34b10 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AasSubmodelElements/Property> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Range> <https://admin-shell.io/aas/3/1/AasSubmodelElements/ReferenceElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementList> ) .
 
-_:ne0737937014847c7af62d153c59ff218b100 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Template> ;
+_:nf8d38217dbec4726b849e760c1200f34b100 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Template> ;
     rdf:rest () .
 
-_:ne0737937014847c7af62d153c59ff218b102 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/TemplateQualifier> ;
+_:nf8d38217dbec4726b849e760c1200f34b102 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/TemplateQualifier> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/QualifierKind/ValueQualifier> ) .
 
-_:ne0737937014847c7af62d153c59ff218b105 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> ;
+_:nf8d38217dbec4726b849e760c1200f34b105 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ModelReference> ;
     rdf:rest () .
 
-_:ne0737937014847c7af62d153c59ff218b107 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/On> ;
+_:nf8d38217dbec4726b849e760c1200f34b107 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/On> ;
     rdf:rest () .
 
-_:ne0737937014847c7af62d153c59ff218b19 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/NotApplicable> ;
+_:nf8d38217dbec4726b849e760c1200f34b19 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/NotApplicable> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AssetKind/Role> <https://admin-shell.io/aas/3/1/AssetKind/Type> ) .
 
-_:ne0737937014847c7af62d153c59ff218b2 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/BasicEventElement> ;
+_:nf8d38217dbec4726b849e760c1200f34b2 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/BasicEventElement> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/AasSubmodelElements/Blob> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Capability> <https://admin-shell.io/aas/3/1/AasSubmodelElements/DataElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Entity> <https://admin-shell.io/aas/3/1/AasSubmodelElements/EventElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/File> <https://admin-shell.io/aas/3/1/AasSubmodelElements/MultiLanguageProperty> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Operation> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Property> <https://admin-shell.io/aas/3/1/AasSubmodelElements/Range> <https://admin-shell.io/aas/3/1/AasSubmodelElements/ReferenceElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/RelationshipElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElement> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/AasSubmodelElements/SubmodelElementList> ) .
 
-_:ne0737937014847c7af62d153c59ff218b23 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Base64Binary> ;
+_:nf8d38217dbec4726b849e760c1200f34b23 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Base64Binary> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Boolean> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Byte> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Date> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/DateTime> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Decimal> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Double> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Duration> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Float> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GDay> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GMonth> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GMonthDay> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GYear> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/GYearMonth> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/HexBinary> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Int> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Integer> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Long> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NegativeInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NonNegativeInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/NonPositiveInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/PositiveInteger> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Short> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/String> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/Time> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedByte> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedInt> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedLong> <https://admin-shell.io/aas/3/1/DataTypeDefXsd/UnsignedShort> ) .
 
-_:ne0737937014847c7af62d153c59ff218b53 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Boolean> ;
+_:nf8d38217dbec4726b849e760c1200f34b53 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Boolean> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/DataTypeIec61360/Date> <https://admin-shell.io/aas/3/1/DataTypeIec61360/File> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Html> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/IntegerMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Irdi> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Iri> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Rational> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RationalMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCount> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealCurrency> <https://admin-shell.io/aas/3/1/DataTypeIec61360/RealMeasure> <https://admin-shell.io/aas/3/1/DataTypeIec61360/String> <https://admin-shell.io/aas/3/1/DataTypeIec61360/StringTranslatable> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Time> <https://admin-shell.io/aas/3/1/DataTypeIec61360/Timestamp> ) .
 
-_:ne0737937014847c7af62d153c59ff218b72 rdf:first <https://admin-shell.io/aas/3/1/Direction/Output> ;
+_:nf8d38217dbec4726b849e760c1200f34b72 rdf:first <https://admin-shell.io/aas/3/1/Direction/Output> ;
     rdf:rest () .
 
-_:ne0737937014847c7af62d153c59ff218b74 rdf:first <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
+_:nf8d38217dbec4726b849e760c1200f34b74 rdf:first <https://admin-shell.io/aas/3/1/EntityType/SelfManagedEntity> ;
     rdf:rest () .
 
-_:ne0737937014847c7af62d153c59ff218b76 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> ;
+_:nf8d38217dbec4726b849e760c1200f34b76 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AssetAdministrationShell> ;
     rdf:rest ( <https://admin-shell.io/aas/3/1/KeyTypes/BasicEventElement> <https://admin-shell.io/aas/3/1/KeyTypes/Blob> <https://admin-shell.io/aas/3/1/KeyTypes/Capability> <https://admin-shell.io/aas/3/1/KeyTypes/ConceptDescription> <https://admin-shell.io/aas/3/1/KeyTypes/DataElement> <https://admin-shell.io/aas/3/1/KeyTypes/Entity> <https://admin-shell.io/aas/3/1/KeyTypes/EventElement> <https://admin-shell.io/aas/3/1/KeyTypes/File> <https://admin-shell.io/aas/3/1/KeyTypes/FragmentReference> <https://admin-shell.io/aas/3/1/KeyTypes/GlobalReference> <https://admin-shell.io/aas/3/1/KeyTypes/Identifiable> <https://admin-shell.io/aas/3/1/KeyTypes/MultiLanguageProperty> <https://admin-shell.io/aas/3/1/KeyTypes/Operation> <https://admin-shell.io/aas/3/1/KeyTypes/Property> <https://admin-shell.io/aas/3/1/KeyTypes/Range> <https://admin-shell.io/aas/3/1/KeyTypes/Referable> <https://admin-shell.io/aas/3/1/KeyTypes/ReferenceElement> <https://admin-shell.io/aas/3/1/KeyTypes/RelationshipElement> <https://admin-shell.io/aas/3/1/KeyTypes/Submodel> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElement> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementCollection> <https://admin-shell.io/aas/3/1/KeyTypes/SubmodelElementList> ) .
 
-_:ne0737937014847c7af62d153c59ff218b1 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/AnnotatedRelationshipElement> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b2 .
+_:nf8d38217dbec4726b849e760c1200f34b1 rdf:first <https://admin-shell.io/aas/3/1/AasSubmodelElements/AnnotatedRelationshipElement> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b2 .
 
-_:ne0737937014847c7af62d153c59ff218b101 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b102 .
+_:nf8d38217dbec4726b849e760c1200f34b101 rdf:first <https://admin-shell.io/aas/3/1/QualifierKind/ConceptQualifier> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b102 .
 
-_:ne0737937014847c7af62d153c59ff218b104 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b105 .
+_:nf8d38217dbec4726b849e760c1200f34b104 rdf:first <https://admin-shell.io/aas/3/1/ReferenceTypes/ExternalReference> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b105 .
 
-_:ne0737937014847c7af62d153c59ff218b106 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/Off> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b107 .
+_:nf8d38217dbec4726b849e760c1200f34b106 rdf:first <https://admin-shell.io/aas/3/1/StateOfEvent/Off> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b107 .
 
-_:ne0737937014847c7af62d153c59ff218b18 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/Instance> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b19 .
+_:nf8d38217dbec4726b849e760c1200f34b18 rdf:first <https://admin-shell.io/aas/3/1/AssetKind/Instance> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b19 .
 
-_:ne0737937014847c7af62d153c59ff218b52 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Blob> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b53 .
+_:nf8d38217dbec4726b849e760c1200f34b52 rdf:first <https://admin-shell.io/aas/3/1/DataTypeIec61360/Blob> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b53 .
 
-_:ne0737937014847c7af62d153c59ff218b71 rdf:first <https://admin-shell.io/aas/3/1/Direction/Input> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b72 .
+_:nf8d38217dbec4726b849e760c1200f34b71 rdf:first <https://admin-shell.io/aas/3/1/Direction/Input> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b72 .
 
-_:ne0737937014847c7af62d153c59ff218b75 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AnnotatedRelationshipElement> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b76 .
+_:nf8d38217dbec4726b849e760c1200f34b75 rdf:first <https://admin-shell.io/aas/3/1/KeyTypes/AnnotatedRelationshipElement> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b76 .
 
-_:ne0737937014847c7af62d153c59ff218b99 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Instance> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b100 .
+_:nf8d38217dbec4726b849e760c1200f34b99 rdf:first <https://admin-shell.io/aas/3/1/ModellingKind/Instance> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b100 .
 
-_:ne0737937014847c7af62d153c59ff218b73 rdf:first <https://admin-shell.io/aas/3/1/EntityType/CoManagedEntity> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b74 .
+_:nf8d38217dbec4726b849e760c1200f34b73 rdf:first <https://admin-shell.io/aas/3/1/EntityType/CoManagedEntity> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b74 .
 
-_:ne0737937014847c7af62d153c59ff218b22 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/AnyUri> ;
-    rdf:rest _:ne0737937014847c7af62d153c59ff218b23 .
+_:nf8d38217dbec4726b849e760c1200f34b22 rdf:first <https://admin-shell.io/aas/3/1/DataTypeDefXsd/AnyUri> ;
+    rdf:rest _:nf8d38217dbec4726b849e760c1200f34b23 .
 

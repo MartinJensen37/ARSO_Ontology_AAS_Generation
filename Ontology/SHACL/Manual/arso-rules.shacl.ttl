@@ -14,10 +14,13 @@
 # Transformation/AAS_to_RDF/aas_to_rdf.py.
 #################################################################
 
+# These two hold for a module (arso:ResourceAAS). A component (arso:ComponentAAS, v0.7) has skills
+# and neither an interface nor capabilities of its own: the module it is built into has them.
+
 arso:SkillsImplyAidShape
   a sh:NodeShape ;
   rdfs:label "A Skills submodel requires an AID submodel" ;
-  sh:targetClass aas:AssetAdministrationShell ;
+  sh:targetClass arso:ResourceAAS ;
   sh:or (
     [ sh:path arso:hasSkillsSubmodel ; sh:maxCount 0 ]
     [ sh:path arso:hasAIDSubmodel    ; sh:minCount 1 ]
@@ -67,7 +70,7 @@ arso:CapabilitiesImplySkillsShape
 arso:SkillsImplyCapabilitiesShape
   a sh:NodeShape ;
   rdfs:label "A Skills submodel requires a Capabilities submodel" ;
-  sh:targetClass aas:AssetAdministrationShell ;
+  sh:targetClass arso:ResourceAAS ;
   sh:or (
     [ sh:path arso:hasSkillsSubmodel       ; sh:maxCount 0 ]
     [ sh:path arso:hasCapabilitiesSubmodel ; sh:minCount 1 ]
@@ -114,10 +117,48 @@ arso:FormsAddressingShape
 
 
 #################################################################
+# HOW A SKILL IS CALLED (ARSO 0.7)
+#################################################################
+
+# A skill is described by its commands (Start, Stop, Abort, Reset), or in the short form by one
+# Operation and one InterfaceReference of its own. A disjunction, so not an OWL restriction.
+
+arso:SkillCallableShape
+  a sh:NodeShape ;
+  rdfs:label "A Skill has its commands, or an Operation and an InterfaceReference of its own" ;
+  sh:targetClass arso:SkillSMC ;
+  sh:or (
+    [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+      sh:qualifiedValueShape [ sh:class arso:SkillCommandSMC ] ; sh:qualifiedMinCount 1 ]
+    [ sh:and (
+        [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+          sh:qualifiedValueShape [ sh:class arso:SkillOperationElement ] ; sh:qualifiedMinCount 1 ]
+        [ sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+          sh:qualifiedValueShape [ sh:class arso:SkillInterfaceReferenceRef ] ; sh:qualifiedMinCount 1 ] ) ]
+  ) ;
+  sh:message "This Skill cannot be called: it has neither a command (Start, Stop, Abort, Reset) nor an Operation with an InterfaceReference of its own." .
+
+# A command is called through its Operation.
+
+arso:CommandOperationShape
+  a sh:NodeShape ;
+  rdfs:label "A command of a skill or of the resource has exactly one Operation" ;
+  sh:targetClass arso:SkillCommandSMC , arso:ModuleCommandSMC ;
+  sh:property [
+    sh:path <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ;
+    sh:qualifiedValueShape [ sh:class arso:SkillOperationElement ] ;
+    sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ;
+    sh:message "A command needs exactly one Operation (named like the command)." ] .
+
+
+#################################################################
 # CROSS-SUBMODEL REFERENCE RESOLUTION (SPARQL -- see category 1 above)
 #################################################################
 
 # Skill interface references must resolve to an InterfaceSMC in the same AAS.
+# ARSO 0.7: the reference is also carried by a command of a skill. A component's AAS has no
+# interface description of its own (the module it is built into carries its skills out, and the
+# reference leads into that module's AAS), so only a shell that has one is judged here.
 
 arso:SkillInterfaceRefTargetShape
   a sh:NodeShape ;
@@ -129,7 +170,8 @@ arso:SkillInterfaceRefTargetShape
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                                     <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
-                <https://w3id.org/2025/arso#hasSkillsSubmodel>               ?skillsSm .
+                <https://w3id.org/2025/arso#hasSkillsSubmodel>               ?skillsSm ;
+                <https://w3id.org/2025/arso#hasAIDSubmodel>                  ?ownAid .
         ?skillsSm
                 (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>)+
                 $this .
@@ -195,7 +237,7 @@ arso:SkillMustBeRealizedByCapabilityShape
   sh:targetClass arso:SkillSMC ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability). A Skill of Kind Primitive, Occupy and Release are exempt." ;
+    sh:message "This Skill is not referenced by any Capability's realizedBy, and no Skill that is uses it. Every Skill must be realized by at least one Capability, itself or as a step of a composite Skill (several Skills may share one Capability). A primitive Skill (Kind Primitive, or the semanticId .../skill/Primitive), Occupy and Release are exempt." ;
     sh:select """
       SELECT $this WHERE {
         ?shell  rdf:type                                              <https://admin-shell.io/aas/3/1/AssetAdministrationShell> ;
@@ -227,6 +269,14 @@ arso:SkillMustBeRealizedByCapabilityShape
           ?kind    <https://admin-shell.io/aas/3/1/Property/value>        ?skillKind .
         }
         FILTER (!BOUND(?skillKind) || str(?skillKind) != "Primitive")
+
+        # Since ARSO 0.7 the kind is the semanticId of the skill element.
+        OPTIONAL {
+          $this    <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>  ?kindRef .
+          ?kindRef <https://admin-shell.io/aas/3/1/Reference/keys>           ?kindKey .
+          ?kindKey <https://admin-shell.io/aas/3/1/Key/value>                ?skillClass .
+        }
+        FILTER (!BOUND(?skillClass) || str(?skillClass) != "https://smartproductionlab.aau.dk/skill/Primitive")
 
         FILTER NOT EXISTS {
           ?shell  <https://w3id.org/2025/arso#hasCapabilitiesSubmodel> ?capsSm .
@@ -274,7 +324,8 @@ arso:SkillInterfaceRefActionShape
         ?refElem rdf:type <https://admin-shell.io/aas/3/1/ReferenceElement> ;
                  <https://admin-shell.io/aas/3/1/Referable/idShort> "InterfaceReference"^^xsd:string .
 
-        ?shell <https://w3id.org/2025/arso#hasSkillsSubmodel> $this .
+        ?shell <https://w3id.org/2025/arso#hasSkillsSubmodel> $this ;
+               <https://w3id.org/2025/arso#hasAIDSubmodel>    ?ownAid .
 
         FILTER NOT EXISTS {
           ?refElem <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ref .
@@ -327,8 +378,8 @@ arso:SkillOperationSemanticIdPatternShape
     sh:path ( <https://admin-shell.io/aas/3/1/HasSemantics/semanticId>
               <https://admin-shell.io/aas/3/1/Reference/keys>
               <https://admin-shell.io/aas/3/1/Key/value> ) ;
-    sh:pattern "^https?://smartproductionlab\\.aau\\.dk/" ;
-    sh:message "Skill semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention)." ;
+    sh:pattern "^https?://(smartproductionlab\\.aau\\.dk|w3id\\.org/2026/apex)/" ;
+    sh:message "Skill semanticId must be a URI under https://smartproductionlab.aau.dk/ (lab convention), or a command of the resource's state machine under https://w3id.org/2026/apex/." ;
   ] .
 
 # A Capability says what it means with a URI of the lab's namespace. IDTA 02020
@@ -524,6 +575,16 @@ arso:AIMCSourceRefTargetShape
           ?prop   <https://admin-shell.io/aas/3/1/Referable/idShort>    ?targetIdShort .
         }
 
+        # A Source in another AAS (the Operation of a component's skill, v0.7) cannot be
+        # followed here: only a Source that names a submodel of this AAS is judged.
+        FILTER EXISTS {
+          $this   <https://admin-shell.io/aas/3/1/ReferenceElement/value> ?ownRef .
+          ?ownRef <https://admin-shell.io/aas/3/1/Reference/keys>          ?ownKey .
+          ?ownKey <https://admin-shell.io/aas/3/1/Key/value>               ?ownId .
+          ?shell  <https://w3id.org/2025/arso#hasSubmodel>                 ?ownSm .
+          ?ownSm  <https://admin-shell.io/aas/3/1/Identifiable/id>         ?ownId .
+        }
+
         # Each step is an EXISTS of its own: rdflib orders the patterns of one group
         # without knowing what is bound, and one group over all of this takes minutes.
         FILTER NOT EXISTS {
@@ -537,7 +598,7 @@ arso:AIMCSourceRefTargetShape
             ?op     rdf:type                                          <https://admin-shell.io/aas/3/1/Operation> ;
                     <https://admin-shell.io/aas/3/1/Referable/idShort>     ?opIdShort .
             ?holder <https://admin-shell.io/aas/3/1/SubmodelElementCollection/value> ?op .
-            ?shell  <https://w3id.org/2025/arso#hasSkillsSubmodel>    ?skillsSm .
+            ?shell  (<https://w3id.org/2025/arso#hasSkillsSubmodel>|<https://w3id.org/2025/arso#hasModuleSubmodel>) ?skillsSm .
             ?skillsSm
                     (<https://admin-shell.io/aas/3/1/Submodel/submodelElements>|<https://admin-shell.io/aas/3/1/SubmodelElementCollection/value>|<https://admin-shell.io/aas/3/1/SubmodelElementList/value>)+
                     ?holder .
