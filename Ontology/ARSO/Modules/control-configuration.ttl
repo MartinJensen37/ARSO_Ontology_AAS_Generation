@@ -21,6 +21,9 @@
 #   ├─ Differences [SMC or SML of Property, 0..1]     one per difference from the source
 #   ├─ Types [SMC or SML, 0..1]
 #   │    └─ {type} [SMC, 0..*]: Name, Hash            as the runtime reports them
+#   ├─ Instances [SMC, 0..1]                           the blocks that are skills and steps (v0.7)
+#   │    └─ {instance} [SMC, 0..*]: InstancePath, FBType, TypeHash [Property];
+#   │         Skill [ReferenceElement]                 the skill or the step of a command it is
 #   ├─ ActiveProcedure [SMC, 0..1]
 #   │    ├─ ProcessReference [ReferenceElement, 1]    → Process AAS (version)
 #   │    ├─ NetworkHash [Property, 0..1]
@@ -118,6 +121,29 @@ arso:CCfgTypesSMC rdf:type owl:Class ;
   arso:idShort "Types" ;
   rdfs:comment "SMC Types — the function block types in use, each with Name and Hash as the runtime reports them." .
 
+arso:CCfgInstancesSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:ControlConfigurationSubmodel ;
+  arso:idShort "Instances" ;
+  rdfs:comment "SMC Instances — the blocks of the program that are the resource's skills and the steps of their commands: which block, of which type, is which skill (v0.7). The Skills submodel says what a skill is; this says where it is in the program." .
+
+arso:CCfgInstanceSMC rdf:type owl:Class ;
+  rdfs:subClassOf aas:SubmodelElementCollection ;
+  arso:parentClass arso:CCfgInstancesSMC ;
+  rdfs:comment "SMC {instance} — one block of the program, named like its instance path with underscores." .
+
+arso:CCfgInstanceDetailProperty rdf:type owl:Class ;
+  rdfs:subClassOf aas:Property ;
+  arso:parentClass arso:CCfgInstanceSMC ;
+  arso:idShort "InstancePath" , "FBType" , "TypeHash" ;
+  rdfs:comment "Property InstancePath (the dotted name of the instance), FBType (its qualified IEC 61499 type) or TypeHash (the hash of that type as the runtime reports it)." .
+
+arso:CCfgInstanceSkillRef rdf:type owl:Class ;
+  rdfs:subClassOf aas:ReferenceElement ;
+  arso:parentClass arso:CCfgInstanceSMC ;
+  arso:idShort "Skill" ;
+  rdfs:comment "ReferenceElement Skill — what the block is: a skill (in the Skills submodel of this AAS or of a component), or the step of a command that runs one." .
+
 arso:CCfgActiveProcedureSMC rdf:type owl:Class ;
   rdfs:subClassOf aas:SubmodelElementCollection ;
   arso:parentClass arso:ControlConfigurationSubmodel ;
@@ -147,6 +173,8 @@ arso:ControlConfigurationSubmodel rdfs:subClassOf
     owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgRulesProperty ],
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
     owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgRuntimeSMC ],
+  [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgInstancesSMC ],
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;
     owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:CCfgActiveProcedureSMC ],
   [ rdf:type owl:Restriction ; owl:onProperty <https://admin-shell.io/aas/3/1/Submodel/submodelElements> ;

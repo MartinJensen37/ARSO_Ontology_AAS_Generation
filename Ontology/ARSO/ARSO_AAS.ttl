@@ -12,7 +12,7 @@
 
 <https://w3id.org/2025/arso>
   rdf:type owl:Ontology ;
-  owl:versionIRI <https://w3id.org/2025/arso/0.6.0> ;
+  owl:versionIRI <https://w3id.org/2025/arso/0.7.0> ;
   owl:imports <http://www.w3id.org/hsu-aut/css> ;
   owl:imports <https://admin-shell.io/aas/3/1/> ;
   owl:imports <https://w3id.org/2025/arso/modules/nameplate> ;
@@ -25,7 +25,17 @@
   owl:imports <https://w3id.org/2025/arso/modules/technical-data> ;
   owl:imports <https://w3id.org/2025/arso/modules/aimc> ;
   owl:imports <https://w3id.org/2025/arso/modules/control-configuration> ;
-  rdfs:comment """ARSO v0.6 — Domain extension ontology for Resource AAS.
+  rdfs:comment """ARSO v0.7 — Domain extension ontology for Resource AAS.
+
+  v0.7 (8 Oct 2026): a skill is its commands (Start, Stop, Abort, Reset), each with the action
+  that calls it, its Operation (parameters, results and the answer are its variables) and the steps
+  it runs. Kind, Parameters, RealizesProperty, Uses, Execute/Stop, Occupies, StateReference,
+  Implementation and the building blocks are gone: a skill's kind is its semanticId, its state and
+  results are data points, the block it is in the program is in the Control Configuration
+  (Instances), and a capability names the skill, never the other way. The resource's own commands
+  are a submodel of their own (Module). A resource is a module, a component of one (its AAS holds
+  its primitives) or a system of modules, told by its asset type. The short form of a skill
+  (SemanticId, Operation, InterfaceReference) stays valid.
 
   v0.6 (7 Oct 2026): building blocks (the skill primitives a resource does not offer), what an
   Implementation and a Contract hold, the rule set a program is built by (Control Configuration),
@@ -102,13 +112,20 @@ arso:ResourceAAS rdf:type owl:Class ;
   rdfs:label "Resource AAS" ;
   rdfs:comment "Asset Administration Shell of a resource (line, module, component). v0.5: the restrictions below apply to this class, not to every aas:AssetAdministrationShell, so ARSO can be loaded together with the product (APSO) and process (AProSO) blueprints without every shell having to represent a css:Resource. The JSON-to-RDF projection types a shell as ResourceAAS when it represents a resource, e.g. when its derivedFrom is the lab's resource template (https://smartproductionlab.aau.dk/aas/templates/resource)." .
 
+arso:ResourceShell rdf:type owl:Class ;
+  rdfs:subClassOf aas:AssetAdministrationShell ;
+  rdfs:label "AAS of a resource" ;
+  rdfs:comment "The Asset Administration Shell of any resource: a module (arso:ResourceAAS), a component of one (arso:ComponentAAS) or a system of modules (arso:SystemAAS). What each has to hold is on those classes (v0.7)." .
+
+arso:ResourceAAS rdfs:subClassOf arso:ResourceShell .
+
 arso:hasAAS rdf:type owl:ObjectProperty ;
   rdfs:domain css:Resource ;
-  rdfs:range arso:ResourceAAS ;
+  rdfs:range arso:ResourceShell ;
   rdfs:comment "Connects a CSS Resource to the AAS that represents it." .
 
 arso:representsResource rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
-  rdfs:domain arso:ResourceAAS ;
+  rdfs:domain arso:ResourceShell ;
   rdfs:range css:Resource ;
   owl:inverseOf arso:hasAAS ;
   rdfs:comment "The CSS Resource this AAS represents." .
@@ -118,10 +135,10 @@ css:Resource rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:hasAAS ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-  owl:onClass arso:ResourceAAS ] .
+  owl:onClass arso:ResourceShell ] .
 
 # Each resource AAS represents exactly one Resource
-arso:ResourceAAS rdfs:subClassOf [
+arso:ResourceShell rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty arso:representsResource ;
   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
@@ -192,25 +209,13 @@ arso:hasControlConfigurationSubmodel rdf:type owl:ObjectProperty , owl:Functiona
 
 arso:usesSkill rdf:type owl:ObjectProperty ;
   rdfs:domain arso:SkillSMC ;
-  rdfs:range [ rdf:type owl:Class ; owl:unionOf ( arso:SkillSMC arso:BuildingBlockSMC ) ] ;
-  arso:resolvedFrom arso:SkillUsesSML ;
-  rdfs:comment "Resolved Uses entry: a composite skill uses this skill or building block (same AAS or an AAS that is a part of it)." .
-
-arso:occupies rdf:type owl:ObjectProperty ;
-  rdfs:domain arso:SkillSMC ;
-  rdfs:range [ rdf:type owl:Class ; owl:unionOf ( arso:EntryNodeEntity arso:NodeEntity ) ] ;
-  rdfs:comment "Resolved Occupies entry: the HierarchicalStructures node (equipment) the skill locks while it runs." .
-
-arso:realizesProperty rdf:type owl:ObjectProperty ;
-  rdfs:domain arso:SkillParameterProperty ;
-  rdfs:range arso:PropertyContainerSMC ;
-  rdfs:comment "Resolved RealizesProperty: the capability property a skill parameter realizes." .
+  rdfs:range arso:SkillSMC ;
+  rdfs:comment "A skill runs this skill: a step of one of its commands refers to it (same AAS or an AAS that is a part of it). Since v0.7 the steps say so themselves (arso:StepSkillRef); the projection does not resolve them into this link." .
 
 arso:realizedBySkill rdf:type owl:ObjectProperty ;
   rdfs:domain arso:CapabilityContainerSMC ;
   rdfs:range arso:SkillSMC ;
   rdfs:comment "Resolved CapabilityRealizedBy: the skill that realizes an offered capability (same AAS)." .
-
 
 #################################################################
 #################################################################
@@ -295,3 +300,58 @@ arso:ResourceAAS rdfs:subClassOf [
   owl:onProperty arso:hasAIMCSubmodel ;
   owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
   owl:onClass arso:AIMCSubmodel ] .
+
+
+#################################################################
+##  v0.7: the Module submodel, and the kinds of resource
+##
+##  What a resource is, is its asset type (arso:assetType: the AAS's
+##  assetInformation.assetType begins with it). A module is the
+##  resource described so far. A component is a part of a module that
+##  acts (an axis, a pump): its AAS holds the skills it has, which the
+##  module it is built into carries out. A system is made of modules.
+##  A component's type follows the kind:
+##  https://smartproductionlab.aau.dk/Resource/Component/LinearAxis.
+#################################################################
+
+arso:assetType rdf:type owl:AnnotationProperty ;
+  rdfs:comment "The beginning of the asset type (assetInformation.assetType) by which an AAS is recognised as this kind of resource." .
+
+arso:ResourceAAS arso:assetType "https://smartproductionlab.aau.dk/Resource/Module" .
+
+arso:hasModuleSubmodel rdf:type owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:subPropertyOf arso:hasSubmodel ;
+  rdfs:range arso:ModuleSubmodel .
+
+# At most one Module submodel
+arso:ResourceAAS rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty arso:hasModuleSubmodel ;
+  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+  owl:onClass arso:ModuleSubmodel ] .
+
+arso:ComponentAAS rdf:type owl:Class ;
+  rdfs:subClassOf arso:ResourceShell ;
+  rdfs:label "Component AAS" ;
+  arso:assetType "https://smartproductionlab.aau.dk/Resource/Component" ;
+  rdfs:comment "Asset Administration Shell of a component of a module: a part that acts and so has skills of its own (v0.7). It needs its Skills; a nameplate is optional. Its interface is the module's: the commands of its skills refer to actions of the module's interface description." .
+
+# A component has exactly one Skills submodel, and at most one nameplate
+arso:ComponentAAS rdfs:subClassOf
+  [ rdf:type owl:Restriction ; owl:onProperty arso:hasSkillsSubmodel ;
+    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:SkillsSubmodel ],
+  [ rdf:type owl:Restriction ; owl:onProperty arso:hasDigitalNameplateSubmodel ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:DigitalNameplateSubmodel ] .
+
+arso:SystemAAS rdf:type owl:Class ;
+  rdfs:subClassOf arso:ResourceShell ;
+  rdfs:label "System AAS" ;
+  arso:assetType "https://smartproductionlab.aau.dk/Resource/System" ;
+  rdfs:comment "Asset Administration Shell of a production system made of modules (v0.7). It needs its Hierarchical Structures: the modules, each found by its asset id." .
+
+# A system has exactly one HierarchicalStructures, and at most one nameplate
+arso:SystemAAS rdfs:subClassOf
+  [ rdf:type owl:Restriction ; owl:onProperty arso:hasHierarchicalStructuresSubmodel ;
+    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:HierarchicalStructuresSubmodel ],
+  [ rdf:type owl:Restriction ; owl:onProperty arso:hasDigitalNameplateSubmodel ;
+    owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass arso:DigitalNameplateSubmodel ] .

@@ -176,8 +176,10 @@ class _StructuralRules:
     parent" (see arso:parentClass's doc comment in ARSO_AAS.ttl). Several
     classes can stand at one place (told apart by their AAS modelType), and a
     class with several idShorts has one entry for each.
-    named: {(parent_cls, idshort)}, the children some class claims by idShort;
-    a class found by its place alone does not take those.
+    named: {(parent_cls, idshort): {child_cls}}, the children some class claims
+    by idShort; a class found by its place alone does not take those. A class
+    claims only an element of its own AAS modelType: an Operation named Start
+    is not the command Start (an SMC), which ARSO 0.7 has beside it.
     unconditional_aas_type: {aas_base_cls: arso_cls}, from arso:unconditionalAasType.
     parents / ancestors: {child_cls: {parent_cls}}, where a class stands. An
     element found by its semanticId is only taken for such a class there.
@@ -186,7 +188,7 @@ class _StructuralRules:
     def __init__(self, ontology_g: Graph) -> None:
         self.direct: list[tuple[tuple[URIRef, str | None], URIRef]] = []
         self.transitive: list[tuple[tuple[URIRef, str | None], URIRef]] = []
-        self.named: set[tuple[URIRef, str]] = set()
+        self.named: dict[tuple[URIRef, str], set[URIRef]] = {}
         self.unconditional_aas_type: dict[URIRef, URIRef] = {}
         self.parents: dict[URIRef, set[URIRef]] = {}
         self.ancestors: dict[URIRef, set[URIRef]] = {}
@@ -195,7 +197,7 @@ class _StructuralRules:
             for idshort in self._idshorts(ontology_g, child):
                 self.direct.append(((parent, idshort), child))
                 if idshort is not None:
-                    self.named.add((parent, idshort))
+                    self.named.setdefault((parent, idshort), set()).add(child)
             self.parents.setdefault(child, set()).add(parent)
         for child, _, parent in sorted(ontology_g.triples((None, ARSO_TRANSITIVE_PARENT_CLASS, None))):
             for idshort in self._idshorts(ontology_g, child):
@@ -676,6 +678,11 @@ def _apply_structural_typing(g: Graph) -> None:
             parent = parent_of.get(parent)
         return False
 
+    def fits(node: URIRef, cls: URIRef) -> bool:
+        """The element has the AAS modelType the class is of."""
+        base = _direct_aas_supertype(_ONTOLOGY, cls)
+        return base is None or (node, RDF.type, base) in g
+
     def confirm_pending() -> bool:
         confirmed = [(node, cls) for node, cls in pending if stands(node, cls)]
         for node, cls in confirmed:
@@ -698,18 +705,19 @@ def _apply_structural_typing(g: Graph) -> None:
                 continue
                 # Without an idShort anchor, require a matching AAS modelType
                 # so the rule can't swallow unrelated siblings.
-            base_aas_type = None if idshort is not None else _direct_aas_supertype(_ONTOLOGY, child_cls)
+            base_aas_type = _direct_aas_supertype(_ONTOLOGY, child_cls)
             for parent_node in list(g.subjects(RDF.type, parent_cls)):
                 for child_node in g.objects(parent_node, containment_prop):
                     if (child_node, RDF.type, child_cls) in g:
+                        continue
+                    if base_aas_type is not None and (child_node, RDF.type, base_aas_type) not in g:
                         continue
                     if idshort is not None:
                         if _idshort_of(g, child_node) != idshort:
                             continue
                     else:
-                        if base_aas_type is not None and (child_node, RDF.type, base_aas_type) not in g:
-                            continue
-                        if (parent_cls, _idshort_of(g, child_node)) in _STRUCTURAL_RULES.named:
+                        claimed = _STRUCTURAL_RULES.named.get((parent_cls, _idshort_of(g, child_node)), ())
+                        if any(fits(child_node, cls) for cls in claimed):
                             continue
                     g.add((child_node, RDF.type, child_cls))
                     changed = True
@@ -779,6 +787,18 @@ def _walk_submodel(g: Graph, shell_uri: URIRef, submodel: dict) -> URIRef | None
     return sm_uri
 
 
+_SHELL_CLASS_BY_ASSET_TYPE: dict[str, URIRef] = {
+    str(start): cls for cls, _, start in _ONTOLOGY.triples((None, ARSO["assetType"], None))
+}
+
+
+def _shell_class(shell: dict) -> URIRef:
+    """The ARSO class of a shell: the one whose asset type its own begins with (the longest)."""
+    stated = (shell.get("assetInformation") or {}).get("assetType") or ""
+    fitting = [start for start in _SHELL_CLASS_BY_ASSET_TYPE if stated == start or stated.startswith(start + "/")]
+    return _SHELL_CLASS_BY_ASSET_TYPE[max(fitting, key=len)] if fitting else ARSO.ResourceAAS
+
+
 def _walk_shell(g: Graph, shell: dict, submodels_by_id: dict[str, dict]) -> None:
     shell_id = shell.get("id")
     if not shell_id:
@@ -786,9 +806,11 @@ def _walk_shell(g: Graph, shell: dict, submodels_by_id: dict[str, dict]) -> None
 
     shell_uri = URIRef(shell_id)
     g.add((shell_uri, RDF.type, AAS.AssetAdministrationShell))
-    # Every shell this pipeline handles is the AAS of a resource; ARSO's
-    # restrictions on the shell apply to arso:ResourceAAS (v0.5).
-    g.add((shell_uri, RDF.type, ARSO.ResourceAAS))
+    # Every shell this pipeline handles is the AAS of a resource. What kind of
+    # resource, and so which of ARSO's restrictions apply to the shell, is told
+    # by its asset type (arso:assetType, v0.7): a module (arso:ResourceAAS, also
+    # for a shell that states no known type), a component of one, or a system.
+    g.add((shell_uri, RDF.type, _shell_class(shell)))
     g.add((shell_uri, P_IDENTIFIABLE_ID, Literal(shell_id, datatype=XSD.string)))
     _emit_referable(g, shell_uri, shell)
     _emit_administration(g, shell_uri, shell)
